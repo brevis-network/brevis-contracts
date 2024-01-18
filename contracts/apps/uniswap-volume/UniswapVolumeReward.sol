@@ -12,7 +12,7 @@ interface IBrevisUniNFT {
     function mint(address to) external;
 }
 
-contract UniswapVolume is Ownable {
+contract UniswapVolumeReward is Ownable {
     ITxVerifier public txVerifier;
 
     mapping(uint64 => address) public universalRouter; // chainId -> router address

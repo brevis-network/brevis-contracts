@@ -1,11 +1,11 @@
 import { Fixture } from 'ethereum-waffle';
-import { ethers, getChainId, waffle } from 'hardhat';
-import { UniswapVolume } from '../../typechain';
+import { ethers, waffle } from 'hardhat';
+import { UniswapVolumeReward } from '../../typechain';
 import { expect } from 'chai';
 import { Wallet } from 'ethers';
 
 describe('Swap Volume Test', async () => {
-  let uniswapVolume: UniswapVolume;
+  let uniswapVolume: UniswapVolumeReward;
   const zeroAddr = '0x0000000000000000000000000000000000000000';
 
   function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
@@ -17,8 +17,8 @@ describe('Swap Volume Test', async () => {
     return { uniswapVolume };
   }
   async function deployLib(admin: Wallet) {
-    const uniswapVolumeFactory = await ethers.getContractFactory('UniswapVolume');
-    const uniswapVolume = (await uniswapVolumeFactory.connect(admin).deploy(zeroAddr)) as UniswapVolume;
+    const uniswapVolumeFactory = await ethers.getContractFactory('UniswapVolumeReward');
+    const uniswapVolume = (await uniswapVolumeFactory.connect(admin).deploy(zeroAddr)) as UniswapVolumeReward;
     await uniswapVolume.setWETH(1, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2');
     await uniswapVolume.setUSDC(1, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6);
     return { uniswapVolume };

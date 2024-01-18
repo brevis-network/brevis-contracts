@@ -37,7 +37,7 @@ describe('BN254 final_emulate proof verifier', async () => {
         admin = res.admin;
     });
 
-    it.only('should pass on true proof', async () => {
+    it('should pass on true proof', async () => {
         const result = await contract.verifyProofWithCommit(
             [
                 BigNumber.from('7098988087689144641203879580397093154573435494056885401628087621279772152016'),
@@ -69,7 +69,7 @@ describe('BN254 final_emulate proof verifier', async () => {
         assert.equal(result, true)
     });
 
-    it.only("should pass on verify raw with real data", async () => {
+    it("should pass on verify raw with real data", async () => {
         const values = [
         
             BigNumber.from('0x28d3939b8a291d8a0aa5c4c25683120eaa4b65c4d914caa2c730e724875a88'),   // a0
