@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IBlockChunks.sol";
 import "../verifiers/interfaces/IZkpVerifier.sol";
-import "../light-client/interfaces/IAnchorBlocks.sol";
+import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 
 uint8 constant TREE_DEPTH = 7;
 uint32 constant NUM_LEAVES = 2 ** 7;

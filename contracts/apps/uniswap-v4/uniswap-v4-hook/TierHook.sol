@@ -11,8 +11,8 @@ import {PoolKey} from "@uniswap/v4-core/contracts/types/PoolKey.sol";
 import {IPoolManager} from "@uniswap/v4-core/contracts/interfaces/IPoolManager.sol";
 import {BaseHook} from "./BaseHook.sol";
 import {BaseFactory} from "./BaseFactory.sol";
-import {UniswapSumVolume} from "../apps/uniswap-sum/UniswapSumVolume.sol";
-import {IUniswapSumVolume} from "../apps/uniswap-sum/IUniswapSumVolume.sol";
+import {UniswapSumVolume} from "../uniswap-sum/UniswapSumVolume.sol";
+import {IUniswapSumVolume} from "../uniswap-sum/IUniswapSumVolume.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TierHook is BaseHook, IHookFeeManager, IDynamicFeeManager {

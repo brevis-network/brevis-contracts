@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "../MessageBridge.sol";
-import "../../interfaces/IEthereumLightClient.sol";
+import "../../../interfaces/IEthereumLightClient.sol";
 
 contract MockLightClient is IEthereumLightClient {
     uint64 public latestSlot; // slot of latest known block

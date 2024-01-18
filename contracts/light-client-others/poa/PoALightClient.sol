@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "../bsc-tendermint/interfaces/IBSCValidatorSet.sol";
-import "../interfaces/IEthereumLightClient.sol";
+import "../../interfaces/IEthereumLightClient.sol";
 
 import "./libraries/ECDSA.sol";
 import "./libraries/Memory.sol";

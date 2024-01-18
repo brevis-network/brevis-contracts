@@ -8,8 +8,8 @@ import "./interfaces/IMessageReceiverApp.sol";
 import "./libraries/RLPReader.sol";
 import "./libraries/MerkleProofTree.sol";
 import "./libraries/MsgLib.sol";
-import "../interfaces/IEthereumLightClient.sol";
-import "../verifiers/interfaces/ISlotValueVerifier.sol";
+import "../../interfaces/IEthereumLightClient.sol";
+import "../../verifiers/interfaces/ISlotValueVerifier.sol";
 
 contract MessageBridge is IMessageBridge, ReentrancyGuard, Ownable {
     using RLPReader for RLPReader.RLPItem;

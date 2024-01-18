@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "../light-client/interfaces/IAnchorBlocks.sol";
+import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 
 contract MockAnchorBlocks is IAnchorBlocks {
     mapping(uint256 => bytes32) public blocks;

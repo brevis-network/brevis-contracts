@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.18;
 
-import "../../interfaces/IEthereumLightClient.sol";
+import "../../../interfaces/IEthereumLightClient.sol";
 
 interface IMessageBridge {
     enum MessageStatus {

@@ -3,8 +3,8 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "../../interfaces/ISMT.sol";
-import "../../verifiers/interfaces/IZkpVerifier.sol";
+import "../../../interfaces/ISMT.sol";
+import "../../../verifiers/interfaces/IZkpVerifier.sol";
 import "./IUniswapSumVolume.sol";
 
 contract UniswapSumVolume is Ownable, IUniswapSumVolume {
