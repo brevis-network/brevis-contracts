@@ -13,7 +13,7 @@ import update637 from './update_637.json';
 
 export async function deployLightClient(admin: Wallet): Promise<EthereumLightClient> {
   const zkVerifier = await deployBeaconVerifier(admin);
-  const factory = await ethers.getContractFactory<EthereumLightClient__factory>('EthereumLightClient');
+  const factory = await ethers.getContractFactory('EthereumLightClient');
   return factory.connect(admin).deploy(
     1616508000,
     '0x043db0d9a83813551ee2f33450d23797757d430911a9320530ad8a0eabc43efb',
@@ -30,11 +30,11 @@ export async function deployLightClient(admin: Wallet): Promise<EthereumLightCli
 }
 
 export async function deployBeaconVerifier(admin: Wallet): Promise<BeaconVerifier> {
-  const factory = await ethers.getContractFactory<BeaconVerifier__factory>('BeaconVerifier');
+  const factory = await ethers.getContractFactory('BeaconVerifier');
   return factory.connect(admin).deploy();
 }
 
 export async function deployAnchorBlocks(admin: Wallet, lightClient: string): Promise<AnchorBlocks> {
-  const factory = await ethers.getContractFactory<AnchorBlocks__factory>('AnchorBlocks');
+  const factory = await ethers.getContractFactory('AnchorBlocks');
   return factory.connect(admin).deploy(lightClient);
 }

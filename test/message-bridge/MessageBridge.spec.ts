@@ -51,10 +51,10 @@ describe('MessageBridge Test', async () => {
     const mockLightClientFactory = await ethers.getContractFactory('MockLightClient');
     const mockLightClient = (await mockLightClientFactory.connect(admin).deploy()) as MockLightClient;
 
-    const messageBridgeFactory = await ethers.getContractFactory<MessageBridge__factory>('MessageBridge');
+    const messageBridgeFactory = await ethers.getContractFactory('MessageBridge');
     const messageBridge = (await messageBridgeFactory.connect(admin).deploy()) as MessageBridge;
 
-    const messageTestFactory = await ethers.getContractFactory<MsgTest__factory>('MsgTest');
+    const messageTestFactory = await ethers.getContractFactory('MsgTest');
     const messageTest = (await messageTestFactory.connect(admin).deploy(messageBridge.address)) as MsgTest;
 
     const chainId = (await ethers.provider.getNetwork()).chainId;

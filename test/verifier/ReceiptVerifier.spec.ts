@@ -14,11 +14,11 @@ import { hexToBytes, splitHash } from '../util';
 import { expect } from 'chai';
 
 async function deployReceiptVerifierContract(admin: Wallet) {
-  const syncerFactory = await ethers.getContractFactory<MockBlockChunks__factory>('MockBlockChunks');
+  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory<ReceiptVerifier__factory>('ReceiptVerifier');
+  const factory = await ethers.getContractFactory('ReceiptVerifier');
   const contract = await factory.connect(admin).deploy(syncer.address);
-  const verifierF = await ethers.getContractFactory<MockZkVerifier__factory>('MockZkVerifier');
+  const verifierF = await ethers.getContractFactory('MockZkVerifier');
   const verifier = await verifierF.connect(admin).deploy();
   await contract.updateVerifierAddress(1, verifier.address);
 

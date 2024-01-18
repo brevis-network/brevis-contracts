@@ -14,17 +14,17 @@ import {
 import { hexToBytes, splitHash } from '../util';
 
 async function deployMockAnchorBlocksContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory<MockAnchorBlocks__factory>('MockAnchorBlocks');
+  const factory = await ethers.getContractFactory('MockAnchorBlocks');
   const contract = await factory.connect(admin).deploy();
   return contract;
 }
 async function deployMockZkVerifierContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory<MockZkVerifier__factory>('MockZkVerifier');
+  const factory = await ethers.getContractFactory('MockZkVerifier');
   const contract = await factory.connect(admin).deploy();
   return contract;
 }
 async function deployBlockChunksContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory<BlockChunks__factory>('BlockChunks');
+  const factory = await ethers.getContractFactory('BlockChunks');
   const contract = await factory.connect(admin).deploy();
   return contract;
 }

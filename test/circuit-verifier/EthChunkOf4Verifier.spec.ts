@@ -5,7 +5,7 @@ import { ethers, waffle } from 'hardhat';
 import { EthChunkOf4Verifier__factory, VerifierGasReport } from '../../typechain';
 
 async function deployContract(admin: Wallet) {
-  const _factory = await ethers.getContractFactory<EthChunkOf4Verifier__factory>('EthChunkOf4Verifier');
+  const _factory = await ethers.getContractFactory('EthChunkOf4Verifier');
   const _contract = await _factory.connect(admin).deploy();
   const factory = await ethers.getContractFactory('VerifierGasReport');
   const contract = (await factory.connect(admin).deploy(_contract.address)) as VerifierGasReport;

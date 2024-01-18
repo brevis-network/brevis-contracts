@@ -14,11 +14,11 @@ import { convertByteArrayToHexString } from '../circuit-verifier/util';
 import { expect } from 'chai';
 
 async function deploySlotVerifierContract(admin: Wallet) {
-  const syncerFactory = await ethers.getContractFactory<MockBlockChunks__factory>('MockBlockChunks');
+  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory<SlotValueVerifier__factory>('SlotValueVerifier');
+  const factory = await ethers.getContractFactory('SlotValueVerifier');
   const contract = await factory.connect(admin).deploy(syncer.address);
-  const verifierF = await ethers.getContractFactory<MockZkVerifier__factory>('EthStorageVerifier');
+  const verifierF = await ethers.getContractFactory('EthStorageVerifier');
   const verifier = await verifierF.connect(admin).deploy();
   await contract.updateVerifierAddress(1, verifier.address);
 
