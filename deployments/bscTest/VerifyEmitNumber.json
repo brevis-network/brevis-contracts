@@ -1,0 +1,309 @@
+{
+  "address": "0xA7Bdb5ad4E91db4eb83cd1EEfc8e4c959F159D83",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IReceiptVerifier",
+          "name": "_receiptVerifier",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "blknum",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "number",
+          "type": "uint256"
+        }
+      ],
+      "name": "VerifiedNumber",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "receiptVerifier",
+      "outputs": [
+        {
+          "internalType": "contract IReceiptVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IReceiptVerifier",
+          "name": "_receiptVerifier",
+          "type": "address"
+        }
+      ],
+      "name": "setReceiptVerifier",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "_contract",
+          "type": "address"
+        }
+      ],
+      "name": "setSrcContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "srcContract",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_receipt",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_proof",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_auxiBlkVerifyInfo",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitNumberReceiptProof",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xea5be7bf74fff284c8aec633fa02b96c4925412547fb20be92c5d898f3f64ed4",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0xA7Bdb5ad4E91db4eb83cd1EEfc8e4c959F159D83",
+    "transactionIndex": 0,
+    "gasUsed": "851835",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000802000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000010000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000020000000000000000000000000000000000000000000000000002000000000000000",
+    "blockHash": "0xf40f1d3dea0a452f2c951588a4b5b3799df99f0922ddf8b5b32f6838fd67b8c0",
+    "transactionHash": "0xea5be7bf74fff284c8aec633fa02b96c4925412547fb20be92c5d898f3f64ed4",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 31426662,
+        "transactionHash": "0xea5be7bf74fff284c8aec633fa02b96c4925412547fb20be92c5d898f3f64ed4",
+        "address": "0xA7Bdb5ad4E91db4eb83cd1EEfc8e4c959F159D83",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x00000000000000000000000058b529f9084d7eaa598eb3477fe36064c5b7bbc1"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0xf40f1d3dea0a452f2c951588a4b5b3799df99f0922ddf8b5b32f6838fd67b8c0"
+      }
+    ],
+    "blockNumber": 31426662,
+    "cumulativeGasUsed": "851835",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xbb1e07e77d298a763D9CB7097dC70CfcBe7052e4"
+  ],
+  "numDeployments": 2,
+  "solcInputHash": "50fd67eb810644417db095ab6c0434e7",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IReceiptVerifier\",\"name\":\"_receiptVerifier\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blknum\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"name\":\"VerifiedNumber\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"receiptVerifier\",\"outputs\":[{\"internalType\":\"contract IReceiptVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IReceiptVerifier\",\"name\":\"_receiptVerifier\",\"type\":\"address\"}],\"name\":\"setReceiptVerifier\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"_contract\",\"type\":\"address\"}],\"name\":\"setSrcContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"srcContract\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_receipt\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"_proof\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"_auxiBlkVerifyInfo\",\"type\":\"bytes\"}],\"name\":\"submitNumberReceiptProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/apps/receipt-demo/VerifyEmitNumber.sol\":\"VerifyEmitNumber\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/apps/receipt-demo/VerifyEmitNumber.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"../../verifiers/interfaces/IReceiptVerifier.sol\\\";\\nimport {BytesLib} from \\\"solidity-bytes-utils/contracts/BytesLib.sol\\\";\\n\\ncontract VerifyEmitNumber is Ownable {\\n    IReceiptVerifier public receiptVerifier;\\n\\n    event VerifiedNumber(uint64 chainId, uint64 blknum, address from, uint256 number);\\n\\n    constructor(IReceiptVerifier _receiptVerifier) {\\n        receiptVerifier = _receiptVerifier;\\n    }\\n\\n    mapping(uint64 => address) public srcContract;\\n\\n    bytes32 private logTopic = keccak256(bytes(\\\"SendNumber(address,uint256)\\\"));\\n\\n    function submitNumberReceiptProof(\\n        bytes calldata _receipt,\\n        bytes calldata _proof,\\n        bytes calldata _auxiBlkVerifyInfo) external {\\n        IReceiptVerifier.ReceiptInfo memory receiptInfo = receiptVerifier.verifyReceiptAndLog(_receipt, _proof, _auxiBlkVerifyInfo);\\n        // status must be 1\\n        require(bytes1(receiptInfo.status) == 0x01, \\\"receipt status is fail\\\");\\n        address sc = srcContract[receiptInfo.chainId];\\n        bool findLog;\\n        address from;\\n        uint256 number;\\n\\n        // loop to get the target event\\n        // TODO, for developer, log index can be a arg, avoid useless for loop\\n        for (uint256 i = 0; i < receiptInfo.logs.length; i++) {\\n            if (receiptInfo.logs[i].addr == sc && receiptInfo.logs[i].topics[0] == logTopic) {\\n                from = address(bytes20(BytesLib.slice(receiptInfo.logs[i].data, 12, 20)));\\n                number = uint256(bytes32(BytesLib.slice(receiptInfo.logs[i].data, 32, 32)));\\n                findLog = true;\\n                break;\\n            }\\n        }\\n        require(findLog == true, \\\"fail to find the event log\\\");\\n        emit VerifiedNumber(receiptInfo.chainId, receiptInfo.blkNum, from, number);\\n    }\\n\\n    function setReceiptVerifier(IReceiptVerifier _receiptVerifier) external onlyOwner {\\n        receiptVerifier = _receiptVerifier;\\n    }\\n\\n    function setSrcContract(uint64 _chainId, address _contract) external onlyOwner {\\n        srcContract[_chainId] = _contract;\\n    }\\n}\",\"keccak256\":\"0xa0877b9ac82d8381272a4d22e46251d990c06f2399638f906a542576bedddbd4\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IReceiptVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IReceiptVerifier {\\n    struct ReceiptInfo {\\n        bytes status;\\n        uint64 cumulativeGasUsed;\\n        bytes bloom;\\n        LogInfo[] logs;\\n        uint32 blkNum;\\n        bytes32 blkHash;\\n        uint64 blkTime;\\n        uint64 chainId;\\n    }\\n\\n    struct LogInfo {\\n        address addr;\\n        bytes32[] topics;\\n        bytes data;\\n    }\\n\\n    // reverts if not verified\\n    // - receiptRaw: signed dynamic fee receipt rlp encode data\\n    // - proofData: receipt proof data\\n    // - auxiBlkVerifyInfo: auxiliary info for blk verify in chunk sync contract\\n    function verifyReceipt(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) external view returns (ReceiptInfo memory receiptInfo);\\n\\n    // verifyReceipt and emit event\\n    function verifyReceiptAndLog(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) external returns (ReceiptInfo memory receiptInfo);\\n}\\n\",\"keccak256\":\"0xff649aa810fcc8e576d7754e36be9173b8d037d5cfea2746c725d6c2c9e2109e\",\"license\":\"MIT\"},\"solidity-bytes-utils/contracts/BytesLib.sol\":{\"content\":\"// SPDX-License-Identifier: Unlicense\\n/*\\n * @title Solidity Bytes Arrays Utils\\n * @author Gon\\u00e7alo S\\u00e1 <goncalo.sa@consensys.net>\\n *\\n * @dev Bytes tightly packed arrays utility library for ethereum contracts written in Solidity.\\n *      The library lets you concatenate, slice and type cast bytes arrays both in memory and storage.\\n */\\npragma solidity >=0.8.0 <0.9.0;\\n\\n\\nlibrary BytesLib {\\n    function concat(\\n        bytes memory _preBytes,\\n        bytes memory _postBytes\\n    )\\n        internal\\n        pure\\n        returns (bytes memory)\\n    {\\n        bytes memory tempBytes;\\n\\n        assembly {\\n            // Get a location of some free memory and store it in tempBytes as\\n            // Solidity does for memory variables.\\n            tempBytes := mload(0x40)\\n\\n            // Store the length of the first bytes array at the beginning of\\n            // the memory for tempBytes.\\n            let length := mload(_preBytes)\\n            mstore(tempBytes, length)\\n\\n            // Maintain a memory counter for the current write location in the\\n            // temp bytes array by adding the 32 bytes for the array length to\\n            // the starting location.\\n            let mc := add(tempBytes, 0x20)\\n            // Stop copying when the memory counter reaches the length of the\\n            // first bytes array.\\n            let end := add(mc, length)\\n\\n            for {\\n                // Initialize a copy counter to the start of the _preBytes data,\\n                // 32 bytes into its memory.\\n                let cc := add(_preBytes, 0x20)\\n            } lt(mc, end) {\\n                // Increase both counters by 32 bytes each iteration.\\n                mc := add(mc, 0x20)\\n                cc := add(cc, 0x20)\\n            } {\\n                // Write the _preBytes data into the tempBytes memory 32 bytes\\n                // at a time.\\n                mstore(mc, mload(cc))\\n            }\\n\\n            // Add the length of _postBytes to the current length of tempBytes\\n            // and store it as the new length in the first 32 bytes of the\\n            // tempBytes memory.\\n            length := mload(_postBytes)\\n            mstore(tempBytes, add(length, mload(tempBytes)))\\n\\n            // Move the memory counter back from a multiple of 0x20 to the\\n            // actual end of the _preBytes data.\\n            mc := end\\n            // Stop copying when the memory counter reaches the new combined\\n            // length of the arrays.\\n            end := add(mc, length)\\n\\n            for {\\n                let cc := add(_postBytes, 0x20)\\n            } lt(mc, end) {\\n                mc := add(mc, 0x20)\\n                cc := add(cc, 0x20)\\n            } {\\n                mstore(mc, mload(cc))\\n            }\\n\\n            // Update the free-memory pointer by padding our last write location\\n            // to 32 bytes: add 31 bytes to the end of tempBytes to move to the\\n            // next 32 byte block, then round down to the nearest multiple of\\n            // 32. If the sum of the length of the two arrays is zero then add\\n            // one before rounding down to leave a blank 32 bytes (the length block with 0).\\n            mstore(0x40, and(\\n              add(add(end, iszero(add(length, mload(_preBytes)))), 31),\\n              not(31) // Round down to the nearest 32 bytes.\\n            ))\\n        }\\n\\n        return tempBytes;\\n    }\\n\\n    function concatStorage(bytes storage _preBytes, bytes memory _postBytes) internal {\\n        assembly {\\n            // Read the first 32 bytes of _preBytes storage, which is the length\\n            // of the array. (We don't need to use the offset into the slot\\n            // because arrays use the entire slot.)\\n            let fslot := sload(_preBytes.slot)\\n            // Arrays of 31 bytes or less have an even value in their slot,\\n            // while longer arrays have an odd value. The actual length is\\n            // the slot divided by two for odd values, and the lowest order\\n            // byte divided by two for even values.\\n            // If the slot is even, bitwise and the slot with 255 and divide by\\n            // two to get the length. If the slot is odd, bitwise and the slot\\n            // with -1 and divide by two.\\n            let slength := div(and(fslot, sub(mul(0x100, iszero(and(fslot, 1))), 1)), 2)\\n            let mlength := mload(_postBytes)\\n            let newlength := add(slength, mlength)\\n            // slength can contain both the length and contents of the array\\n            // if length < 32 bytes so let's prepare for that\\n            // v. http://solidity.readthedocs.io/en/latest/miscellaneous.html#layout-of-state-variables-in-storage\\n            switch add(lt(slength, 32), lt(newlength, 32))\\n            case 2 {\\n                // Since the new array still fits in the slot, we just need to\\n                // update the contents of the slot.\\n                // uint256(bytes_storage) = uint256(bytes_storage) + uint256(bytes_memory) + new_length\\n                sstore(\\n                    _preBytes.slot,\\n                    // all the modifications to the slot are inside this\\n                    // next block\\n                    add(\\n                        // we can just add to the slot contents because the\\n                        // bytes we want to change are the LSBs\\n                        fslot,\\n                        add(\\n                            mul(\\n                                div(\\n                                    // load the bytes from memory\\n                                    mload(add(_postBytes, 0x20)),\\n                                    // zero all bytes to the right\\n                                    exp(0x100, sub(32, mlength))\\n                                ),\\n                                // and now shift left the number of bytes to\\n                                // leave space for the length in the slot\\n                                exp(0x100, sub(32, newlength))\\n                            ),\\n                            // increase length by the double of the memory\\n                            // bytes length\\n                            mul(mlength, 2)\\n                        )\\n                    )\\n                )\\n            }\\n            case 1 {\\n                // The stored value fits in the slot, but the combined value\\n                // will exceed it.\\n                // get the keccak hash to get the contents of the array\\n                mstore(0x0, _preBytes.slot)\\n                let sc := add(keccak256(0x0, 0x20), div(slength, 32))\\n\\n                // save new length\\n                sstore(_preBytes.slot, add(mul(newlength, 2), 1))\\n\\n                // The contents of the _postBytes array start 32 bytes into\\n                // the structure. Our first read should obtain the `submod`\\n                // bytes that can fit into the unused space in the last word\\n                // of the stored array. To get this, we read 32 bytes starting\\n                // from `submod`, so the data we read overlaps with the array\\n                // contents by `submod` bytes. Masking the lowest-order\\n                // `submod` bytes allows us to add that value directly to the\\n                // stored value.\\n\\n                let submod := sub(32, slength)\\n                let mc := add(_postBytes, submod)\\n                let end := add(_postBytes, mlength)\\n                let mask := sub(exp(0x100, submod), 1)\\n\\n                sstore(\\n                    sc,\\n                    add(\\n                        and(\\n                            fslot,\\n                            0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00\\n                        ),\\n                        and(mload(mc), mask)\\n                    )\\n                )\\n\\n                for {\\n                    mc := add(mc, 0x20)\\n                    sc := add(sc, 1)\\n                } lt(mc, end) {\\n                    sc := add(sc, 1)\\n                    mc := add(mc, 0x20)\\n                } {\\n                    sstore(sc, mload(mc))\\n                }\\n\\n                mask := exp(0x100, sub(mc, end))\\n\\n                sstore(sc, mul(div(mload(mc), mask), mask))\\n            }\\n            default {\\n                // get the keccak hash to get the contents of the array\\n                mstore(0x0, _preBytes.slot)\\n                // Start copying to the last used word of the stored array.\\n                let sc := add(keccak256(0x0, 0x20), div(slength, 32))\\n\\n                // save new length\\n                sstore(_preBytes.slot, add(mul(newlength, 2), 1))\\n\\n                // Copy over the first `submod` bytes of the new data as in\\n                // case 1 above.\\n                let slengthmod := mod(slength, 32)\\n                let mlengthmod := mod(mlength, 32)\\n                let submod := sub(32, slengthmod)\\n                let mc := add(_postBytes, submod)\\n                let end := add(_postBytes, mlength)\\n                let mask := sub(exp(0x100, submod), 1)\\n\\n                sstore(sc, add(sload(sc), and(mload(mc), mask)))\\n\\n                for {\\n                    sc := add(sc, 1)\\n                    mc := add(mc, 0x20)\\n                } lt(mc, end) {\\n                    sc := add(sc, 1)\\n                    mc := add(mc, 0x20)\\n                } {\\n                    sstore(sc, mload(mc))\\n                }\\n\\n                mask := exp(0x100, sub(mc, end))\\n\\n                sstore(sc, mul(div(mload(mc), mask), mask))\\n            }\\n        }\\n    }\\n\\n    function slice(\\n        bytes memory _bytes,\\n        uint256 _start,\\n        uint256 _length\\n    )\\n        internal\\n        pure\\n        returns (bytes memory)\\n    {\\n        require(_length + 31 >= _length, \\\"slice_overflow\\\");\\n        require(_bytes.length >= _start + _length, \\\"slice_outOfBounds\\\");\\n\\n        bytes memory tempBytes;\\n\\n        assembly {\\n            switch iszero(_length)\\n            case 0 {\\n                // Get a location of some free memory and store it in tempBytes as\\n                // Solidity does for memory variables.\\n                tempBytes := mload(0x40)\\n\\n                // The first word of the slice result is potentially a partial\\n                // word read from the original array. To read it, we calculate\\n                // the length of that partial word and start copying that many\\n                // bytes into the array. The first word we copy will start with\\n                // data we don't care about, but the last `lengthmod` bytes will\\n                // land at the beginning of the contents of the new array. When\\n                // we're done copying, we overwrite the full first word with\\n                // the actual length of the slice.\\n                let lengthmod := and(_length, 31)\\n\\n                // The multiplication in the next line is necessary\\n                // because when slicing multiples of 32 bytes (lengthmod == 0)\\n                // the following copy loop was copying the origin's length\\n                // and then ending prematurely not copying everything it should.\\n                let mc := add(add(tempBytes, lengthmod), mul(0x20, iszero(lengthmod)))\\n                let end := add(mc, _length)\\n\\n                for {\\n                    // The multiplication in the next line has the same exact purpose\\n                    // as the one above.\\n                    let cc := add(add(add(_bytes, lengthmod), mul(0x20, iszero(lengthmod))), _start)\\n                } lt(mc, end) {\\n                    mc := add(mc, 0x20)\\n                    cc := add(cc, 0x20)\\n                } {\\n                    mstore(mc, mload(cc))\\n                }\\n\\n                mstore(tempBytes, _length)\\n\\n                //update free-memory pointer\\n                //allocating the array padded to 32 bytes like the compiler does now\\n                mstore(0x40, and(add(mc, 31), not(31)))\\n            }\\n            //if we want a zero-length slice let's just return a zero-length array\\n            default {\\n                tempBytes := mload(0x40)\\n                //zero out the 32 bytes slice we are about to return\\n                //we need to do it because Solidity does not garbage collect\\n                mstore(tempBytes, 0)\\n\\n                mstore(0x40, add(tempBytes, 0x20))\\n            }\\n        }\\n\\n        return tempBytes;\\n    }\\n\\n    function toAddress(bytes memory _bytes, uint256 _start) internal pure returns (address) {\\n        require(_bytes.length >= _start + 20, \\\"toAddress_outOfBounds\\\");\\n        address tempAddress;\\n\\n        assembly {\\n            tempAddress := div(mload(add(add(_bytes, 0x20), _start)), 0x1000000000000000000000000)\\n        }\\n\\n        return tempAddress;\\n    }\\n\\n    function toUint8(bytes memory _bytes, uint256 _start) internal pure returns (uint8) {\\n        require(_bytes.length >= _start + 1 , \\\"toUint8_outOfBounds\\\");\\n        uint8 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x1), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint16(bytes memory _bytes, uint256 _start) internal pure returns (uint16) {\\n        require(_bytes.length >= _start + 2, \\\"toUint16_outOfBounds\\\");\\n        uint16 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x2), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint32(bytes memory _bytes, uint256 _start) internal pure returns (uint32) {\\n        require(_bytes.length >= _start + 4, \\\"toUint32_outOfBounds\\\");\\n        uint32 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x4), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint64(bytes memory _bytes, uint256 _start) internal pure returns (uint64) {\\n        require(_bytes.length >= _start + 8, \\\"toUint64_outOfBounds\\\");\\n        uint64 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x8), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint96(bytes memory _bytes, uint256 _start) internal pure returns (uint96) {\\n        require(_bytes.length >= _start + 12, \\\"toUint96_outOfBounds\\\");\\n        uint96 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0xc), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint128(bytes memory _bytes, uint256 _start) internal pure returns (uint128) {\\n        require(_bytes.length >= _start + 16, \\\"toUint128_outOfBounds\\\");\\n        uint128 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x10), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toUint256(bytes memory _bytes, uint256 _start) internal pure returns (uint256) {\\n        require(_bytes.length >= _start + 32, \\\"toUint256_outOfBounds\\\");\\n        uint256 tempUint;\\n\\n        assembly {\\n            tempUint := mload(add(add(_bytes, 0x20), _start))\\n        }\\n\\n        return tempUint;\\n    }\\n\\n    function toBytes32(bytes memory _bytes, uint256 _start) internal pure returns (bytes32) {\\n        require(_bytes.length >= _start + 32, \\\"toBytes32_outOfBounds\\\");\\n        bytes32 tempBytes32;\\n\\n        assembly {\\n            tempBytes32 := mload(add(add(_bytes, 0x20), _start))\\n        }\\n\\n        return tempBytes32;\\n    }\\n\\n    function equal(bytes memory _preBytes, bytes memory _postBytes) internal pure returns (bool) {\\n        bool success = true;\\n\\n        assembly {\\n            let length := mload(_preBytes)\\n\\n            // if lengths don't match the arrays are not equal\\n            switch eq(length, mload(_postBytes))\\n            case 1 {\\n                // cb is a circuit breaker in the for loop since there's\\n                //  no said feature for inline assembly loops\\n                // cb = 1 - don't breaker\\n                // cb = 0 - break\\n                let cb := 1\\n\\n                let mc := add(_preBytes, 0x20)\\n                let end := add(mc, length)\\n\\n                for {\\n                    let cc := add(_postBytes, 0x20)\\n                // the next line is the loop condition:\\n                // while(uint256(mc < end) + cb == 2)\\n                } eq(add(lt(mc, end), cb), 2) {\\n                    mc := add(mc, 0x20)\\n                    cc := add(cc, 0x20)\\n                } {\\n                    // if any of these checks fails then arrays are not equal\\n                    if iszero(eq(mload(mc), mload(cc))) {\\n                        // unsuccess:\\n                        success := 0\\n                        cb := 0\\n                    }\\n                }\\n            }\\n            default {\\n                // unsuccess:\\n                success := 0\\n            }\\n        }\\n\\n        return success;\\n    }\\n\\n    function equalStorage(\\n        bytes storage _preBytes,\\n        bytes memory _postBytes\\n    )\\n        internal\\n        view\\n        returns (bool)\\n    {\\n        bool success = true;\\n\\n        assembly {\\n            // we know _preBytes_offset is 0\\n            let fslot := sload(_preBytes.slot)\\n            // Decode the length of the stored array like in concatStorage().\\n            let slength := div(and(fslot, sub(mul(0x100, iszero(and(fslot, 1))), 1)), 2)\\n            let mlength := mload(_postBytes)\\n\\n            // if lengths don't match the arrays are not equal\\n            switch eq(slength, mlength)\\n            case 1 {\\n                // slength can contain both the length and contents of the array\\n                // if length < 32 bytes so let's prepare for that\\n                // v. http://solidity.readthedocs.io/en/latest/miscellaneous.html#layout-of-state-variables-in-storage\\n                if iszero(iszero(slength)) {\\n                    switch lt(slength, 32)\\n                    case 1 {\\n                        // blank the last byte which is the length\\n                        fslot := mul(div(fslot, 0x100), 0x100)\\n\\n                        if iszero(eq(fslot, mload(add(_postBytes, 0x20)))) {\\n                            // unsuccess:\\n                            success := 0\\n                        }\\n                    }\\n                    default {\\n                        // cb is a circuit breaker in the for loop since there's\\n                        //  no said feature for inline assembly loops\\n                        // cb = 1 - don't breaker\\n                        // cb = 0 - break\\n                        let cb := 1\\n\\n                        // get the keccak hash to get the contents of the array\\n                        mstore(0x0, _preBytes.slot)\\n                        let sc := keccak256(0x0, 0x20)\\n\\n                        let mc := add(_postBytes, 0x20)\\n                        let end := add(mc, mlength)\\n\\n                        // the next line is the loop condition:\\n                        // while(uint256(mc < end) + cb == 2)\\n                        for {} eq(add(lt(mc, end), cb), 2) {\\n                            sc := add(sc, 1)\\n                            mc := add(mc, 0x20)\\n                        } {\\n                            if iszero(eq(sload(sc), mload(mc))) {\\n                                // unsuccess:\\n                                success := 0\\n                                cb := 0\\n                            }\\n                        }\\n                    }\\n                }\\n            }\\n            default {\\n                // unsuccess:\\n                success := 0\\n            }\\n        }\\n\\n        return success;\\n    }\\n}\\n\",\"keccak256\":\"0xf75784dfc94ea43668eb195d5690a1dde1b6eda62017e73a3899721583821d29\",\"license\":\"Unlicense\"}},\"version\":1}",
+  "bytecode": "0x608034610106576001600160401b0390601f610e4738819003918201601f19168301918483118484101761010b5780849260209460405283398101031261010657516001600160a01b0380821692909183900361010657600090815460018060a01b031993338583161784553391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08480a3604051916040830191838310908311176100f25750601b91602091604052828152017f53656e644e756d62657228616464726573732c75696e743235362900000000008152206003556001541617600155604051610d2590816101228239f35b634e487b7160e01b81526041600452602490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080604052600436101561001257600080fd5b6000803560e01c9081632b4fc2001461009a575080634710f6d114610095578063715018a6146100905780638da5cb5b1461008b578063c941746114610086578063f22074f014610081578063f2fde38b1461007c5763fdb2965e1461007757600080fd5b610643565b610592565b610546565b6104d7565b61049f565b610441565b610127565b346100df5760203660031901126100df5760406001600160a01b039167ffffffffffffffff6004356100cb816100e2565b168152600260205220541660805260206080f35b80fd5b67ffffffffffffffff8116036100f457565b600080fd5b9181601f840112156100f45782359167ffffffffffffffff83116100f457602083818601950101116100f457565b346100f4576060806003193601126100f45767ffffffffffffffff906004358281116100f45761015b9036906004016100f9565b9190926024358181116100f4576101769036906004016100f9565b9290936044359283116100f4576101946101e09336906004016100f9565b90966001976101b96101ad8a546001600160a01b031690565b6001600160a01b031690565b91604097885197889586948593631ccb6d3d60e11b855260009d8e9a8b9760048801610a42565b03925af191821561043c578492610418575b50610211600160f81b60ff60f81b61020a8551610a8b565b1614610ab9565b60e082019061025561024861022e845167ffffffffffffffff1690565b67ffffffffffffffff166000526002602052604060002090565b546001600160a01b031690565b918587879388956001600160a01b038a9116925b61030a575b50505060806102bc6103049594936102ae7fdf57525f8b726ad747267d5fd6ca5fa2934198b708305f8716362dca43146ba59a9b6102c895151514610bc0565b5167ffffffffffffffff1690565b95015163ffffffff1690565b945194859485909493926001600160a01b039063ffffffff60609467ffffffffffffffff60808601991685521660208401521660408201520152565b0390a180f35b81880180518051831015610411576103376101ad610329858894610b52565b51516001600160a01b031690565b14806103ee575b6103595750906103508b949392610b05565b90919293610269565b949061030497507fdf57525f8b726ad747267d5fd6ca5fa2934198b708305f8716362dca43146ba59a9b96506102c89450608093506102bc92506103de6103d98b6103d1846103ca6103c46103bf856103b78f9a6102ae9b51610b52565b510151610c58565b610b66565b60601c90565b9a51610b52565b510151610ca5565b610b9d565b968095509b9a505093949561026e565b5061040760206103ff848451610b52565b510151610b40565b516003541461033e565b505061026e565b6104359192503d8086833e61042d8183610734565b81019061094d565b90386101f2565b610a7f565b346100f4576000806003193601126100df578080546001600160a01b03196001600160a01b0382169161047533841461066a565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b346100f45760003660031901126100f45760206001600160a01b0360005416604051908152f35b6001600160a01b038116036100f457565b346100f45760403660031901126100f4576004356104f4816100e2565b60243590610501826104c6565b67ffffffffffffffff6001600160a01b03916105228360005416331461066a565b166000526002602052604060002091166001600160a01b0319825416179055600080f35b346100f45760203660031901126100f457600435610563816104c6565b6001600160a01b039061057b8260005416331461066a565b166001600160a01b03196001541617600155600080f35b346100f45760203660031901126100f4576004356105af816104c6565b6001600160a01b036105c68160005416331461066a565b8116156105d8576105d6906106b5565b005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b346100f45760003660031901126100f45760206001600160a01b0360015416604051908152f35b1561067157565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761072f57604052565b6106fd565b90601f8019910116810190811067ffffffffffffffff82111761072f57604052565b60405190610100820182811067ffffffffffffffff82111761072f57604052565b919080601f840112156100f45782519067ffffffffffffffff821161072f57604051916020916107b0601f8301601f1916840185610734565b8184528282870101116100f45760005b8181106107d557508260009394955001015290565b85810183015184820184015282016107c0565b51906107f3826100e2565b565b67ffffffffffffffff811161072f5760051b60200190565b81601f820112156100f457805190610824826107f5565b92604061083381519586610734565b8385526020938486019185600592831b860101948486116100f457868101935b86851061086557505050505050505090565b845167ffffffffffffffff908181116100f457830191606080601f19858b0301126100f45785519061089682610713565b8b8501516108a3816104c6565b8252868501518481116100f45785018a603f820112156100f457808d80920151896108cd826107f5565b936108da82519586610734565b8285528401918c1b830101918d83116100f4578f908b01915b83831061092b57509150508301528401519283116100f45761091c898c80969581960101610777565b86820152815201940193610853565b819083518152019101908f906108f3565b519063ffffffff821682036100f457565b6020818303126100f457805167ffffffffffffffff918282116100f4570191610100838203126100f45761097f610756565b9280518381116100f45782610995918301610777565b84526109a3602082016107e8565b602085015260408101518381116100f457826109c0918301610777565b604085015260608101519283116100f4576109e260e092610a1994830161080d565b60608501526109f36080820161093c565b608085015260a081015160a0850152610a0e60c082016107e8565b60c0850152016107e8565b60e082015290565b908060209392818452848401376000828201840152601f01601f1916010190565b94929093610a60610a7c9795610a6e94606089526060890191610a21565b918683036020880152610a21565b926040818503910152610a21565b90565b6040513d6000823e3d90fd5b906020825192015160ff60f81b908181169360018110610aaa57505050565b60010360031b82901b16169150565b15610ac057565b60405162461bcd60e51b815260206004820152601660248201527f7265636569707420737461747573206973206661696c000000000000000000006044820152606490fd5b6000198114610b145760010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b805115610b4d5760200190565b610b2a565b8051821015610b4d5760209160051b010190565b90602082519201516bffffffffffffffffffffffff19908181169360148110610b8e57505050565b60140360031b82901b16169150565b602081519101519060208110610bb1575090565b6000199060200360031b1b1690565b15610bc757565b60405162461bcd60e51b815260206004820152601a60248201527f6661696c20746f2066696e6420746865206576656e74206c6f670000000000006044820152606490fd5b15610c1357565b60405162461bcd60e51b815260206004820152601160248201527f736c6963655f6f75744f66426f756e64730000000000000000000000000000006044820152606490fd5b6020610c678183511015610c0c565b60405191601483019180602885019201915b808410610c945750506014835250601f01601f191660405290565b825184529281019291810191610c79565b610cb3604082511015610c0c565b6040519060208083019160408085019101905b808410610cde5750508252601f01601f191660405290565b815184529282019290820190610cc656fea26469706673582212201133ec86744a8a2ece6b982a6b263ea826e3379ca563fd894158ef2ffbefb0f464736f6c63430008120033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c9081632b4fc2001461009a575080634710f6d114610095578063715018a6146100905780638da5cb5b1461008b578063c941746114610086578063f22074f014610081578063f2fde38b1461007c5763fdb2965e1461007757600080fd5b610643565b610592565b610546565b6104d7565b61049f565b610441565b610127565b346100df5760203660031901126100df5760406001600160a01b039167ffffffffffffffff6004356100cb816100e2565b168152600260205220541660805260206080f35b80fd5b67ffffffffffffffff8116036100f457565b600080fd5b9181601f840112156100f45782359167ffffffffffffffff83116100f457602083818601950101116100f457565b346100f4576060806003193601126100f45767ffffffffffffffff906004358281116100f45761015b9036906004016100f9565b9190926024358181116100f4576101769036906004016100f9565b9290936044359283116100f4576101946101e09336906004016100f9565b90966001976101b96101ad8a546001600160a01b031690565b6001600160a01b031690565b91604097885197889586948593631ccb6d3d60e11b855260009d8e9a8b9760048801610a42565b03925af191821561043c578492610418575b50610211600160f81b60ff60f81b61020a8551610a8b565b1614610ab9565b60e082019061025561024861022e845167ffffffffffffffff1690565b67ffffffffffffffff166000526002602052604060002090565b546001600160a01b031690565b918587879388956001600160a01b038a9116925b61030a575b50505060806102bc6103049594936102ae7fdf57525f8b726ad747267d5fd6ca5fa2934198b708305f8716362dca43146ba59a9b6102c895151514610bc0565b5167ffffffffffffffff1690565b95015163ffffffff1690565b945194859485909493926001600160a01b039063ffffffff60609467ffffffffffffffff60808601991685521660208401521660408201520152565b0390a180f35b81880180518051831015610411576103376101ad610329858894610b52565b51516001600160a01b031690565b14806103ee575b6103595750906103508b949392610b05565b90919293610269565b949061030497507fdf57525f8b726ad747267d5fd6ca5fa2934198b708305f8716362dca43146ba59a9b96506102c89450608093506102bc92506103de6103d98b6103d1846103ca6103c46103bf856103b78f9a6102ae9b51610b52565b510151610c58565b610b66565b60601c90565b9a51610b52565b510151610ca5565b610b9d565b968095509b9a505093949561026e565b5061040760206103ff848451610b52565b510151610b40565b516003541461033e565b505061026e565b6104359192503d8086833e61042d8183610734565b81019061094d565b90386101f2565b610a7f565b346100f4576000806003193601126100df578080546001600160a01b03196001600160a01b0382169161047533841461066a565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b346100f45760003660031901126100f45760206001600160a01b0360005416604051908152f35b6001600160a01b038116036100f457565b346100f45760403660031901126100f4576004356104f4816100e2565b60243590610501826104c6565b67ffffffffffffffff6001600160a01b03916105228360005416331461066a565b166000526002602052604060002091166001600160a01b0319825416179055600080f35b346100f45760203660031901126100f457600435610563816104c6565b6001600160a01b039061057b8260005416331461066a565b166001600160a01b03196001541617600155600080f35b346100f45760203660031901126100f4576004356105af816104c6565b6001600160a01b036105c68160005416331461066a565b8116156105d8576105d6906106b5565b005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b346100f45760003660031901126100f45760206001600160a01b0360015416604051908152f35b1561067157565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761072f57604052565b6106fd565b90601f8019910116810190811067ffffffffffffffff82111761072f57604052565b60405190610100820182811067ffffffffffffffff82111761072f57604052565b919080601f840112156100f45782519067ffffffffffffffff821161072f57604051916020916107b0601f8301601f1916840185610734565b8184528282870101116100f45760005b8181106107d557508260009394955001015290565b85810183015184820184015282016107c0565b51906107f3826100e2565b565b67ffffffffffffffff811161072f5760051b60200190565b81601f820112156100f457805190610824826107f5565b92604061083381519586610734565b8385526020938486019185600592831b860101948486116100f457868101935b86851061086557505050505050505090565b845167ffffffffffffffff908181116100f457830191606080601f19858b0301126100f45785519061089682610713565b8b8501516108a3816104c6565b8252868501518481116100f45785018a603f820112156100f457808d80920151896108cd826107f5565b936108da82519586610734565b8285528401918c1b830101918d83116100f4578f908b01915b83831061092b57509150508301528401519283116100f45761091c898c80969581960101610777565b86820152815201940193610853565b819083518152019101908f906108f3565b519063ffffffff821682036100f457565b6020818303126100f457805167ffffffffffffffff918282116100f4570191610100838203126100f45761097f610756565b9280518381116100f45782610995918301610777565b84526109a3602082016107e8565b602085015260408101518381116100f457826109c0918301610777565b604085015260608101519283116100f4576109e260e092610a1994830161080d565b60608501526109f36080820161093c565b608085015260a081015160a0850152610a0e60c082016107e8565b60c0850152016107e8565b60e082015290565b908060209392818452848401376000828201840152601f01601f1916010190565b94929093610a60610a7c9795610a6e94606089526060890191610a21565b918683036020880152610a21565b926040818503910152610a21565b90565b6040513d6000823e3d90fd5b906020825192015160ff60f81b908181169360018110610aaa57505050565b60010360031b82901b16169150565b15610ac057565b60405162461bcd60e51b815260206004820152601660248201527f7265636569707420737461747573206973206661696c000000000000000000006044820152606490fd5b6000198114610b145760010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b805115610b4d5760200190565b610b2a565b8051821015610b4d5760209160051b010190565b90602082519201516bffffffffffffffffffffffff19908181169360148110610b8e57505050565b60140360031b82901b16169150565b602081519101519060208110610bb1575090565b6000199060200360031b1b1690565b15610bc757565b60405162461bcd60e51b815260206004820152601a60248201527f6661696c20746f2066696e6420746865206576656e74206c6f670000000000006044820152606490fd5b15610c1357565b60405162461bcd60e51b815260206004820152601160248201527f736c6963655f6f75744f66426f756e64730000000000000000000000000000006044820152606490fd5b6020610c678183511015610c0c565b60405191601483019180602885019201915b808410610c945750506014835250601f01601f191660405290565b825184529281019291810191610c79565b610cb3604082511015610c0c565b6040519060208083019160408085019101905b808410610cde5750508252601f01601f191660405290565b815184529282019290820190610cc656fea26469706673582212201133ec86744a8a2ece6b982a6b263ea826e3379ca563fd894158ef2ffbefb0f464736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/apps/receipt-demo/VerifyEmitNumber.sol:VerifyEmitNumber",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 137,
+        "contract": "contracts/apps/receipt-demo/VerifyEmitNumber.sol:VerifyEmitNumber",
+        "label": "receiptVerifier",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IReceiptVerifier)395"
+      },
+      {
+        "astId": 162,
+        "contract": "contracts/apps/receipt-demo/VerifyEmitNumber.sol:VerifyEmitNumber",
+        "label": "srcContract",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint64,t_address)"
+      },
+      {
+        "astId": 170,
+        "contract": "contracts/apps/receipt-demo/VerifyEmitNumber.sol:VerifyEmitNumber",
+        "label": "logTopic",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_bytes32"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IReceiptVerifier)395": {
+        "encoding": "inplace",
+        "label": "contract IReceiptVerifier",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint64,t_address)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  }
+}

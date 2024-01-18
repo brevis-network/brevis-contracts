@@ -1,0 +1,39 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/apps/slotvalue/SlotValue.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.18;\n\nimport \"../../verifiers/interfaces/ISlotValueVerifier.sol\";\n\ncontract SlotValue {\n    ISlotValueVerifier public slotValueVerifier;\n\n    event VerifiedSlotValueProof(address contractAddr, uint64 chainId, bytes32 slot, bytes32 slotValue, uint32 blkNum, bytes32 blkHash);\n\n    constructor(ISlotValueVerifier _verifier) {\n        slotValueVerifier = _verifier;\n    }\n\n    function submitSlotValuePoof(uint64 chainId, address contractAddr, bytes calldata proofData, bytes calldata blkVerifyInfo) external {\n        ISlotValueVerifier.SlotInfo memory slotInfo = slotValueVerifier.verifySlotValue(\n            chainId,\n            proofData,\n            blkVerifyInfo\n        );\n        emit VerifiedSlotValueProof(contractAddr, slotInfo.chainId, slotInfo.slot, slotInfo.slotValue, slotInfo.blkNum, slotInfo.blkHash);\n    }\n}\n"
+    },
+    "contracts/verifiers/interfaces/ISlotValueVerifier.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.18;\n\ninterface ISlotValueVerifier {\n    struct SlotInfo {\n        uint64 chainId;\n        bytes32 blkHash;\n        bytes32 slot;\n        bytes32 slotValue;\n        uint32 blkNum;\n    }\n\n    function verifySlotValue(\n        uint64 chainId,\n        bytes calldata proofData,\n        bytes calldata blkVerifyInfo\n    ) external returns (SlotInfo memory slotInfo);\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "viaIR": true,
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

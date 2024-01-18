@@ -1,0 +1,542 @@
+{
+  "address": "0xbb1e07e77d298a763D9CB7097dC70CfcBe7052e4",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_blockChunks",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newAddress",
+          "type": "address"
+        }
+      ],
+      "name": "UpdateBlockChunks",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newAddress",
+          "type": "address"
+        }
+      ],
+      "name": "UpdateVerifierAddress",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "receiptHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "VerifiedReceipt",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "blockChunks",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "receiptRaw",
+          "type": "bytes"
+        }
+      ],
+      "name": "decodeReceipt",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "status",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint64",
+              "name": "cumulativeGasUsed",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes",
+              "name": "bloom",
+              "type": "bytes"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32[]",
+                  "name": "topics",
+                  "type": "bytes32[]"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "data",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct IReceiptVerifier.LogInfo[]",
+              "name": "logs",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint32",
+              "name": "blkNum",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "blkHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "blkTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "chainId",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct IReceiptVerifier.ReceiptInfo",
+          "name": "info",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_blockChunks",
+          "type": "address"
+        }
+      ],
+      "name": "updateBlockChunks",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "_verifierAddress",
+          "type": "address"
+        }
+      ],
+      "name": "updateVerifierAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "verifierAddresses",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "receiptRaw",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proofData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "auxiBlkVerifyInfo",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyReceipt",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "status",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint64",
+              "name": "cumulativeGasUsed",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes",
+              "name": "bloom",
+              "type": "bytes"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32[]",
+                  "name": "topics",
+                  "type": "bytes32[]"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "data",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct IReceiptVerifier.LogInfo[]",
+              "name": "logs",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint32",
+              "name": "blkNum",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "blkHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "blkTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "chainId",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct IReceiptVerifier.ReceiptInfo",
+          "name": "info",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "receiptRaw",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proofData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "auxiBlkVerifyInfo",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyReceiptAndLog",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "status",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint64",
+              "name": "cumulativeGasUsed",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes",
+              "name": "bloom",
+              "type": "bytes"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32[]",
+                  "name": "topics",
+                  "type": "bytes32[]"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "data",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct IReceiptVerifier.LogInfo[]",
+              "name": "logs",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint32",
+              "name": "blkNum",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "blkHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "blkTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "chainId",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct IReceiptVerifier.ReceiptInfo",
+          "name": "info",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x43c4646da5c27122e06360ed352043aadc18ea9d0ba49580d0c0dce45a4de1d1",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0xbb1e07e77d298a763D9CB7097dC70CfcBe7052e4",
+    "transactionIndex": 1,
+    "gasUsed": "1560285",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000802000020000000000000000000804000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000008000000000000000000000000000000000000000040000000000000000",
+    "blockHash": "0xb1aef89c5d7c2b7a80da6bc6eb55983d144afe3694536127a68f44b266213e95",
+    "transactionHash": "0x43c4646da5c27122e06360ed352043aadc18ea9d0ba49580d0c0dce45a4de1d1",
+    "logs": [
+      {
+        "transactionIndex": 1,
+        "blockNumber": 31422224,
+        "transactionHash": "0x43c4646da5c27122e06360ed352043aadc18ea9d0ba49580d0c0dce45a4de1d1",
+        "address": "0xbb1e07e77d298a763D9CB7097dC70CfcBe7052e4",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x00000000000000000000000058b529f9084d7eaa598eb3477fe36064c5b7bbc1"
+        ],
+        "data": "0x",
+        "logIndex": 1,
+        "blockHash": "0xb1aef89c5d7c2b7a80da6bc6eb55983d144afe3694536127a68f44b266213e95"
+      }
+    ],
+    "blockNumber": 31422224,
+    "cumulativeGasUsed": "1589478",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x420755E97ca29314dB49ae019161f4b52012AADf"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "2c4506faf962a540c8e2d2bc35bafac2",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_blockChunks\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAddress\",\"type\":\"address\"}],\"name\":\"UpdateBlockChunks\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAddress\",\"type\":\"address\"}],\"name\":\"UpdateVerifierAddress\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"receiptHash\",\"type\":\"bytes32\"}],\"name\":\"VerifiedReceipt\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"blockChunks\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"receiptRaw\",\"type\":\"bytes\"}],\"name\":\"decodeReceipt\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"status\",\"type\":\"bytes\"},{\"internalType\":\"uint64\",\"name\":\"cumulativeGasUsed\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"bloom\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bytes32[]\",\"name\":\"topics\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"internalType\":\"struct IReceiptVerifier.LogInfo[]\",\"name\":\"logs\",\"type\":\"tuple[]\"},{\"internalType\":\"uint32\",\"name\":\"blkNum\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"blkHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"blkTime\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"internalType\":\"struct IReceiptVerifier.ReceiptInfo\",\"name\":\"info\",\"type\":\"tuple\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_blockChunks\",\"type\":\"address\"}],\"name\":\"updateBlockChunks\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"_verifierAddress\",\"type\":\"address\"}],\"name\":\"updateVerifierAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"verifierAddresses\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"receiptRaw\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proofData\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"auxiBlkVerifyInfo\",\"type\":\"bytes\"}],\"name\":\"verifyReceipt\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"status\",\"type\":\"bytes\"},{\"internalType\":\"uint64\",\"name\":\"cumulativeGasUsed\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"bloom\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bytes32[]\",\"name\":\"topics\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"internalType\":\"struct IReceiptVerifier.LogInfo[]\",\"name\":\"logs\",\"type\":\"tuple[]\"},{\"internalType\":\"uint32\",\"name\":\"blkNum\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"blkHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"blkTime\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"internalType\":\"struct IReceiptVerifier.ReceiptInfo\",\"name\":\"info\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"receiptRaw\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proofData\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"auxiBlkVerifyInfo\",\"type\":\"bytes\"}],\"name\":\"verifyReceiptAndLog\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"status\",\"type\":\"bytes\"},{\"internalType\":\"uint64\",\"name\":\"cumulativeGasUsed\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"bloom\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bytes32[]\",\"name\":\"topics\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"internalType\":\"struct IReceiptVerifier.LogInfo[]\",\"name\":\"logs\",\"type\":\"tuple[]\"},{\"internalType\":\"uint32\",\"name\":\"blkNum\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"blkHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"blkTime\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"internalType\":\"struct IReceiptVerifier.ReceiptInfo\",\"name\":\"info\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/verifiers/ReceiptVerifier.sol\":\"ReceiptVerifier\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/chunk-sync/interfaces/IBlockChunks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IBlockChunks {\\n    // historicalRoots(chainId, startBlockNumber) is 0 unless (startBlockNumber % 128 == 0)\\n    // historicalRoots(chainId, startBlockNumber) holds the hash of\\n    //   prevHash || root || numFinal\\n    // where\\n    // - prevHash is the parent hash of block startBlockNumber\\n    // - root is the partial Merkle root of blockhashes of block numbers\\n    //   [startBlockNumber, startBlockNumber + 128)\\n    //   where unconfirmed block hashes are 0's\\n    // - numFinal is the number of confirmed consecutive roots in [startBlockNumber, startBlockNumber + 128)\\n    function historicalRoots(uint64 chainId, uint32 startBlockNumber) external view returns (bytes32);\\n\\n    event UpdateEvent(uint64 chainId, uint32 startBlockNumber, bytes32 prevHash, bytes32 root, uint32 numFinal);\\n\\n    struct BlockHashWitness {\\n        uint64 chainId;\\n        uint32 blkNum;\\n        bytes32 claimedBlkHash;\\n        bytes32 prevHash;\\n        uint32 numFinal;\\n        bytes32[7] merkleProof;\\n    }\\n\\n    // update blocks in the \\\"backward\\\" direction, anchoring on a \\\"recent\\\" end blockhash from anchor contract\\n    // * startBlockNumber must be a multiple of 128\\n    // * for now always endBlockNumber = startBlockNumber + 127 (full update on every 128 blocks chunk)\\n    function updateRecent(uint64 chainId, bytes calldata proofData) external;\\n\\n    // update older blocks in \\\"backwards\\\" direction, anchoring on more recent trusted blockhash\\n    // must be batch of 128 blocks\\n    function updateOld(uint64 chainId, bytes32 nextRoot, uint32 nextNumFinal, bytes calldata proofData) external;\\n\\n    function isBlockHashValid(BlockHashWitness calldata witness) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x2f33a1b7daa1d8b05f3b4aebeea58b7b8d261c279f350c751796de281cbf464e\",\"license\":\"MIT\"},\"contracts/verifiers/ReceiptVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"solidity-rlp/contracts/RLPReader.sol\\\";\\nimport \\\"./interfaces/IReceiptVerifier.sol\\\";\\nimport \\\"./interfaces/IZkpVerifier.sol\\\";\\nimport \\\"../chunk-sync/interfaces/IBlockChunks.sol\\\";\\n\\ncontract ReceiptVerifier is IReceiptVerifier, Ownable {\\n    using RLPReader for bytes;\\n    using RLPReader for uint;\\n    using RLPReader for RLPReader.RLPItem;\\n\\n    uint32 constant PUBLIC_BYTES_START_IDX = 10 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment)\\n\\n    // retrieved from proofData, to align the fields with circuit...\\n    struct ProofData {\\n        bytes32 leafHash;\\n        bytes32 blkHash;\\n        uint32 blkNum;\\n        uint64 blkTime;\\n        uint64 chainId;\\n        bytes leafRlpPrefix; // not public input\\n    }\\n\\n    mapping(uint64 => address) public verifierAddresses; // chainid => snark verifier contract address\\n    address public blockChunks;\\n\\n    event UpdateVerifierAddress(uint64 chainId, address newAddress);\\n    event UpdateBlockChunks(address newAddress);\\n    event VerifiedReceipt(uint64 chainId, bytes32 receiptHash);\\n\\n    constructor(address _blockChunks) {\\n        blockChunks = _blockChunks;\\n    }\\n\\n    function updateVerifierAddress(uint64 _chainId, address _verifierAddress) external onlyOwner {\\n        verifierAddresses[_chainId] = _verifierAddress;\\n        emit UpdateVerifierAddress(_chainId, _verifierAddress);\\n    }\\n\\n    function updateBlockChunks(address _blockChunks) external onlyOwner {\\n        blockChunks = _blockChunks;\\n        emit UpdateBlockChunks(_blockChunks);\\n    }\\n\\n    function verifyReceiptAndLog(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) external returns (ReceiptInfo memory info) {\\n        info = verifyReceipt(receiptRaw, proofData, auxiBlkVerifyInfo);\\n        emit VerifiedReceipt(info.chainId, keccak256(receiptRaw));\\n    }\\n\\n    function verifyReceipt(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) public view returns (ReceiptInfo memory info) {\\n        ProofData memory data = getProofData(proofData);\\n        require(verifyRaw(data.chainId, proofData), \\\"proof not valid\\\");\\n        bytes memory leafRlp = bytes.concat(data.leafRlpPrefix, receiptRaw);\\n        bytes32 leafHash = keccak256(leafRlp);\\n        require(leafHash == data.leafHash, \\\"leafHash not match\\\");\\n\\n        (bytes32 prevHash, uint32 numFinal, bytes32[7] memory merkleProof) = getFromAuxiBlkVerifyInfo(\\n            auxiBlkVerifyInfo\\n        );\\n\\n        IBlockChunks.BlockHashWitness memory witness = IBlockChunks.BlockHashWitness({\\n            chainId: data.chainId,\\n            blkNum: data.blkNum,\\n            claimedBlkHash: data.blkHash,\\n            prevHash: prevHash,\\n            numFinal: numFinal,\\n            merkleProof: merkleProof\\n        });\\n        require(IBlockChunks(blockChunks).isBlockHashValid(witness), \\\"invalid blkHash\\\");\\n\\n        info = decodeReceipt(receiptRaw);\\n        info.blkHash = data.blkHash;\\n        info.blkTime = data.blkTime;\\n        info.blkNum = data.blkNum;\\n        info.chainId = data.chainId;\\n    }\\n\\n    function getFromAuxiBlkVerifyInfo(\\n        bytes calldata auxiBlkVerifyInfo\\n    ) internal pure returns (bytes32 prevHash, uint32 numFinal, bytes32[7] memory merkleProof) {\\n        require(auxiBlkVerifyInfo.length == 8 * 32 + 4, \\\"incorrect auxiBlkVerifyInfo\\\");\\n\\n        prevHash = bytes32(auxiBlkVerifyInfo[:32]);\\n        numFinal = uint32(bytes4(auxiBlkVerifyInfo[32:36]));\\n        for (uint8 idx = 0; idx < 6; idx++) {\\n            merkleProof[idx] = bytes32(auxiBlkVerifyInfo[36 + 32 * idx:36 + 32 * (idx + 1)]);\\n        }\\n        merkleProof[6] = bytes32(auxiBlkVerifyInfo[36 + 32 * 6:36 + 32 * (6 + 1)]);\\n    }\\n\\n    // support DynamicFeeTxType for now\\n    function decodeReceipt(bytes calldata receiptRaw) public pure returns (ReceiptInfo memory info) {\\n        uint8 txType = uint8(receiptRaw[0]);\\n        require(txType == 2, \\\"not a DynamicFeeTxType\\\");\\n        bytes memory rlpData = receiptRaw[1:];\\n        RLPReader.RLPItem[] memory values = rlpData.toRlpItem().toList();\\n        info.status = values[0].toBytes();\\n        info.cumulativeGasUsed = uint64(values[1].toUint());\\n        info.bloom = values[2].toBytes();\\n\\n        RLPReader.RLPItem[] memory rlpLogs = values[3].toList();\\n        LogInfo[] memory logInfos = new LogInfo[](rlpLogs.length);\\n        for (uint8 i = 0; i < rlpLogs.length; i++) {\\n            RLPReader.RLPItem[] memory log = rlpLogs[i].toList();\\n            //let one = log[0].toBytes();\\n            logInfos[i].addr = log[0].toAddress();\\n            RLPReader.RLPItem[] memory topics = log[1].toList();\\n            logInfos[i].topics = new bytes32[](topics.length);\\n            for (uint8 j = 0; j < topics.length; j++) {\\n                logInfos[i].topics[j] = bytes32(topics[j].toBytes());\\n            }\\n            logInfos[i].data = log[2].toBytes();\\n        }\\n        info.logs = logInfos;\\n    }\\n\\n    function verifyRaw(uint64 chainId, bytes calldata proofData) private view returns (bool) {\\n        require(verifierAddresses[chainId] != address(0), \\\"chain verifier not set\\\");\\n        return (IZkpVerifier)(verifierAddresses[chainId]).verifyRaw(proofData);\\n    }\\n\\n    function getProofData(bytes calldata proofData) internal pure returns (ProofData memory data) {\\n        data.leafHash = bytes32(\\n            (uint256(bytes32(proofData[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32])) << 128) |\\n                uint128(bytes16(proofData[PUBLIC_BYTES_START_IDX + 32 + 16:PUBLIC_BYTES_START_IDX + 2 * 32]))\\n        );\\n        data.blkHash = bytes32(\\n            (uint256(bytes32(proofData[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32])) << 128) |\\n                uint128(bytes16(proofData[PUBLIC_BYTES_START_IDX + 3 * 32 + 16:PUBLIC_BYTES_START_IDX + 4 * 32]))\\n        );\\n        data.blkNum = uint32(bytes4(proofData[PUBLIC_BYTES_START_IDX + 5 * 32 - 4:PUBLIC_BYTES_START_IDX + 5 * 32]));\\n        data.blkTime = uint64(bytes8(proofData[PUBLIC_BYTES_START_IDX + 6 * 32 - 8:PUBLIC_BYTES_START_IDX + 6 * 32]));\\n        // not public input\\n        data.chainId = uint64(bytes8(proofData[PUBLIC_BYTES_START_IDX + 6 * 32:PUBLIC_BYTES_START_IDX + 6 * 32 + 8]));\\n        data.leafRlpPrefix = bytes(proofData[PUBLIC_BYTES_START_IDX + 6 * 32 + 8:]);\\n    }\\n}\\n\",\"keccak256\":\"0xf4fa30d87adc39b20e848093816090bd33a482527e0212851f28aabc81e8ad4f\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IReceiptVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IReceiptVerifier {\\n    struct ReceiptInfo {\\n        bytes status;\\n        uint64 cumulativeGasUsed;\\n        bytes bloom;\\n        LogInfo[] logs;\\n        uint32 blkNum;\\n        bytes32 blkHash;\\n        uint64 blkTime;\\n        uint64 chainId;\\n    }\\n\\n    struct LogInfo {\\n        address addr;\\n        bytes32[] topics;\\n        bytes data;\\n    }\\n\\n    // reverts if not verified\\n    // - receiptRaw: signed dynamic fee receipt rlp encode data\\n    // - proofData: receipt proof data\\n    // - auxiBlkVerifyInfo: auxiliary info for blk verify in chunk sync contract\\n    function verifyReceipt(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) external view returns (ReceiptInfo memory receiptInfo);\\n\\n    // verifyReceipt and emit event\\n    function verifyReceiptAndLog(\\n        bytes calldata receiptRaw,\\n        bytes calldata proofData,\\n        bytes calldata auxiBlkVerifyInfo\\n    ) external returns (ReceiptInfo memory receiptInfo);\\n}\\n\",\"keccak256\":\"0xff649aa810fcc8e576d7754e36be9173b8d037d5cfea2746c725d6c2c9e2109e\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IZkpVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IZkpVerifier {\\n    function verifyRaw(bytes calldata proofData) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0x180d5c22339cff67100807cd564dde6d7ae21d5c8073e9ade51053fe1ece22e2\",\"license\":\"MIT\"},\"solidity-rlp/contracts/RLPReader.sol\":{\"content\":\"// SPDX-License-Identifier: Apache-2.0\\n\\n/*\\n * @author Hamdi Allam hamdi.allam97@gmail.com\\n * Please reach out with any questions or concerns\\n */\\npragma solidity >=0.5.10 <=0.8.18;\\n\\nlibrary RLPReader {\\n    uint8 constant STRING_SHORT_START = 0x80;\\n    uint8 constant STRING_LONG_START = 0xb8;\\n    uint8 constant LIST_SHORT_START = 0xc0;\\n    uint8 constant LIST_LONG_START = 0xf8;\\n    uint8 constant WORD_SIZE = 32;\\n\\n    struct RLPItem {\\n        uint256 len;\\n        uint256 memPtr;\\n    }\\n\\n    struct Iterator {\\n        RLPItem item; // Item that's being iterated over.\\n        uint256 nextPtr; // Position of the next item in the list.\\n    }\\n\\n    /*\\n     * @dev Returns the next element in the iteration. Reverts if it has not next element.\\n     * @param self The iterator.\\n     * @return The next element in the iteration.\\n     */\\n    function next(Iterator memory self) internal pure returns (RLPItem memory) {\\n        require(hasNext(self));\\n\\n        uint256 ptr = self.nextPtr;\\n        uint256 itemLength = _itemLength(ptr);\\n        self.nextPtr = ptr + itemLength;\\n\\n        return RLPItem(itemLength, ptr);\\n    }\\n\\n    /*\\n     * @dev Returns true if the iteration has more elements.\\n     * @param self The iterator.\\n     * @return true if the iteration has more elements.\\n     */\\n    function hasNext(Iterator memory self) internal pure returns (bool) {\\n        RLPItem memory item = self.item;\\n        return self.nextPtr < item.memPtr + item.len;\\n    }\\n\\n    /*\\n     * @param item RLP encoded bytes\\n     */\\n    function toRlpItem(bytes memory item) internal pure returns (RLPItem memory) {\\n        uint256 memPtr;\\n        assembly {\\n            memPtr := add(item, 0x20)\\n        }\\n\\n        return RLPItem(item.length, memPtr);\\n    }\\n\\n    /*\\n     * @dev Create an iterator. Reverts if item is not a list.\\n     * @param self The RLP item.\\n     * @return An 'Iterator' over the item.\\n     */\\n    function iterator(RLPItem memory self) internal pure returns (Iterator memory) {\\n        require(isList(self));\\n\\n        uint256 ptr = self.memPtr + _payloadOffset(self.memPtr);\\n        return Iterator(self, ptr);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function rlpLen(RLPItem memory item) internal pure returns (uint256) {\\n        return item.len;\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     * @return (memPtr, len) pair: location of the item's payload in memory.\\n     */\\n    function payloadLocation(RLPItem memory item) internal pure returns (uint256, uint256) {\\n        uint256 offset = _payloadOffset(item.memPtr);\\n        uint256 memPtr = item.memPtr + offset;\\n        uint256 len = item.len - offset; // data length\\n        return (memPtr, len);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function payloadLen(RLPItem memory item) internal pure returns (uint256) {\\n        (, uint256 len) = payloadLocation(item);\\n        return len;\\n    }\\n\\n    /*\\n     * @param the RLP item containing the encoded list.\\n     */\\n    function toList(RLPItem memory item) internal pure returns (RLPItem[] memory) {\\n        require(isList(item));\\n\\n        uint256 items = numItems(item);\\n        RLPItem[] memory result = new RLPItem[](items);\\n\\n        uint256 memPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 dataLen;\\n        for (uint256 i = 0; i < items; i++) {\\n            dataLen = _itemLength(memPtr);\\n            result[i] = RLPItem(dataLen, memPtr);\\n            memPtr = memPtr + dataLen;\\n        }\\n\\n        return result;\\n    }\\n\\n    // @return indicator whether encoded payload is a list. negate this function call for isData.\\n    function isList(RLPItem memory item) internal pure returns (bool) {\\n        if (item.len == 0) return false;\\n\\n        uint8 byte0;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < LIST_SHORT_START) return false;\\n        return true;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toRlpBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of RLP encoded bytes.\\n     */\\n    function rlpBytesKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        uint256 ptr = item.memPtr;\\n        uint256 len = item.len;\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(ptr, len)\\n        }\\n        return result;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of the item payload.\\n     */\\n    function payloadKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(memPtr, len)\\n        }\\n        return result;\\n    }\\n\\n    /** RLPItem conversions into data types **/\\n\\n    // @returns raw rlp encoding in bytes\\n    function toRlpBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        bytes memory result = new bytes(item.len);\\n        if (result.length == 0) return result;\\n\\n        uint256 ptr;\\n        assembly {\\n            ptr := add(0x20, result)\\n        }\\n\\n        copy(item.memPtr, ptr, item.len);\\n        return result;\\n    }\\n\\n    // any non-zero byte except \\\"0x80\\\" is considered true\\n    function toBoolean(RLPItem memory item) internal pure returns (bool) {\\n        require(item.len == 1);\\n        uint256 result;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            result := byte(0, mload(memPtr))\\n        }\\n\\n        // SEE Github Issue #5.\\n        // Summary: Most commonly used RLP libraries (i.e Geth) will encode\\n        // \\\"0\\\" as \\\"0x80\\\" instead of as \\\"0\\\". We handle this edge case explicitly\\n        // here.\\n        if (result == 0 || result == STRING_SHORT_START) {\\n            return false;\\n        } else {\\n            return true;\\n        }\\n    }\\n\\n    function toAddress(RLPItem memory item) internal pure returns (address) {\\n        // 1 byte for the length prefix\\n        require(item.len == 21);\\n\\n        return address(uint160(toUint(item)));\\n    }\\n\\n    function toUint(RLPItem memory item) internal pure returns (uint256) {\\n        require(item.len > 0 && item.len <= 33);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n\\n        uint256 result;\\n        assembly {\\n            result := mload(memPtr)\\n\\n            // shift to the correct location if neccesary\\n            if lt(len, 32) {\\n                result := div(result, exp(256, sub(32, len)))\\n            }\\n        }\\n\\n        return result;\\n    }\\n\\n    // enforces 32 byte length\\n    function toUintStrict(RLPItem memory item) internal pure returns (uint256) {\\n        // one byte prefix\\n        require(item.len == 33);\\n\\n        uint256 result;\\n        uint256 memPtr = item.memPtr + 1;\\n        assembly {\\n            result := mload(memPtr)\\n        }\\n\\n        return result;\\n    }\\n\\n    function toBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        require(item.len > 0);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes memory result = new bytes(len);\\n\\n        uint256 destPtr;\\n        assembly {\\n            destPtr := add(0x20, result)\\n        }\\n\\n        copy(memPtr, destPtr, len);\\n        return result;\\n    }\\n\\n    /*\\n     * Private Helpers\\n     */\\n\\n    // @return number of payload items inside an encoded list.\\n    function numItems(RLPItem memory item) private pure returns (uint256) {\\n        if (item.len == 0) return 0;\\n\\n        uint256 count = 0;\\n        uint256 currPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 endPtr = item.memPtr + item.len;\\n        while (currPtr < endPtr) {\\n            currPtr = currPtr + _itemLength(currPtr); // skip over an item\\n            count++;\\n        }\\n\\n        return count;\\n    }\\n\\n    // @return entire rlp item byte length\\n    function _itemLength(uint256 memPtr) private pure returns (uint256) {\\n        uint256 itemLen;\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            itemLen = 1;\\n        } else if (byte0 < STRING_LONG_START) {\\n            itemLen = byte0 - STRING_SHORT_START + 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            assembly {\\n                let byteLen := sub(byte0, 0xb7) // # of bytes the actual length is\\n                memPtr := add(memPtr, 1) // skip over the first byte\\n\\n                /* 32 byte word size */\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to get the len\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        } else if (byte0 < LIST_LONG_START) {\\n            itemLen = byte0 - LIST_SHORT_START + 1;\\n        } else {\\n            assembly {\\n                let byteLen := sub(byte0, 0xf7)\\n                memPtr := add(memPtr, 1)\\n\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to the correct length\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        }\\n\\n        return itemLen;\\n    }\\n\\n    // @return number of bytes until the data\\n    function _payloadOffset(uint256 memPtr) private pure returns (uint256) {\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            return 0;\\n        } else if (byte0 < STRING_LONG_START || (byte0 >= LIST_SHORT_START && byte0 < LIST_LONG_START)) {\\n            return 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            // being explicit\\n            return byte0 - (STRING_LONG_START - 1) + 1;\\n        } else {\\n            return byte0 - (LIST_LONG_START - 1) + 1;\\n        }\\n    }\\n\\n    /*\\n     * @param src Pointer to source\\n     * @param dest Pointer to destination\\n     * @param len Amount of memory to copy from the source\\n     */\\n    function copy(uint256 src, uint256 dest, uint256 len) private pure {\\n        if (len == 0) return;\\n\\n        // copy as many word sizes as possible\\n        for (; len >= WORD_SIZE; len -= WORD_SIZE) {\\n            assembly {\\n                mstore(dest, mload(src))\\n            }\\n\\n            src += WORD_SIZE;\\n            dest += WORD_SIZE;\\n        }\\n\\n        if (len > 0) {\\n            // left over bytes. Mask is used to remove unwanted bytes from the word\\n            uint256 mask = 256**(WORD_SIZE - len) - 1;\\n            assembly {\\n                let srcpart := and(mload(src), not(mask)) // zero out src\\n                let destpart := and(mload(dest), mask) // retrieve the bytes\\n                mstore(dest, or(destpart, srcpart))\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x9036309f0e44341796ff4030aa5de524772a584fb23d28aa01c9c8026092971c\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x6080346100a757601f611b2938819003918201601f19168301916001600160401b038311848410176100ac578084926020946040528339810103126100a757516001600160a01b0390818116908190036100a75760005460018060a01b0319903382821617600055604051933391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a36002541617600255611a6690816100c38239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080604052600436101561001257600080fd5b6000803560e01c9081631eeb86da146100ba575080633996da7a146100b557806368ac2f78146100b0578063715018a6146100ab578063724796ed146100a65780638da5cb5b146100a1578063c109ae5d1461009c578063ec4ffc5214610097578063f2fde38b146100925763f5cec6af1461008d57600080fd5b610698565b6105eb565b610553565b6104ff565b6104d8565b6104b1565b610453565b610427565b610399565b3461012a57602036600319011261012a577f0addee9cb6aa9328bbfbe8282179a6737af344619320736b6918af70b6a94a9860206100f661012d565b6001600160a01b039061010d8286541633146106dc565b16806001600160a01b03196002541617600255604051908152a180f35b80fd5b600435906001600160a01b038216820361014357565b600080fd5b9181601f840112156101435782359167ffffffffffffffff8311610143576020838186019501011161014357565b9060606003198301126101435767ffffffffffffffff60043581811161014357836101a391600401610148565b9390939260243583811161014357826101be91600401610148565b93909392604435918211610143576101d891600401610148565b9091565b60005b8381106101ef5750506000910152565b81810151838201526020016101df565b90602091610218815180928185528580860191016101dc565b601f01601f1916010190565b908082519081815260208091019281808460051b830101950193600080925b858410610254575050505050505090565b90919293949596601f19828203018452858851916060908181016001600160a01b0385511682528385015192848301528251809152836080830193019087905b8082106102ca5750505082916001946102b992604080920151918184039101526101ff565b990194019401929594939190610243565b825185528b95948501949092019160019190910190610294565b6103969060208152825160e061035061030b610100938460208701526101208601906101ff565b602087015167ffffffffffffffff16604086015261033b604088015191601f1992838883030160608901526101ff565b90606088015190868303016080870152610224565b608086015163ffffffff1660a08501529460a081015160c085015261038560c08201518386019067ffffffffffffffff169052565b015167ffffffffffffffff16910152565b90565b34610143576104236104057fa5db3bb7a25cc2804c7835ab71b15513b8c68585e3593c3fdee39a883754736660406103ed6103d336610176565b926103e59995999694969291926107f7565b50868a610a56565b9467ffffffffffffffff60e087015116923691610864565b6020815191012082519182526020820152a1604051918291826102e4565b0390f35b346101435761042361044761043b36610176565b94939093929192610a56565b604051918291826102e4565b346101435760008060031936011261012a578080546001600160a01b03196001600160a01b038216916104873384146106dc565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b346101435760003660031901126101435760206001600160a01b0360025416604051908152f35b346101435760003660031901126101435760206001600160a01b0360005416604051908152f35b346101435760203660031901126101435760043567ffffffffffffffff811161014357610447610536610423923690600401610148565b906110ee565b6004359067ffffffffffffffff8216820361014357565b346101435760403660031901126101435761056c61053c565b602435906001600160a01b03918281168091036101435767ffffffffffffffff6040926105bf7ffd4bb2421fdcb098a8b68c19410f433a24b805b98f148eb28b7cc384b0a0e65f956000541633146106dc565b169081600052600160205282600020816001600160a01b031982541617905582519182526020820152a1005b346101435760203660031901126101435761060461012d565b6001600160a01b0361061b816000541633146106dc565b81161561062d5761062b90610727565b005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b346101435760203660031901126101435767ffffffffffffffff6106ba61053c565b16600052600160205260206001600160a01b0360406000205416604051908152f35b156106e357565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b634e487b7160e01b600052604160045260246000fd5b6040810190811067ffffffffffffffff8211176107a157604052565b61076f565b90601f8019910116810190811067ffffffffffffffff8211176107a157604052565b6040519060c0820182811067ffffffffffffffff8211176107a157604052565b604051906107f582610785565b565b60405190610100820182811067ffffffffffffffff8211176107a157604052600060e08360608152826020820152606060408201526060808201528260808201528260a08201528260c08201520152565b67ffffffffffffffff81116107a157601f01601f191660200190565b92919261087082610848565b9161087e60405193846107a6565b829481845281830111610143578281602093846000960137010152565b156108a257565b60405162461bcd60e51b815260206004820152600f60248201527f70726f6f66206e6f742076616c696400000000000000000000000000000000006044820152606490fd5b602090836107f593959495604051968361090a89955180928880890191016101dc565b84019185830137016000838201520380855201836107a6565b1561092a57565b60405162461bcd60e51b815260206004820152601260248201527f6c65616648617368206e6f74206d6174636800000000000000000000000000006044820152606490fd5b90816020910312610143575180151581036101435790565b91909161018081019267ffffffffffffffff815116825260a08063ffffffff926020938085830151168587015260408201516040870152606082015160608701526080820151166080860152015192016000905b600782106109e95750505050565b828060019286518152019401910190926109db565b6040513d6000823e3d90fd5b15610a1157565b60405162461bcd60e51b815260206004820152600f60248201527f696e76616c696420626c6b4861736800000000000000000000000000000000006044820152606490fd5b959493929192610a646107f7565b50610a6f8385611484565b9360808501938451610a889067ffffffffffffffff1690565b91610a929261130c565b610a9b9061089b565b868260a086015191610aac926108e7565b948551602080970120855114610ac190610923565b610aca91610e8d565b9291978451610ae09067ffffffffffffffff1690565b9360408701928351610af59063ffffffff1690565b9a8989019b8c5190610b056107c8565b67ffffffffffffffff909916895263ffffffff16888c01526040880152606087015263ffffffff16608086015260a085015260025487906001600160a01b03166001600160a01b03166001600160a01b0316604051631513dce960e21b81529586919082908190610b799060048301610987565b03915afa968715610c42576060610c0497610bb8610be996610bdf95610bb36107f59d610bf69b610bce98600092610c15575b5050610a0a565b6110ee565b9b5160a08d0152015167ffffffffffffffff1690565b67ffffffffffffffff1660c08a0152565b5163ffffffff1690565b63ffffffff166080870152565b5167ffffffffffffffff1690565b67ffffffffffffffff1660e0840152565b610c349250803d10610c3b575b610c2c81836107a6565b81019061096f565b3880610bac565b503d610c22565b6109fe565b15610c4e57565b60405162461bcd60e51b815260206004820152601b60248201527f696e636f72726563742061757869426c6b566572696679496e666f00000000006044820152606490fd5b906020116101435790602090565b906024116101435760200190600490565b90610104116101435760e40190602090565b909291928360011161014357831161014357600101916000190190565b9061016011610143576101400190602090565b9061018011610143576101700190601090565b906101a011610143576101800190602090565b906101c011610143576101b00190601090565b906101e011610143576101dc0190600490565b9061020011610143576101f80190600890565b9061020811610143576102000190600890565b92919261020891848311610143578411610143570191610207190190565b90939293848311610143578411610143578101920390565b359060208110610daa575090565b6000199060200360031b1b1690565b7fffffffff000000000000000000000000000000000000000000000000000000009035818116939260048110610dee57505050565b60040360031b82901b16169150565b634e487b7160e01b600052601160045260246000fd5b60ff1660ff8114610e245760010190565b610dfd565b60051b90611fe060e0831692168203610e2457565b60ff166024019060ff8211610e2457565b60ff60019116019060ff8211610e2457565b634e487b7160e01b600052603260045260246000fd5b906007811015610e885760051b0190565b610e61565b916040519060e0820182811067ffffffffffffffff8211176107a15760405260e036833781610ebf6101048514610c47565b610ed2610ecc8587610c93565b90610d9c565b93610eef610ee9610ee38389610ca1565b90610db9565b60e01c90565b9460005b60ff808216906006821015610f555790610f4a610f43610ecc85948d89610f24610f1f610f509a610e29565b610e3e565b9280610f3a610f1f610f358c610e4f565b610e29565b16931691610d84565b9189610e77565b52610e13565b610ef3565b50505095610ecc60c092610f6b92969496610cb2565b910152565b9015610e885790565b15610f8057565b60405162461bcd60e51b815260206004820152601660248201527f6e6f7420612044796e616d6963466565547854797065000000000000000000006044820152606490fd5b805115610e885760200190565b805160011015610e885760400190565b805160021015610e885760600190565b805160031015610e885760800190565b8051821015610e885760209160051b010190565b67ffffffffffffffff81116107a15760051b60200190565b9061103882611016565b604090611047825191826107a6565b8381528093611058601f1991611016565b0190600092835b83811061106d575050505050565b8151906060918281019281841067ffffffffffffffff8511176107a1576020938552878252839080828401528583015282860101520161105f565b906110b282611016565b6110bf60405191826107a6565b82815280926110d0601f1991611016565b0190602036910137565b602081519101519060208110610daa575090565b909161116861116361115e6111576111046107f7565b968060ff9761115260028a61114b61114561111f8787610f70565b357fff000000000000000000000000000000000000000000000000000000000000001690565b60f81c90565b1614610f79565b610cc4565b3691610864565b6115e0565b611630565b9161117b61117584610fc5565b5161180f565b845261119f61119261118c85610fd2565b51611748565b67ffffffffffffffff1690565b6111b76020918287019067ffffffffffffffff169052565b6111dc6111d66111c961117587610fe2565b9560409687890152610ff2565b51611630565b6111e6815161102e565b936000805b835193868316948510156112d5576112066111d68683611002565b9961123561121c6112168d610fc5565b5161172a565b611226888c611002565b51906001600160a01b03169052565b6112416111d68c610fd2565b9461124c86516110a8565b88611257898d611002565b510152835b86518a8216908110156112a057908b610f4a838c6112938d61128d6112888f61129b9a61117591611002565b6110da565b95611002565b510151611002565b61125c565b505095909a6112cd9395506112c56112be6111758d93979597610fe2565b928b611002565b510152610e13565b9092916111eb565b50505094505050506060830152565b90918060409360208452816020850152848401376000828201840152601f01601f1916010190565b909167ffffffffffffffff821660005260016020526001600160a01b0360406000205416156113c6576113989261137b61136f61136f61136260209667ffffffffffffffff166000526001602052604060002090565b546001600160a01b031690565b6001600160a01b031690565b906040518095819482936322bb937360e11b8452600484016112e4565b03915afa908115610c42576000916113ae575090565b610396915060203d8111610c3b57610c2c81836107a6565b60405162461bcd60e51b815260206004820152601660248201527f636861696e207665726966696572206e6f7420736574000000000000000000006044820152606490fd5b6fffffffffffffffffffffffffffffffff19903581811693926010811061143157505050565b60100360031b82901b16169150565b7fffffffffffffffff000000000000000000000000000000000000000000000000903581811693926008811061147557505050565b60080360031b82901b16169150565b91906040519060c082019082821067ffffffffffffffff8311176107a157611157610f6b9160a09360405260008552600060208601526000604086015260006060860152600060808601526060848601528085976114ee6114e8610ecc8484610ce1565b60801b90565b61152261150d6115076115018686610cf4565b9061140b565b60801c90565b6fffffffffffffffffffffffffffffffff1690565b1787526115356114e8610ecc8484610d07565b61154861150d6115076115018686610d1a565b17602088015261156e611561610ee9610ee38585610d2d565b63ffffffff166040890152565b61159e61158d6115876115818585610d40565b90611440565b60c01c90565b67ffffffffffffffff166060890152565b6115c26115b16115876115818585610d53565b67ffffffffffffffff166080890152565b610d66565b604051906115d482610785565b60006020838281520152565b6115e86115c7565b506020815191604051926115fb84610785565b835201602082015290565b9060018201809211610e2457565b91908201809211610e2457565b6000198114610e245760010190565b61163981611703565b15610143576116478161185c565b61165081611016565b9161165e60405193846107a6565b818352601f1961166d83611016565b0160005b8181106116ec57505061169260208092015161168c81611944565b90611614565b6000905b8382106116a4575050505090565b6116e0816116b46116e6936118be565b906116bd6107e8565b82815281878201526116cf868a611002565b526116da8589611002565b50611614565b91611621565b90611696565b6020906116f76115c7565b82828801015201611671565b80511561172457602060c09101515160001a1061171f57600190565b600090565b50600090565b6015815103610143576117446001600160a01b0391611748565b1690565b8051801515908161177e575b501561014357611763906117e3565b90519060208110611772575090565b6020036101000a900490565b60219150111538611754565b60bf19810191908211610e2457565b607f19810191908211610e2457565b6020039060208211610e2457565b600019810191908211610e2457565b60f619810191908211610e2457565b60b619810191908211610e2457565b9060208201916117f38351611944565b925190838201809211610e245751928303928311610e24579190565b80511561014357611822610396916117e3565b61182e81939293610848565b9261183c60405194856107a6565b818452601f1961184b83610848565b0136602086013783602001906119b3565b805115611724576000906020810190815161187681611944565b8101809111610e2457915190518101809111610e245791905b82811061189c5750905090565b6118a5816118be565b8101809111610e24576118b89091611621565b9061188f565b805160001a9060808210156118d4575050600190565b60b88210156118ef57506118ea61039691611799565b611606565b9060c08110156119135760b51991600160b783602003016101000a91015104010190565b9060f882101561192a57506118ea6103969161178a565b60010151602082900360f7016101000a90040160f5190190565b5160001a60808110156119575750600090565b60b88110801561198e575b1561196d5750600190565b60c0811015611982576118ea610396916117d4565b6118ea610396916117c5565b5060c08110158015611962575060f88110611962565b601f8111610e24576101000a90565b929091928315611a2a5792915b6020938484106119f55780518252848101809111610e2457938101809111610e245791601f198101908111610e2457916119c0565b9193509180611a0357505050565b611a17611a12611a1c926117a8565b6119a4565b6117b6565b905182518216911916179052565b5091505056fea2646970667358221220b629ac78b6d4b32310be6770abda08ad305ad54a23897fa355b4f313fa3ac82f64736f6c63430008120033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c9081631eeb86da146100ba575080633996da7a146100b557806368ac2f78146100b0578063715018a6146100ab578063724796ed146100a65780638da5cb5b146100a1578063c109ae5d1461009c578063ec4ffc5214610097578063f2fde38b146100925763f5cec6af1461008d57600080fd5b610698565b6105eb565b610553565b6104ff565b6104d8565b6104b1565b610453565b610427565b610399565b3461012a57602036600319011261012a577f0addee9cb6aa9328bbfbe8282179a6737af344619320736b6918af70b6a94a9860206100f661012d565b6001600160a01b039061010d8286541633146106dc565b16806001600160a01b03196002541617600255604051908152a180f35b80fd5b600435906001600160a01b038216820361014357565b600080fd5b9181601f840112156101435782359167ffffffffffffffff8311610143576020838186019501011161014357565b9060606003198301126101435767ffffffffffffffff60043581811161014357836101a391600401610148565b9390939260243583811161014357826101be91600401610148565b93909392604435918211610143576101d891600401610148565b9091565b60005b8381106101ef5750506000910152565b81810151838201526020016101df565b90602091610218815180928185528580860191016101dc565b601f01601f1916010190565b908082519081815260208091019281808460051b830101950193600080925b858410610254575050505050505090565b90919293949596601f19828203018452858851916060908181016001600160a01b0385511682528385015192848301528251809152836080830193019087905b8082106102ca5750505082916001946102b992604080920151918184039101526101ff565b990194019401929594939190610243565b825185528b95948501949092019160019190910190610294565b6103969060208152825160e061035061030b610100938460208701526101208601906101ff565b602087015167ffffffffffffffff16604086015261033b604088015191601f1992838883030160608901526101ff565b90606088015190868303016080870152610224565b608086015163ffffffff1660a08501529460a081015160c085015261038560c08201518386019067ffffffffffffffff169052565b015167ffffffffffffffff16910152565b90565b34610143576104236104057fa5db3bb7a25cc2804c7835ab71b15513b8c68585e3593c3fdee39a883754736660406103ed6103d336610176565b926103e59995999694969291926107f7565b50868a610a56565b9467ffffffffffffffff60e087015116923691610864565b6020815191012082519182526020820152a1604051918291826102e4565b0390f35b346101435761042361044761043b36610176565b94939093929192610a56565b604051918291826102e4565b346101435760008060031936011261012a578080546001600160a01b03196001600160a01b038216916104873384146106dc565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b346101435760003660031901126101435760206001600160a01b0360025416604051908152f35b346101435760003660031901126101435760206001600160a01b0360005416604051908152f35b346101435760203660031901126101435760043567ffffffffffffffff811161014357610447610536610423923690600401610148565b906110ee565b6004359067ffffffffffffffff8216820361014357565b346101435760403660031901126101435761056c61053c565b602435906001600160a01b03918281168091036101435767ffffffffffffffff6040926105bf7ffd4bb2421fdcb098a8b68c19410f433a24b805b98f148eb28b7cc384b0a0e65f956000541633146106dc565b169081600052600160205282600020816001600160a01b031982541617905582519182526020820152a1005b346101435760203660031901126101435761060461012d565b6001600160a01b0361061b816000541633146106dc565b81161561062d5761062b90610727565b005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b346101435760203660031901126101435767ffffffffffffffff6106ba61053c565b16600052600160205260206001600160a01b0360406000205416604051908152f35b156106e357565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b634e487b7160e01b600052604160045260246000fd5b6040810190811067ffffffffffffffff8211176107a157604052565b61076f565b90601f8019910116810190811067ffffffffffffffff8211176107a157604052565b6040519060c0820182811067ffffffffffffffff8211176107a157604052565b604051906107f582610785565b565b60405190610100820182811067ffffffffffffffff8211176107a157604052600060e08360608152826020820152606060408201526060808201528260808201528260a08201528260c08201520152565b67ffffffffffffffff81116107a157601f01601f191660200190565b92919261087082610848565b9161087e60405193846107a6565b829481845281830111610143578281602093846000960137010152565b156108a257565b60405162461bcd60e51b815260206004820152600f60248201527f70726f6f66206e6f742076616c696400000000000000000000000000000000006044820152606490fd5b602090836107f593959495604051968361090a89955180928880890191016101dc565b84019185830137016000838201520380855201836107a6565b1561092a57565b60405162461bcd60e51b815260206004820152601260248201527f6c65616648617368206e6f74206d6174636800000000000000000000000000006044820152606490fd5b90816020910312610143575180151581036101435790565b91909161018081019267ffffffffffffffff815116825260a08063ffffffff926020938085830151168587015260408201516040870152606082015160608701526080820151166080860152015192016000905b600782106109e95750505050565b828060019286518152019401910190926109db565b6040513d6000823e3d90fd5b15610a1157565b60405162461bcd60e51b815260206004820152600f60248201527f696e76616c696420626c6b4861736800000000000000000000000000000000006044820152606490fd5b959493929192610a646107f7565b50610a6f8385611484565b9360808501938451610a889067ffffffffffffffff1690565b91610a929261130c565b610a9b9061089b565b868260a086015191610aac926108e7565b948551602080970120855114610ac190610923565b610aca91610e8d565b9291978451610ae09067ffffffffffffffff1690565b9360408701928351610af59063ffffffff1690565b9a8989019b8c5190610b056107c8565b67ffffffffffffffff909916895263ffffffff16888c01526040880152606087015263ffffffff16608086015260a085015260025487906001600160a01b03166001600160a01b03166001600160a01b0316604051631513dce960e21b81529586919082908190610b799060048301610987565b03915afa968715610c42576060610c0497610bb8610be996610bdf95610bb36107f59d610bf69b610bce98600092610c15575b5050610a0a565b6110ee565b9b5160a08d0152015167ffffffffffffffff1690565b67ffffffffffffffff1660c08a0152565b5163ffffffff1690565b63ffffffff166080870152565b5167ffffffffffffffff1690565b67ffffffffffffffff1660e0840152565b610c349250803d10610c3b575b610c2c81836107a6565b81019061096f565b3880610bac565b503d610c22565b6109fe565b15610c4e57565b60405162461bcd60e51b815260206004820152601b60248201527f696e636f72726563742061757869426c6b566572696679496e666f00000000006044820152606490fd5b906020116101435790602090565b906024116101435760200190600490565b90610104116101435760e40190602090565b909291928360011161014357831161014357600101916000190190565b9061016011610143576101400190602090565b9061018011610143576101700190601090565b906101a011610143576101800190602090565b906101c011610143576101b00190601090565b906101e011610143576101dc0190600490565b9061020011610143576101f80190600890565b9061020811610143576102000190600890565b92919261020891848311610143578411610143570191610207190190565b90939293848311610143578411610143578101920390565b359060208110610daa575090565b6000199060200360031b1b1690565b7fffffffff000000000000000000000000000000000000000000000000000000009035818116939260048110610dee57505050565b60040360031b82901b16169150565b634e487b7160e01b600052601160045260246000fd5b60ff1660ff8114610e245760010190565b610dfd565b60051b90611fe060e0831692168203610e2457565b60ff166024019060ff8211610e2457565b60ff60019116019060ff8211610e2457565b634e487b7160e01b600052603260045260246000fd5b906007811015610e885760051b0190565b610e61565b916040519060e0820182811067ffffffffffffffff8211176107a15760405260e036833781610ebf6101048514610c47565b610ed2610ecc8587610c93565b90610d9c565b93610eef610ee9610ee38389610ca1565b90610db9565b60e01c90565b9460005b60ff808216906006821015610f555790610f4a610f43610ecc85948d89610f24610f1f610f509a610e29565b610e3e565b9280610f3a610f1f610f358c610e4f565b610e29565b16931691610d84565b9189610e77565b52610e13565b610ef3565b50505095610ecc60c092610f6b92969496610cb2565b910152565b9015610e885790565b15610f8057565b60405162461bcd60e51b815260206004820152601660248201527f6e6f7420612044796e616d6963466565547854797065000000000000000000006044820152606490fd5b805115610e885760200190565b805160011015610e885760400190565b805160021015610e885760600190565b805160031015610e885760800190565b8051821015610e885760209160051b010190565b67ffffffffffffffff81116107a15760051b60200190565b9061103882611016565b604090611047825191826107a6565b8381528093611058601f1991611016565b0190600092835b83811061106d575050505050565b8151906060918281019281841067ffffffffffffffff8511176107a1576020938552878252839080828401528583015282860101520161105f565b906110b282611016565b6110bf60405191826107a6565b82815280926110d0601f1991611016565b0190602036910137565b602081519101519060208110610daa575090565b909161116861116361115e6111576111046107f7565b968060ff9761115260028a61114b61114561111f8787610f70565b357fff000000000000000000000000000000000000000000000000000000000000001690565b60f81c90565b1614610f79565b610cc4565b3691610864565b6115e0565b611630565b9161117b61117584610fc5565b5161180f565b845261119f61119261118c85610fd2565b51611748565b67ffffffffffffffff1690565b6111b76020918287019067ffffffffffffffff169052565b6111dc6111d66111c961117587610fe2565b9560409687890152610ff2565b51611630565b6111e6815161102e565b936000805b835193868316948510156112d5576112066111d68683611002565b9961123561121c6112168d610fc5565b5161172a565b611226888c611002565b51906001600160a01b03169052565b6112416111d68c610fd2565b9461124c86516110a8565b88611257898d611002565b510152835b86518a8216908110156112a057908b610f4a838c6112938d61128d6112888f61129b9a61117591611002565b6110da565b95611002565b510151611002565b61125c565b505095909a6112cd9395506112c56112be6111758d93979597610fe2565b928b611002565b510152610e13565b9092916111eb565b50505094505050506060830152565b90918060409360208452816020850152848401376000828201840152601f01601f1916010190565b909167ffffffffffffffff821660005260016020526001600160a01b0360406000205416156113c6576113989261137b61136f61136f61136260209667ffffffffffffffff166000526001602052604060002090565b546001600160a01b031690565b6001600160a01b031690565b906040518095819482936322bb937360e11b8452600484016112e4565b03915afa908115610c42576000916113ae575090565b610396915060203d8111610c3b57610c2c81836107a6565b60405162461bcd60e51b815260206004820152601660248201527f636861696e207665726966696572206e6f7420736574000000000000000000006044820152606490fd5b6fffffffffffffffffffffffffffffffff19903581811693926010811061143157505050565b60100360031b82901b16169150565b7fffffffffffffffff000000000000000000000000000000000000000000000000903581811693926008811061147557505050565b60080360031b82901b16169150565b91906040519060c082019082821067ffffffffffffffff8311176107a157611157610f6b9160a09360405260008552600060208601526000604086015260006060860152600060808601526060848601528085976114ee6114e8610ecc8484610ce1565b60801b90565b61152261150d6115076115018686610cf4565b9061140b565b60801c90565b6fffffffffffffffffffffffffffffffff1690565b1787526115356114e8610ecc8484610d07565b61154861150d6115076115018686610d1a565b17602088015261156e611561610ee9610ee38585610d2d565b63ffffffff166040890152565b61159e61158d6115876115818585610d40565b90611440565b60c01c90565b67ffffffffffffffff166060890152565b6115c26115b16115876115818585610d53565b67ffffffffffffffff166080890152565b610d66565b604051906115d482610785565b60006020838281520152565b6115e86115c7565b506020815191604051926115fb84610785565b835201602082015290565b9060018201809211610e2457565b91908201809211610e2457565b6000198114610e245760010190565b61163981611703565b15610143576116478161185c565b61165081611016565b9161165e60405193846107a6565b818352601f1961166d83611016565b0160005b8181106116ec57505061169260208092015161168c81611944565b90611614565b6000905b8382106116a4575050505090565b6116e0816116b46116e6936118be565b906116bd6107e8565b82815281878201526116cf868a611002565b526116da8589611002565b50611614565b91611621565b90611696565b6020906116f76115c7565b82828801015201611671565b80511561172457602060c09101515160001a1061171f57600190565b600090565b50600090565b6015815103610143576117446001600160a01b0391611748565b1690565b8051801515908161177e575b501561014357611763906117e3565b90519060208110611772575090565b6020036101000a900490565b60219150111538611754565b60bf19810191908211610e2457565b607f19810191908211610e2457565b6020039060208211610e2457565b600019810191908211610e2457565b60f619810191908211610e2457565b60b619810191908211610e2457565b9060208201916117f38351611944565b925190838201809211610e245751928303928311610e24579190565b80511561014357611822610396916117e3565b61182e81939293610848565b9261183c60405194856107a6565b818452601f1961184b83610848565b0136602086013783602001906119b3565b805115611724576000906020810190815161187681611944565b8101809111610e2457915190518101809111610e245791905b82811061189c5750905090565b6118a5816118be565b8101809111610e24576118b89091611621565b9061188f565b805160001a9060808210156118d4575050600190565b60b88210156118ef57506118ea61039691611799565b611606565b9060c08110156119135760b51991600160b783602003016101000a91015104010190565b9060f882101561192a57506118ea6103969161178a565b60010151602082900360f7016101000a90040160f5190190565b5160001a60808110156119575750600090565b60b88110801561198e575b1561196d5750600190565b60c0811015611982576118ea610396916117d4565b6118ea610396916117c5565b5060c08110158015611962575060f88110611962565b601f8111610e24576101000a90565b929091928315611a2a5792915b6020938484106119f55780518252848101809111610e2457938101809111610e245791601f198101908111610e2457916119c0565b9193509180611a0357505050565b611a17611a12611a1c926117a8565b6119a4565b6117b6565b905182518216911916179052565b5091505056fea2646970667358221220b629ac78b6d4b32310be6770abda08ad305ad54a23897fa355b4f313fa3ac82f64736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/verifiers/ReceiptVerifier.sol:ReceiptVerifier",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 1509,
+        "contract": "contracts/verifiers/ReceiptVerifier.sol:ReceiptVerifier",
+        "label": "verifierAddresses",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_uint64,t_address)"
+      },
+      {
+        "astId": 1511,
+        "contract": "contracts/verifiers/ReceiptVerifier.sol:ReceiptVerifier",
+        "label": "blockChunks",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint64,t_address)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  }
+}

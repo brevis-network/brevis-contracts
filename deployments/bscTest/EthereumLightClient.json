@@ -1,0 +1,1798 @@
+{
+  "address": "0x300005c79c1c47e2b7d4741584A2eeDCc4cb94bc",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "genesisTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "genesisValidatorsRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "_forkEpochs",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "bytes4[]",
+          "name": "_forkVersions",
+          "type": "bytes4[]"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_finalizedSlot",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "syncCommitteeRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "syncCommitteePoseidonRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "_zkVerifier",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "slot",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "executionStateRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "FinalityUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes4",
+          "name": "forkVersion",
+          "type": "bytes4"
+        }
+      ],
+      "name": "ForkVersionUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "slot",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "executionStateRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "OptimisticUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "sszRoot",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "poseidonRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "SyncCommitteeUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "bestValidUpdate",
+      "outputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "slot",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "proposerIndex",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "parentRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "stateRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "bodyRoot",
+                  "type": "bytes32"
+                }
+              ],
+              "internalType": "struct BeaconBlockHeader",
+              "name": "beacon",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "stateRoot",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "blockHash",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "blockNumber",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct ExecutionPayload",
+              "name": "execution",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "bytes32",
+                  "name": "leaf",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32[]",
+                  "name": "branch",
+                  "type": "bytes32[]"
+                }
+              ],
+              "internalType": "struct LeafWithBranch",
+              "name": "executionRoot",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct HeaderWithExecution",
+          "name": "attestedHeader",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "slot",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "proposerIndex",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "parentRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "stateRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "bodyRoot",
+                  "type": "bytes32"
+                }
+              ],
+              "internalType": "struct BeaconBlockHeader",
+              "name": "beacon",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "stateRoot",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "blockHash",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "blockNumber",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct ExecutionPayload",
+              "name": "execution",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "bytes32",
+                  "name": "leaf",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32[]",
+                  "name": "branch",
+                  "type": "bytes32[]"
+                }
+              ],
+              "internalType": "struct LeafWithBranch",
+              "name": "executionRoot",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct HeaderWithExecution",
+          "name": "finalizedHeader",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "nextSyncCommitteeRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "nextSyncCommitteePoseidonRoot",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256[2]",
+              "name": "a",
+              "type": "uint256[2]"
+            },
+            {
+              "internalType": "uint256[2][2]",
+              "name": "b",
+              "type": "uint256[2][2]"
+            },
+            {
+              "internalType": "uint256[2]",
+              "name": "c",
+              "type": "uint256[2]"
+            },
+            {
+              "internalType": "uint256[2]",
+              "name": "commitment",
+              "type": "uint256[2]"
+            }
+          ],
+          "internalType": "struct IBeaconVerifier.Proof",
+          "name": "nextSyncCommitteeRootMappingProof",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "participation",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "poseidonRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "commitment",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "commitment",
+                  "type": "uint256[2]"
+                }
+              ],
+              "internalType": "struct IBeaconVerifier.Proof",
+              "name": "proof",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SyncAggregate",
+          "name": "syncAggregate",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint64",
+          "name": "signatureSlot",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "forkVersion",
+          "type": "bytes4"
+        }
+      ],
+      "name": "computeDomain",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "slot",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "proposerIndex",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "parentRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "stateRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "bodyRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct BeaconBlockHeader",
+          "name": "header",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "domain",
+          "type": "bytes32"
+        }
+      ],
+      "name": "computeSigningRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentSyncCommitteePoseidonRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentSyncCommitteeRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "finalizedExecutionStateRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "finalizedExecutionStateRootAndSlot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "slot",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "finalizedSlot",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "forkEpochs",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "forkVersions",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestFinalizedSlotAndCommitteeRoots",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "slot",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "currentRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "nextRoot",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextSyncCommitteePoseidonRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextSyncCommitteeRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "optimisticExecutionStateRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "optimisticExecutionStateRootAndSlot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "slot",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "optimisticSlot",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "processLightClientForceUpdate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint64",
+                      "name": "slot",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "uint64",
+                      "name": "proposerIndex",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "parentRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "stateRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "bodyRoot",
+                      "type": "bytes32"
+                    }
+                  ],
+                  "internalType": "struct BeaconBlockHeader",
+                  "name": "beacon",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "stateRoot",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockHash",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockNumber",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct ExecutionPayload",
+                  "name": "execution",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "executionRoot",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct HeaderWithExecution",
+              "name": "attestedHeader",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint64",
+                      "name": "slot",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "uint64",
+                      "name": "proposerIndex",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "parentRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "stateRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "bodyRoot",
+                      "type": "bytes32"
+                    }
+                  ],
+                  "internalType": "struct BeaconBlockHeader",
+                  "name": "beacon",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "stateRoot",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockHash",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockNumber",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct ExecutionPayload",
+                  "name": "execution",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "executionRoot",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct HeaderWithExecution",
+              "name": "finalizedHeader",
+              "type": "tuple"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "finalityBranch",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "nextSyncCommitteeRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "nextSyncCommitteeBranch",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "nextSyncCommitteePoseidonRoot",
+              "type": "bytes32"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "commitment",
+                  "type": "uint256[2]"
+                }
+              ],
+              "internalType": "struct IBeaconVerifier.Proof",
+              "name": "nextSyncCommitteeRootMappingProof",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "participation",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "poseidonRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "commitment",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "a",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2][2]",
+                      "name": "b",
+                      "type": "uint256[2][2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "c",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "commitment",
+                      "type": "uint256[2]"
+                    }
+                  ],
+                  "internalType": "struct IBeaconVerifier.Proof",
+                  "name": "proof",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SyncAggregate",
+              "name": "syncAggregate",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint64",
+              "name": "signatureSlot",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct LightClientUpdate",
+          "name": "update",
+          "type": "tuple"
+        }
+      ],
+      "name": "processLightClientUpdate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes4",
+          "name": "forkVersion",
+          "type": "bytes4"
+        }
+      ],
+      "name": "updateForkVersion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "signatureSlot",
+          "type": "uint64"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "slot",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "proposerIndex",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "parentRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "stateRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "bodyRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct BeaconBlockHeader",
+          "name": "header",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "participation",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "poseidonRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "commitment",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "commitment",
+                  "type": "uint256[2]"
+                }
+              ],
+              "internalType": "struct IBeaconVerifier.Proof",
+              "name": "proof",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SyncAggregate",
+          "name": "syncAggregate",
+          "type": "tuple"
+        }
+      ],
+      "name": "verifyCommitteeSignature",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "zkVerifier",
+      "outputs": [
+        {
+          "internalType": "contract IBeaconVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xf0b712f0b04e236704eef694a4f2b7732e2de9b9f7c187e8d92932d6038ba5f2",
+  "receipt": {
+    "to": null,
+    "from": "0x9532f934EfcE6c4Bf5BA078b25fDd81a780FBdfB",
+    "contractAddress": "0x300005c79c1c47e2b7d4741584A2eeDCc4cb94bc",
+    "transactionIndex": 3,
+    "gasUsed": "4217596",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000100000000000000000000000000000000000100200000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000020040000000000000000000000000000000000000000000000000800000000000000",
+    "blockHash": "0x273a88952d6ffde5a4d13422bcf6ec5e116a07af856adfcd308e0b21de1ddcd1",
+    "transactionHash": "0xf0b712f0b04e236704eef694a4f2b7732e2de9b9f7c187e8d92932d6038ba5f2",
+    "logs": [
+      {
+        "transactionIndex": 3,
+        "blockNumber": 30214120,
+        "transactionHash": "0xf0b712f0b04e236704eef694a4f2b7732e2de9b9f7c187e8d92932d6038ba5f2",
+        "address": "0x300005c79c1c47e2b7d4741584A2eeDCc4cb94bc",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000009532f934efce6c4bf5ba078b25fdd81a780fbdfb"
+        ],
+        "data": "0x",
+        "logIndex": 13,
+        "blockHash": "0x273a88952d6ffde5a4d13422bcf6ec5e116a07af856adfcd308e0b21de1ddcd1"
+      }
+    ],
+    "blockNumber": 30214120,
+    "cumulativeGasUsed": "5127228",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    1606824023,
+    "0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95",
+    [
+      0,
+      74240,
+      144896,
+      194048
+    ],
+    [
+      "0x00000000",
+      "0x01000000",
+      "0x02000000",
+      "0x03000000"
+    ],
+    6513843,
+    "0xdfd73daafb81c19816db1c8d74639b64c40e0e986a9bad4fb0156b6a45bdb734",
+    "0x0f51f5a9fbce6ada1dafcae5325588c7260b1e452e9821e59df45fa396bd37f2",
+    "0xb77b728B4766d48c8757f80B3669b5eBF034963E"
+  ],
+  "numDeployments": 5,
+  "solcInputHash": "7d436983b9105fa11c99b67b99048ba9",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"genesisTime\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"genesisValidatorsRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64[]\",\"name\":\"_forkEpochs\",\"type\":\"uint64[]\"},{\"internalType\":\"bytes4[]\",\"name\":\"_forkVersions\",\"type\":\"bytes4[]\"},{\"internalType\":\"uint64\",\"name\":\"_finalizedSlot\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"syncCommitteeRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"syncCommitteePoseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_zkVerifier\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"slot\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"executionStateRoot\",\"type\":\"bytes32\"}],\"name\":\"FinalityUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes4\",\"name\":\"forkVersion\",\"type\":\"bytes4\"}],\"name\":\"ForkVersionUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"slot\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"executionStateRoot\",\"type\":\"bytes32\"}],\"name\":\"OptimisticUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"period\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"sszRoot\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"}],\"name\":\"SyncCommitteeUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"bestValidUpdate\",\"outputs\":[{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"attestedHeader\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"finalizedHeader\",\"type\":\"tuple\"},{\"internalType\":\"bytes32\",\"name\":\"nextSyncCommitteeRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"nextSyncCommitteePoseidonRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"nextSyncCommitteeRootMappingProof\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"participation\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"struct SyncAggregate\",\"name\":\"syncAggregate\",\"type\":\"tuple\"},{\"internalType\":\"uint64\",\"name\":\"signatureSlot\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"forkVersion\",\"type\":\"bytes4\"}],\"name\":\"computeDomain\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"header\",\"type\":\"tuple\"},{\"internalType\":\"bytes32\",\"name\":\"domain\",\"type\":\"bytes32\"}],\"name\":\"computeSigningRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentSyncCommitteePoseidonRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentSyncCommitteeRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"finalizedExecutionStateRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"finalizedExecutionStateRootAndSlot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"finalizedSlot\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"forkEpochs\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"forkVersions\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"latestFinalizedSlotAndCommitteeRoots\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"currentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"nextRoot\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"nextSyncCommitteePoseidonRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"nextSyncCommitteeRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"optimisticExecutionStateRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"optimisticExecutionStateRootAndSlot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"optimisticSlot\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"processLightClientForceUpdate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"attestedHeader\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"finalizedHeader\",\"type\":\"tuple\"},{\"internalType\":\"bytes32[]\",\"name\":\"finalityBranch\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes32\",\"name\":\"nextSyncCommitteeRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"nextSyncCommitteeBranch\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes32\",\"name\":\"nextSyncCommitteePoseidonRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"nextSyncCommitteeRootMappingProof\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"participation\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"struct SyncAggregate\",\"name\":\"syncAggregate\",\"type\":\"tuple\"},{\"internalType\":\"uint64\",\"name\":\"signatureSlot\",\"type\":\"uint64\"}],\"internalType\":\"struct LightClientUpdate\",\"name\":\"update\",\"type\":\"tuple\"}],\"name\":\"processLightClientUpdate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"bytes4\",\"name\":\"forkVersion\",\"type\":\"bytes4\"}],\"name\":\"updateForkVersion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"signatureSlot\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"header\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"participation\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"struct SyncAggregate\",\"name\":\"syncAggregate\",\"type\":\"tuple\"}],\"name\":\"verifyCommitteeSignature\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"zkVerifier\",\"outputs\":[{\"internalType\":\"contract IBeaconVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"computeDomain(bytes4)\":{\"notice\":\"https://github.com/ethereum/consensus-specs/blob/dev/specs/phase0/beacon-chain.md#compute_domain\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/light-client/EthereumLightClient.sol\":\"EthereumLightClient\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/light-client/EthereumLightClient.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\nimport \\\"./interfaces/IEthereumLightClient.sol\\\";\\nimport \\\"./LightClientStore.sol\\\";\\nimport \\\"./common/Helpers.sol\\\";\\nimport \\\"./common/Constants.sol\\\";\\nimport \\\"./common/Types.sol\\\";\\n\\ncontract EthereumLightClient is IEthereumLightClient, LightClientStore, Ownable {\\n    event OptimisticUpdate(uint256 slot, bytes32 executionStateRoot);\\n    event FinalityUpdate(uint256 slot, bytes32 executionStateRoot);\\n    event SyncCommitteeUpdated(uint256 period, bytes32 sszRoot, bytes32 poseidonRoot);\\n    event ForkVersionUpdated(uint64 epoch, bytes4 forkVersion);\\n\\n    constructor(\\n        uint256 genesisTime,\\n        bytes32 genesisValidatorsRoot,\\n        uint64[] memory _forkEpochs,\\n        bytes4[] memory _forkVersions,\\n        uint64 _finalizedSlot,\\n        bytes32 syncCommitteeRoot,\\n        bytes32 syncCommitteePoseidonRoot,\\n        address _zkVerifier\\n    )\\n        LightClientStore(\\n            genesisTime,\\n            genesisValidatorsRoot,\\n            _forkEpochs,\\n            _forkVersions,\\n            _finalizedSlot,\\n            syncCommitteeRoot,\\n            syncCommitteePoseidonRoot,\\n            _zkVerifier\\n        )\\n    {}\\n\\n    function latestFinalizedSlotAndCommitteeRoots()\\n        external\\n        view\\n        returns (uint64 slot, bytes32 currentRoot, bytes32 nextRoot)\\n    {\\n        return (finalizedSlot, currentSyncCommitteeRoot, nextSyncCommitteeRoot);\\n    }\\n\\n    function optimisticExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot) {\\n        return (optimisticExecutionStateRoot, optimisticSlot);\\n    }\\n\\n    function finalizedExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot) {\\n        return (finalizedExecutionStateRoot, finalizedSlot);\\n    }\\n\\n    function updateForkVersion(uint64 epoch, bytes4 forkVersion) external onlyOwner {\\n        require(forkVersion != bytes4(0), \\\"bad fork version\\\");\\n        forkEpochs.push(epoch);\\n        forkVersions.push(forkVersion);\\n        emit ForkVersionUpdated(epoch, forkVersion);\\n    }\\n\\n    function processLightClientForceUpdate() external onlyOwner {\\n        require(currentSlot() > finalizedSlot + UPDATE_TIMEOUT, \\\"timeout not passed\\\");\\n        require(bestValidUpdate.attestedHeader.beacon.slot > 0, \\\"no best valid update\\\");\\n\\n        // Forced best update when the update timeout has elapsed.\\n        // Because the apply logic waits for finalizedHeader.beacon.slot to indicate sync committee fin,\\n        // the attestedHeader may be treated as finalizedHeader in extended periods of non-fin\\n        // to guarantee progression into later sync committee periods according to isBetterUpdate().\\n        if (bestValidUpdate.finalizedHeader.beacon.slot <= finalizedSlot) {\\n            bestValidUpdate.finalizedHeader = bestValidUpdate.attestedHeader;\\n        }\\n        applyFinalityUpdate(bestValidUpdate);\\n        delete bestValidUpdate;\\n    }\\n\\n    function processLightClientUpdate(LightClientUpdate memory update) public {\\n        bool quorumReached = hasSupermajority(update.syncAggregate.participation);\\n        bool betterUpdate = isBetterUpdate(update, bestValidUpdate);\\n        require(betterUpdate || quorumReached, \\\"quorum not reached\\\");\\n        validateLightClientUpdate(update);\\n\\n        // Update the best update in case we have to force-update to it if the timeout elapses\\n        if (betterUpdate) {\\n            bestValidUpdate = update;\\n        }\\n        // Apply optimistic update\\n        if (quorumReached && update.attestedHeader.beacon.slot > optimisticSlot) {\\n            applyOptimisticUpdate(update);\\n        }\\n        // Apply finality update\\n        if (\\n            quorumReached &&\\n            (update.finalizedHeader.beacon.slot > finalizedSlot ||\\n                (hasNextSyncCommittee(update) && nextSyncCommitteeRoot == bytes32(0)))\\n        ) {\\n            applyFinalityUpdate(update);\\n            delete bestValidUpdate;\\n        }\\n    }\\n\\n    function validateLightClientUpdate(LightClientUpdate memory update) private view {\\n        // Verify sync committee has sufficient participants\\n        require(update.syncAggregate.participation > MIN_SYNC_COMMITTEE_PARTICIPANTS, \\\"not enough participation\\\");\\n        // Verify update does not skip a sync committee period\\n        require(\\n            currentSlot() > update.attestedHeader.beacon.slot &&\\n                update.attestedHeader.beacon.slot > update.finalizedHeader.beacon.slot,\\n            \\\"bad slot\\\"\\n        );\\n        uint64 storePeriod = computeSyncCommitteePeriodAtSlot(finalizedSlot);\\n\\n        // Verify update is relavant\\n        uint64 updateAttestedPeriod = computeSyncCommitteePeriodAtSlot(update.attestedHeader.beacon.slot);\\n        bool updateHasNextSyncCommittee = nextSyncCommitteeRoot == bytes32(0) &&\\n            hasNextSyncCommitteeProof(update) &&\\n            updateAttestedPeriod == storePeriod;\\n        // Since sync committee update prefers older header (see isBetterUpdate), an update either\\n        // needs to have a newer header or it should have sync committee update.\\n        require(\\n            update.attestedHeader.beacon.slot > finalizedSlot || updateHasNextSyncCommittee,\\n            \\\"bad att slot or committee\\\"\\n        );\\n\\n        // Verify that the finalityBranch, if present, confirms finalizedHeader\\n        // to match the finalized checkpoint root saved in the state of attestedHeader.\\n        // Note that the genesis finalized checkpoint root is represented as a zero hash.\\n        if (!hasFinalityProof(update)) {\\n            require(isEmpty(update.finalizedHeader), \\\"no fin proof\\\");\\n        } else {\\n            // genesis block header\\n            if (update.finalizedHeader.beacon.slot == 0) {\\n                require(isEmpty(update.finalizedHeader), \\\"genesis header should be empty\\\");\\n            } else {\\n                bool isValidFinalityProof = Helpers.isValidMerkleBranch(\\n                    Helpers.hashTreeRoot(update.finalizedHeader.beacon),\\n                    update.finalityBranch,\\n                    FINALIZED_ROOT_INDEX,\\n                    update.attestedHeader.beacon.stateRoot\\n                );\\n                require(isValidFinalityProof, \\\"bad fin proof\\\");\\n                verifyExecutionPayload(update.finalizedHeader, \\\"finalized\\\");\\n            }\\n        }\\n\\n        // Verify that the update's nextSyncCommittee, if present, actually is the next sync committee\\n        // saved in the state of the update's attested header\\n        if (!hasNextSyncCommitteeProof(update)) {\\n            require(\\n                update.nextSyncCommitteeRoot == bytes32(0) && update.nextSyncCommitteePoseidonRoot == bytes32(0),\\n                \\\"no next sync committee proof\\\"\\n            );\\n        } else {\\n            if (updateAttestedPeriod == storePeriod && nextSyncCommitteeRoot != bytes32(0)) {\\n                require(update.nextSyncCommitteeRoot == nextSyncCommitteeRoot, \\\"bad next sync committee\\\");\\n            }\\n            bool validSyncCommitteeProof = Helpers.isValidMerkleBranch(\\n                update.nextSyncCommitteeRoot,\\n                update.nextSyncCommitteeBranch,\\n                NEXT_SYNC_COMMITTEE_INDEX,\\n                update.attestedHeader.beacon.stateRoot\\n            );\\n            require(validSyncCommitteeProof, \\\"bad next sync committee proof\\\");\\n            bool validCommitteeRootMappingProof = zkVerifier.verifySyncCommitteeRootMappingProof(\\n                update.nextSyncCommitteeRoot,\\n                update.nextSyncCommitteePoseidonRoot,\\n                update.nextSyncCommitteeRootMappingProof\\n            );\\n            require(validCommitteeRootMappingProof, \\\"bad next sync committee root mapping proof\\\");\\n        }\\n\\n        // Verify optimistic execution payload\\n        verifyExecutionPayload(update.attestedHeader, \\\"optimistic\\\");\\n\\n        // Verify sync committee signature ZK proof\\n        verifyCommitteeSignature(update.signatureSlot, update.attestedHeader.beacon, update.syncAggregate);\\n    }\\n\\n    function verifyCommitteeSignature(\\n        uint64 signatureSlot,\\n        BeaconBlockHeader memory header,\\n        SyncAggregate memory syncAggregate\\n    ) public view {\\n        uint64 storePeriod = computeSyncCommitteePeriodAtSlot(finalizedSlot);\\n        uint64 updateSigPeriod = computeSyncCommitteePeriodAtSlot(signatureSlot);\\n        if (nextSyncCommitteeRoot != bytes32(0)) {\\n            require(updateSigPeriod == storePeriod || updateSigPeriod == storePeriod + 1, \\\"bad sig period 2\\\");\\n        } else {\\n            require(updateSigPeriod == storePeriod, \\\"bad sig period 1\\\");\\n        }\\n\\n        bytes4 forkVersion = computeForkVersion(computeEpochAtSlot(signatureSlot));\\n        bytes32 domain = computeDomain(forkVersion);\\n        bytes32 signingRoot = computeSigningRoot(header, domain);\\n        bytes32 activeSyncCommitteePoseidonRoot;\\n        if (updateSigPeriod == storePeriod) {\\n            require(currentSyncCommitteePoseidonRoot == syncAggregate.poseidonRoot, \\\"bad poseidon root\\\");\\n            activeSyncCommitteePoseidonRoot = currentSyncCommitteePoseidonRoot;\\n        } else {\\n            require(nextSyncCommitteePoseidonRoot == syncAggregate.poseidonRoot, \\\"bad poseidon root\\\");\\n            activeSyncCommitteePoseidonRoot = nextSyncCommitteePoseidonRoot;\\n        }\\n        require(\\n            zkVerifier.verifySignatureProof(\\n                signingRoot,\\n                activeSyncCommitteePoseidonRoot,\\n                syncAggregate.participation,\\n                syncAggregate.commitment,\\n                syncAggregate.proof\\n            ),\\n            \\\"bad bls sig proof\\\"\\n        );\\n    }\\n\\n    function verifyExecutionPayload(HeaderWithExecution memory h, string memory name) private pure {\\n        ExecutionPayload memory exec = h.execution;\\n        bool valid = Helpers.isValidMerkleBranch(h.executionRoot, EXECUTION_PAYLOAD_ROOT_INDEX, h.beacon.bodyRoot);\\n        require(valid, string.concat(\\\"bad exec root proof \\\", name));\\n        valid = Helpers.isValidMerkleBranch(exec.stateRoot, EXECUTION_STATE_ROOT_LOCAL_INDEX, h.executionRoot.leaf);\\n        require(valid, string.concat(\\\"bad exec state root proof \\\", name));\\n    }\\n\\n    function applyOptimisticUpdate(LightClientUpdate memory update) private {\\n        HeaderWithExecution memory h = update.attestedHeader;\\n        bytes32 stateRoot = h.execution.stateRoot.leaf;\\n        optimisticExecutionStateRoot = stateRoot;\\n        optimisticSlot = h.beacon.slot;\\n        emit OptimisticUpdate(h.beacon.slot, stateRoot);\\n    }\\n\\n    function applyFinalityUpdate(LightClientUpdate memory update) private {\\n        uint64 updateSlot = update.finalizedHeader.beacon.slot;\\n        uint64 storePeriod = computeSyncCommitteePeriodAtSlot(finalizedSlot);\\n        uint64 updateFinalizedPeriod = computeSyncCommitteePeriodAtSlot(updateSlot);\\n        if (nextSyncCommitteeRoot == bytes32(0)) {\\n            require(updateFinalizedPeriod == storePeriod, \\\"mismatch period\\\");\\n            nextSyncCommitteeRoot = update.nextSyncCommitteeRoot;\\n            nextSyncCommitteePoseidonRoot = update.nextSyncCommitteePoseidonRoot;\\n            emit SyncCommitteeUpdated(updateFinalizedPeriod + 1, nextSyncCommitteeRoot, nextSyncCommitteePoseidonRoot);\\n        } else if (updateFinalizedPeriod == storePeriod + 1) {\\n            currentSyncCommitteeRoot = nextSyncCommitteeRoot;\\n            currentSyncCommitteePoseidonRoot = nextSyncCommitteePoseidonRoot;\\n            nextSyncCommitteeRoot = update.nextSyncCommitteeRoot;\\n            nextSyncCommitteePoseidonRoot = update.nextSyncCommitteePoseidonRoot;\\n            emit SyncCommitteeUpdated(updateFinalizedPeriod + 1, nextSyncCommitteeRoot, nextSyncCommitteePoseidonRoot);\\n        }\\n        bytes32 updateExecStateRoot = update.finalizedHeader.execution.stateRoot.leaf;\\n        if (updateSlot > finalizedSlot) {\\n            finalizedExecutionStateRoot = updateExecStateRoot;\\n            finalizedSlot = updateSlot;\\n            emit FinalityUpdate(updateSlot, updateExecStateRoot);\\n            return;\\n        }\\n    }\\n\\n    /*\\n     * https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/sync-protocol.md#is_better_update\\n     */\\n    function isBetterUpdate(\\n        LightClientUpdate memory newUpdate,\\n        LightClientUpdate memory oldUpdate\\n    ) private pure returns (bool) {\\n        // Old update doesn't exist\\n        if (oldUpdate.syncAggregate.participation == 0) {\\n            return newUpdate.syncAggregate.participation > 0;\\n        }\\n\\n        // Compare supermajority (> 2/3) sync committee participation\\n        bool newHasSupermajority = hasSupermajority(newUpdate.syncAggregate.participation);\\n        bool oldHasSupermajority = hasSupermajority(oldUpdate.syncAggregate.participation);\\n        if (newHasSupermajority != oldHasSupermajority) {\\n            // the new update is a better one if new has supermajority but old doesn't\\n            return newHasSupermajority && !oldHasSupermajority;\\n        }\\n        if (!newHasSupermajority && newUpdate.syncAggregate.participation != oldUpdate.syncAggregate.participation) {\\n            // a better update is the one with higher participation when both new and old doesn't have supermajority\\n            return newUpdate.syncAggregate.participation > oldUpdate.syncAggregate.participation;\\n        }\\n\\n        // Compare presence of relevant sync committee\\n        bool newHasSyncCommittee = hasRelavantSyncCommittee(newUpdate);\\n        bool oldHasSyncCommittee = hasRelavantSyncCommittee(oldUpdate);\\n        if (newHasSyncCommittee != oldHasSyncCommittee) {\\n            return newHasSyncCommittee;\\n        }\\n\\n        // Compare indication of any fin\\n        bool newHasFinality = hasFinalityProof(newUpdate);\\n        bool oldHasFinality = hasFinalityProof(oldUpdate);\\n        if (newHasFinality != oldHasFinality) {\\n            return newHasFinality;\\n        }\\n\\n        // Compare sync committee fin\\n        if (newHasFinality) {\\n            bool newHasCommitteeFinality = computeSyncCommitteePeriodAtSlot(newUpdate.finalizedHeader.beacon.slot) ==\\n                computeSyncCommitteePeriodAtSlot(newUpdate.attestedHeader.beacon.slot);\\n            bool oldHasCommitteeFinality = computeSyncCommitteePeriodAtSlot(oldUpdate.finalizedHeader.beacon.slot) ==\\n                computeSyncCommitteePeriodAtSlot(oldUpdate.attestedHeader.beacon.slot);\\n            if (newHasCommitteeFinality != oldHasCommitteeFinality) {\\n                return newHasCommitteeFinality;\\n            }\\n        }\\n\\n        // Tiebreaker 1: Sync committee participation beyond supermajority\\n        if (newUpdate.syncAggregate.participation != oldUpdate.syncAggregate.participation) {\\n            return newUpdate.syncAggregate.participation > oldUpdate.syncAggregate.participation;\\n        }\\n\\n        // Tiebreaker 2: Prefer older data (fewer changes to best)\\n        if (newUpdate.attestedHeader.beacon.slot != oldUpdate.attestedHeader.beacon.slot) {\\n            return newUpdate.attestedHeader.beacon.slot < oldUpdate.attestedHeader.beacon.slot;\\n        }\\n\\n        return newUpdate.signatureSlot < oldUpdate.signatureSlot;\\n    }\\n\\n    function hasRelavantSyncCommittee(LightClientUpdate memory update) private pure returns (bool) {\\n        return\\n            hasNextSyncCommitteeProof(update) &&\\n            computeSyncCommitteePeriodAtSlot(update.attestedHeader.beacon.slot) ==\\n            computeSyncCommitteePeriodAtSlot(update.signatureSlot);\\n    }\\n\\n    function hasNextSyncCommitteeProof(LightClientUpdate memory update) private pure returns (bool) {\\n        return update.nextSyncCommitteeBranch.length > 0;\\n    }\\n\\n    function hasNextSyncCommittee(LightClientUpdate memory update) private pure returns (bool) {\\n        return\\n            hasNextSyncCommitteeProof(update) &&\\n            hasFinalityProof(update) &&\\n            computeSyncCommitteePeriodAtSlot(update.finalizedHeader.beacon.slot) ==\\n            computeSyncCommitteePeriodAtSlot(update.attestedHeader.beacon.slot);\\n    }\\n\\n    function hasFinalityProof(LightClientUpdate memory update) private pure returns (bool) {\\n        return update.finalityBranch.length > 0;\\n    }\\n\\n    function hasSupermajority(uint64 participation) private pure returns (bool) {\\n        return participation * 3 >= SYNC_COMMITTEE_SIZE * 2;\\n    }\\n\\n    function currentSlot() private view returns (uint64) {\\n        return uint64((block.timestamp - GENESIS_TIME) / SLOT_LENGTH_SECONDS);\\n    }\\n\\n    function computeForkVersion(uint64 epoch) private view returns (bytes4) {\\n        for (uint256 i = forkVersions.length - 1; i >= 0; i--) {\\n            if (epoch >= forkEpochs[i]) {\\n                return forkVersions[i];\\n            }\\n        }\\n        revert(\\\"fork versions not set\\\");\\n    }\\n\\n    function computeSyncCommitteePeriodAtSlot(uint64 slot) private pure returns (uint64) {\\n        return computeSyncCommitteePeriod(computeEpochAtSlot(slot));\\n    }\\n\\n    function computeEpochAtSlot(uint64 slot) private pure returns (uint64) {\\n        return slot / SLOTS_PER_EPOCH;\\n    }\\n\\n    function computeSyncCommitteePeriod(uint64 epoch) private pure returns (uint64) {\\n        return epoch / EPOCHS_PER_SYNC_COMMITTEE_PERIOD;\\n    }\\n\\n    /**\\n     * https://github.com/ethereum/consensus-specs/blob/dev/specs/phase0/beacon-chain.md#compute_domain\\n     */\\n    function computeDomain(bytes4 forkVersion) public view returns (bytes32) {\\n        return DOMAIN_SYNC_COMMITTEE | (sha256(abi.encode(forkVersion, GENESIS_VALIDATOR_ROOT)) >> 32);\\n    }\\n\\n    // computeDomain(forkVersion, genesisValidatorsRoot)\\n    function computeSigningRoot(BeaconBlockHeader memory header, bytes32 domain) public pure returns (bytes32) {\\n        return sha256(bytes.concat(Helpers.hashTreeRoot(header), domain));\\n    }\\n}\\n\",\"keccak256\":\"0xc426384730d94111f6b93a476a005620cf67cf29b1a9426fcc1b11575a3c1421\",\"license\":\"MIT\"},\"contracts/light-client/LightClientStore.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"./common/Types.sol\\\";\\nimport \\\"../verifiers/interfaces/IBeaconVerifier.sol\\\";\\n\\nabstract contract LightClientStore {\\n    // beacon chain genesis information\\n    uint256 immutable GENESIS_TIME;\\n    bytes32 immutable GENESIS_VALIDATOR_ROOT;\\n\\n    uint64 public finalizedSlot;\\n    bytes32 public finalizedExecutionStateRoot;\\n\\n    uint64 public optimisticSlot;\\n    bytes32 public optimisticExecutionStateRoot;\\n\\n    bytes32 public currentSyncCommitteeRoot;\\n    bytes32 public currentSyncCommitteePoseidonRoot;\\n    bytes32 public nextSyncCommitteeRoot;\\n    bytes32 public nextSyncCommitteePoseidonRoot;\\n\\n    LightClientUpdate public bestValidUpdate;\\n\\n    // fork versions\\n    uint64[] public forkEpochs;\\n    bytes4[] public forkVersions;\\n\\n    // zk verifier\\n    IBeaconVerifier public zkVerifier; // contract too big. need to move this one out\\n\\n    constructor(\\n        uint256 genesisTime,\\n        bytes32 genesisValidatorsRoot,\\n        uint64[] memory _forkEpochs,\\n        bytes4[] memory _forkVersions,\\n        uint64 _finalizedSlot,\\n        bytes32 syncCommitteeRoot,\\n        bytes32 syncCommitteePoseidonRoot,\\n        address _zkVerifier\\n    ) {\\n        GENESIS_TIME = genesisTime;\\n        GENESIS_VALIDATOR_ROOT = genesisValidatorsRoot;\\n        forkEpochs = _forkEpochs;\\n        forkVersions = _forkVersions;\\n        finalizedSlot = _finalizedSlot;\\n        currentSyncCommitteeRoot = syncCommitteeRoot;\\n        currentSyncCommitteePoseidonRoot = syncCommitteePoseidonRoot;\\n        zkVerifier = IBeaconVerifier(_zkVerifier);\\n    }\\n}\\n\",\"keccak256\":\"0x6f9300c439a7ef33588c9669ca30e4fd767b6a96bdeb349607e6ba32fa410bb2\",\"license\":\"MIT\"},\"contracts/light-client/common/Constants.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\n// light client security params\\nuint256 constant MIN_SYNC_COMMITTEE_PARTICIPANTS = 1;\\nuint256 constant UPDATE_TIMEOUT = 86400;\\n\\n// beacon chain constants\\nuint256 constant FINALIZED_ROOT_INDEX = 105;\\nuint256 constant NEXT_SYNC_COMMITTEE_INDEX = 55;\\nuint256 constant SYNC_COMMITTEE_SIZE = 512;\\nuint64 constant SLOTS_PER_EPOCH = 32;\\nuint64 constant EPOCHS_PER_SYNC_COMMITTEE_PERIOD = 256;\\nbytes32 constant DOMAIN_SYNC_COMMITTEE = bytes32(uint256(0x07) << 248);\\nuint256 constant SLOT_LENGTH_SECONDS = 12;\\n\\n// https://github.com/ethereum/consensus-specs/blob/dev/specs/capella/light-client/sync-protocol.md\\n// beaconBodyRoot -> stateRoot gindex: 2 << 7 | 9 * 2 << 3 | 2\\nuint256 constant EXECUTION_STATE_ROOT_INDEX = 402;\\n// beaconBodyRoot -> blockHash gindex: 2 << 7 | 9 * 2 << 3 | 12\\nuint256 constant EXECUTION_BLOCK_HASH_INDEX = 412;\\n\\n// the following indices are gindices counting from the executionPayloadRoot\\n// beaconBodyRoot -> executionPayloadRoot gindex: 2 << 4 | 9\\nuint256 constant EXECUTION_PAYLOAD_ROOT_INDEX = 25;\\n// executionPayloadRoot -> stateRoot gindex: 2 << 4 | 2\\nuint256 constant EXECUTION_STATE_ROOT_LOCAL_INDEX = 18;\\n// executionPayloadRoot -> blockNumber gindex: 2 << 4 | 6\\nuint256 constant EXECUTION_BLOCK_NUMBER_LOCAL_INDEX = 22;\\n// executionPayloadRoot -> blockHash gindex: 2 << 4 | 12\\nuint256 constant EXECUTION_BLOCK_HASH_LOCAL_INDEX = 28;\\n\",\"keccak256\":\"0xfff6b15056895cc970f6327ace9a5e86f849a1dc8177297de3b84d3e895774c5\",\"license\":\"MIT\"},\"contracts/light-client/common/Helpers.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"./Types.sol\\\";\\n\\nlibrary Helpers {\\n    function isValidMerkleBranch(LeafWithBranch memory lwb, uint256 index, bytes32 root) internal pure returns (bool) {\\n        bytes32 restoredMerkleRoot = restoreMerkleRoot(lwb.leaf, lwb.branch, index);\\n        return root == restoredMerkleRoot;\\n    }\\n\\n    function isValidMerkleBranch(\\n        bytes32 leaf,\\n        bytes32[] memory branch,\\n        uint256 index,\\n        bytes32 root\\n    ) internal pure returns (bool) {\\n        bytes32 restoredMerkleRoot = restoreMerkleRoot(leaf, branch, index);\\n        return root == restoredMerkleRoot;\\n    }\\n\\n    function concatMerkleBranches(bytes32[] memory a, bytes32[] memory b) internal pure returns (bytes32[] memory) {\\n        bytes32[] memory c = new bytes32[](a.length + b.length);\\n        for (uint256 i = 0; i < a.length + b.length; i++) {\\n            if (i < a.length) {\\n                c[i] = a[i];\\n            } else {\\n                c[i] = b[i - a.length];\\n            }\\n        }\\n        return c;\\n    }\\n\\n    function restoreMerkleRoot(bytes32 leaf, bytes32[] memory branch, uint256 index) internal pure returns (bytes32) {\\n        bytes32 value = leaf;\\n        for (uint256 i = 0; i < branch.length; i++) {\\n            if ((index / (2 ** i)) % 2 == 1) {\\n                value = sha256(bytes.concat(branch[i], value));\\n            } else {\\n                value = sha256(bytes.concat(value, branch[i]));\\n            }\\n        }\\n        return value;\\n    }\\n\\n    function hashTreeRoot(BeaconBlockHeader memory header) internal pure returns (bytes32) {\\n        bytes32 left = sha256(\\n            bytes.concat(\\n                sha256(bytes.concat(bytes32(revertEndian(header.slot)), bytes32(revertEndian(header.proposerIndex)))),\\n                sha256(bytes.concat(header.parentRoot, header.stateRoot))\\n            )\\n        );\\n        bytes32 right = sha256(\\n            bytes.concat(\\n                sha256(bytes.concat(header.bodyRoot, bytes32(0))),\\n                sha256(bytes.concat(bytes32(0), bytes32(0)))\\n            )\\n        );\\n        return sha256(bytes.concat(left, right));\\n    }\\n\\n    function revertEndian(uint256 x) internal pure returns (uint256) {\\n        uint256 res;\\n        for (uint256 i = 0; i < 32; i++) {\\n            res = (res << 8) | (x & 0xff);\\n            x >>= 8;\\n        }\\n        return res;\\n    }\\n}\\n\",\"keccak256\":\"0x155bc54a458320de76c24d21269169c3b2f5bcd573f85d078c7d5a1285ffa0cb\",\"license\":\"MIT\"},\"contracts/light-client/common/Types.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"../../verifiers/interfaces/IBeaconVerifier.sol\\\";\\n\\nstruct LightClientOptimisticUpdate {\\n    // Header attested to by the sync committee\\n    HeaderWithExecution attestedHeader;\\n    // Sync committee aggregate signature participation & zk proof\\n    SyncAggregate syncAggregate;\\n    // Slot at which the aggregate signature was created (untrusted)\\n    uint64 signatureSlot;\\n}\\n\\nstruct LightClientUpdate {\\n    // Header attested to by the sync committee\\n    HeaderWithExecution attestedHeader;\\n    HeaderWithExecution finalizedHeader;\\n    // merkle branch from finalized beacon header root to attestedHeader.stateRoot\\n    bytes32[] finalityBranch;\\n    bytes32 nextSyncCommitteeRoot;\\n    bytes32[] nextSyncCommitteeBranch;\\n    bytes32 nextSyncCommitteePoseidonRoot;\\n    IBeaconVerifier.Proof nextSyncCommitteeRootMappingProof;\\n    // Sync committee aggregate signature participation & zk proof\\n    SyncAggregate syncAggregate;\\n    // Slot at which the aggregate signature was created (untrusted)\\n    uint64 signatureSlot;\\n}\\n\\nstruct HeaderWithExecution {\\n    BeaconBlockHeader beacon;\\n    ExecutionPayload execution;\\n    // merkle branch from execution payload root to beacon block root\\n    LeafWithBranch executionRoot;\\n}\\n\\nfunction isEmpty(HeaderWithExecution memory header) pure returns (bool) {\\n    return header.beacon.stateRoot == bytes32(0);\\n}\\n\\n// only contains the fields we care about in execution payload\\nstruct ExecutionPayload {\\n    // merkle branch from execution state root to execution payload root\\n    LeafWithBranch stateRoot;\\n    // merkle branch from execution block hash to execution payload root\\n    LeafWithBranch blockHash;\\n    // merkle branch from execution block number to execution payload root\\n    LeafWithBranch blockNumber;\\n}\\n\\nfunction isEmpty(ExecutionPayload memory payload) pure returns (bool) {\\n    return\\n        payload.stateRoot.leaf == bytes32(0) &&\\n        payload.blockHash.leaf == bytes32(0) &&\\n        payload.blockNumber.leaf == bytes32(0);\\n}\\n\\nstruct LeafWithBranch {\\n    bytes32 leaf;\\n    bytes32[] branch;\\n}\\n\\nstruct BeaconBlockHeader {\\n    uint64 slot;\\n    uint64 proposerIndex;\\n    bytes32 parentRoot;\\n    bytes32 stateRoot;\\n    bytes32 bodyRoot;\\n}\\n\\nstruct SyncAggregate {\\n    uint64 participation;\\n    bytes32 poseidonRoot;\\n    uint256 commitment;\\n    IBeaconVerifier.Proof proof;\\n}\\n\",\"keccak256\":\"0xfdce2463221d4f52cb738108e0a49d0edcac45dcfc04f1436d51ec7147880a4e\",\"license\":\"MIT\"},\"contracts/light-client/interfaces/IEthereumLightClient.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"../common/Types.sol\\\";\\n\\ninterface IEthereumLightClient {\\n    function optimisticExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot);\\n\\n    function finalizedExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot);\\n\\n    // reverts if check fails\\n    function verifyCommitteeSignature(\\n        uint64 signatureSlot,\\n        BeaconBlockHeader memory header,\\n        SyncAggregate memory syncAggregate\\n    ) external view;\\n}\\n\",\"keccak256\":\"0xdffff054c93ea078e756e8e5c2bf63a158b4d76f4bce3d7ab707315f447ab9e2\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IBeaconVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IBeaconVerifier {\\n    struct Proof {\\n        uint256[2] a;\\n        uint256[2][2] b;\\n        uint256[2] c;\\n        uint256[2] commitment;\\n    }\\n\\n    function verifySignatureProof(\\n        bytes32 signingRoot,\\n        bytes32 syncCommitteePoseidonRoot,\\n        uint256 participation,\\n        uint256 commitment,\\n        Proof memory p\\n    ) external view returns (bool);\\n\\n    function verifySyncCommitteeRootMappingProof(\\n        bytes32 sszRoot,\\n        bytes32 poseidonRoot,\\n        Proof memory p\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xed1ad52868352df8cd01a387549559c672c0714da7175e7a8660c77fd06c2d00\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60c060405234620004be5762004ce8803803806200001d8162000500565b92833981019061010081830312620004be5780519160208083015192604081015160018060401b0390818111620004be5782019284601f85011215620004be57835192620000756200006f8562000526565b62000500565b9482868681520183819660051b83010191888311620004be5784809101915b838310620004e557505050506060810151838111620004be57810186601f82011215620004be57805196620000cd6200006f8962000526565b9184838a8152019085829a60051b820101928311620004be578501905b828210620004c35750505062000103608083016200053e565b9260a08301519560c08401519760e0809501519a60018060a01b039c8d8d16809d03620004be5760805260a0525198868a11620004a8576801000000000000000091828b11620004a857603c548b603c558b81811062000448575b505099936000809b603c825285822060029780891c92845b848110620003ed57506003198216909103908162000396575b50505050505191878311620003825782116200036e57603d5482603d5580831062000311575b5091603d8a52808a20928260031c948b5b868110620002c457506007198416909303928362000263575b505050505050501660018060401b031984541617835560045560055560018060a01b03199182603e541617603e55603f54913390831617603f557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0604051933393169180a361477b90816200056d8239608051816143d3015260a0518161449d0152f35b958b93929193968c915b8483106200028a57505050505050015538808080808080620001df565b90919293949784620002b66001928b51851c9087871b60031b9163ffffffff809116831b921b19161790565b99019594930191906200026d565b8c8d5b8560088210620002e057505086820155600101620001c6565b62000307869360019397518d1c9088881b60031b9163ffffffff809116831b921b19161790565b92019401620002c7565b6200034290603d8c52848c20600780860160031c820192601c878a1b168062000349575b500160031c019062000553565b38620001b5565b62000367906000198601908154906000199060200360031b1c169055565b3862000335565b634e487b7160e01b8a52604160045260248afd5b634e487b7160e01b8b52604160045260248bfd5b9084898e5b838310620003b557505050505001558a388080806200018f565b8497620003e09160019495965116908560031b60031b9160018060401b03809116831b921b19161790565b9601929101898e6200039b565b90919293948d8a82915b600483106200041657505050848201558f949392919060010162000176565b85519190950194166001600160401b03908116600683901b90811b91901b1990921691909117906001018a8f620003f7565b6200047b91603c60005260038760002091601882850160021c840194831b168062000483575b500160021c019062000553565b388b6200015e565b620004a1906000198601908154906000199060200360031b1c169055565b386200046e565b634e487b7160e01b600052604160045260246000fd5b600080fd5b81516001600160e01b031981168103620004be578152908501908501620000ea565b8190620004f2846200053e565b815201910190849062000094565b6040519190601f01601f191682016001600160401b03811183821017620004a857604052565b6001600160401b038111620004a85760051b60200190565b51906001600160401b0382168203620004be57565b8181106200055f575050565b600081556001016200055356fe6080604052600436101561001257600080fd5b60003560e01c8063031523dd146114b5578063124207661461148457806339536c8f146114665780633cf5ea9e1461143f5780633dd3f4aa1461125557806343a6c5a61461122457806365e700de1461120657806367b49cc7146111e8578063715018a61461117c578063751f7f15146111095780638da5cb5b146110e2578063a1a9ad5514610c05578063a4059e0714610be7578063aae3913b14610baf578063ab556e9f14610a62578063ba67ee481461035e578063baa94ea214610318578063bcbaf770146102d7578063c5190436146102b9578063d180236914610292578063d6df096d1461026b578063e153d79914610233578063e1861b08146102155763f2fde38b1461012457600080fd5b34610210576020366003190112610210576004356001600160a01b0380821680920361021057603f549081169061015c338314612f82565b82156101a55773ffffffffffffffffffffffffffffffffffffffff19168217603f557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b600080fd5b34610210576000366003190112610210576020600754604051908152f35b346102105760003660031901126102105760606001600160401b03600054166004546006549060405192835260208301526040820152f35b346102105760003660031901126102105760206001600160a01b03603e5416604051908152f35b346102105760003660031901126102105760206001600160401b0360005416604051908152f35b34610210576000366003190112610210576020600154604051908152f35b3461021057602036600319011261021057600435603c54811015610210576001600160401b03610308602092612f42565b9190546040519260031b1c168152f35b3461021057602036600319011261021057600435603d5481101561021057610341602091612eec565b905460405160039290921b1c60e01b6001600160e01b0319168152f35b346102105760003660031901126102105760405161037b81612986565b60405161038781612950565b6001600160401b03600854818116835260401c1660208201526009546040820152600a549060609182820152600b54608082015282526040516103c981612986565b6040516103d58161296b565b600c548152604051806020600d54918281520190600d6000527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb59060005b818110610a4c57505050816104299103826129bc565b6020820152815260405161043c8161296b565b600e548152604051806020600f54918281520190600f6000527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac8029060005b818110610a3657505050816104909103826129bc565b602082015260208201526040516104a68161296b565b601054815260405180602060115491828152019060116000527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c689060005b818110610a2057505050816104fa9103826129bc565b6020820152604082015260208301526040516105158161296b565b601254815260405180602060135491828152019060136000527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a0909060005b818110610a0a57505050816105699103826129bc565b6020820152604083015260405161057f81612986565b60405161058b81612950565b6001600160401b03601454818116835260401c166020820152601554604082015260165483820152601754608082015281526040516105c981612986565b6040516105d58161296b565b601854815260405180602060195491828152019060196000527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c96959060005b8181106109f457505050816106299103826129bc565b6020820152815260405161063c8161296b565b601a548152604051806020601b54918281520190601b6000527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc19060005b8181106109de57505050816106909103826129bc565b602082015260208201526040516106a68161296b565b601c548152604051806020601d54918281520190601d6000527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f9060005b8181106109c857505050816106fa9103826129bc565b6020820152604082015260208201526040516107158161296b565b601e548152604051806020601f54918281520190601f6000527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d8079060005b8181106109b257505050816107699103826129bc565b60208201526040820152602154916023549060405190610788826129a1565b60405160246000825b6002821061099b575050506107a58161296b565b8252604051936107b48561296b565b84936026976000955b600290818810156107e5579060206001926107d78d612d32565b8152019a01960195986107bd565b50508787959295602084015260405180602a906000905b60028210610984575050506108108161296b565b604084015260405180602c906000905b6002821061096d575050506108348161296b565b8584015260405193610845856129a1565b6001600160401b03602e54168552602f546020860152603054604086015260405161086f816129a1565b610877612c94565b8152604051956108868761296b565b86956033996000975b600290818a10156108b7579060206001926108a98f612d32565b8152019c019801979a61088f565b505061091397509161093360409261096395948c8c60208801526108d9612cca565b868801526108e5612cfe565b818801528085019687526109216001600160401b03603b54169987519d8e9d8e610380908181520190612dae565b8d810360208f015290612dae565b99868c01528a01526080890190612e7f565b6001600160401b038151166101c088015260208101516101e0880152015161020086015251610220850190612e7f565b6103608301520390f35b825481526001928301929190910190602001610820565b8254815260019283019291909101906020016107fc565b825481526001928301929190910190602001610791565b8254845260209093019260019283019201610753565b82548452602090930192600192830192016106e4565b825484526020909301926001928301920161067a565b8254845260209093019260019283019201610613565b8254845260209093019260019283019201610553565b82548452602090930192600192830192016104e4565b825484526020909301926001928301920161047a565b8254845260209093019260019283019201610413565b3461021057604036600319011261021057610a7b6129dd565b602435906001600160e01b031982169081830361021057610aa86001600160a01b03603f54163314612f82565b8115610b6a57603c5491600160401b9283811015610b5457806001610ad09201603c55612f42565b926001600160401b038091169382549060031b9185831b921b1916179055603d5492831015610b54577f3d992c45d9456d8ebe181b6a66a3721421393afaa297791373e7569c1abcc8af93610b2d84600160409601603d55612eec565b63ffffffff829392549160031b9260e01c831b921b191617905582519182526020820152a1005b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152601060248201527f62616420666f726b2076657273696f6e000000000000000000000000000000006044820152606490fd5b34610210576020366003190112610210576004356001600160e01b03198116810361021057610bdf602091614481565b604051908152f35b34610210576000366003190112610210576020600454604051908152f35b3461021057600036600319011261021057610c2c6001600160a01b03603f54163314612f82565b610c346143d1565b6001600160401b0390816000541690620151808201908183116110cc57831611156110875781600854169081156110425782601454161115610c8b575b610c81610c7c612fcd565b614034565b610c896136d9565b005b610cab906001600160401b03166001600160401b03196014541617601455565b610cdf8160085460401c1667ffffffffffffffff60401b6014549160401b169067ffffffffffffffff60401b191617601455565b600954601555600a54601655600b54601755600c54601855600d54818111610b5457600160401b90818111610b545760195481601955808210611001575b507fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb58054906000915b838310610fcb5750505050600e54601a55600f54828111610b5457818111610b5457601b5481601b55808210610f8a575b507f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac8028054906000915b838310610f545750505050601054601c55601154828111610b5457818111610b5457601d5481601d55808210610f13575b507f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c688054906000915b838310610edd5750505050601254601e55601354918211610b54578111610b5457601f5481601f55808210610e9c575b507f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a09090601f60005281546000905b828210610e66575050610c71565b60018091940191825494817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d8070155019092610e58565b817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d80791820191015b818110610ed15750610e2a565b60008155600101610ec4565b60018091920192835492817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f0155019190610dfa565b817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f91820191015b818110610f485750610dd1565b60008155600101610f3b565b60018091920192835492817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc10155019190610da0565b817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc191820191015b818110610fbf5750610d77565b60008155600101610fb2565b60018091920192835492817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c96950155019190610d46565b817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c969591820191015b8181106110365750610d1d565b60008155600101611029565b60405162461bcd60e51b815260206004820152601460248201527f6e6f20626573742076616c6964207570646174650000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601260248201527f74696d656f7574206e6f742070617373656400000000000000000000000000006044820152606490fd5b634e487b7160e01b600052601160045260246000fd5b346102105760003660031901126102105760206001600160a01b03603f5416604051908152f35b3461021057366003190160c081126102105760a0136102105760405161112e81612950565b6001600160401b03600435818116810361021057825260243590811681036102105781610bdf9160208094015260443560408201526064356060820152608435608082015260a43590614518565b34610210576000366003190112610210576000603f5473ffffffffffffffffffffffffffffffffffffffff196001600160a01b038216916111be338414612f82565b16603f557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b34610210576000366003190112610210576020600654604051908152f35b34610210576000366003190112610210576020600554604051908152f35b3461021057600036600319011261021057600354600254604080519283526001600160401b03909116602083015290f35b34610210576102603660031901126102105761126f6129dd565b60a03660231901126102105760405161128781612950565b6001600160401b0390602435828116810361021057815260443592828416840361021057602093848301526064356040830152608435606083015260a43560808301526101a060c31936011261021057604051926112e4846129a1565b60c435908116810361021057835260e43584840152610104356040840152610140366101231901126102105760405161131c816129a1565b366101431215610210576040516113328161296b565b80610164913683116102105787610124915b848310611430575050508252366101831215610210576040516113668161296b565b806101e49236841161021057905b8884831061141857915050830152366102031215610210576040516113988161296b565b8061022492368411610210578890915b84831061140957505050604083015236610243121561021057604051906113ce8261296b565b816102649136831161021057905b8282106113fa57505050610c89955060608201526060840152613b9c565b813581529088019088016113dc565b823581529181019181016113a8565b6040916114253685612bb5565b815201910190611374565b82358152918101918101611344565b346102105760003660031901126102105760206001600160401b0360025416604051908152f35b34610210576000366003190112610210576020600354604051908152f35b3461021057600036600319011261021057600154600054604080519283526001600160401b03909116602083015290f35b346102105760031960203682011261021057600435906001600160401b038211610210576103c0908236030112610210576114f06080612934565b80600401356001600160401b038111610210576115139060043691840101612ab2565b60805260248101356001600160401b038111610210576115399060043691840101612ab2565b60a05260448101356001600160401b0381116102105761155f9060043691840101612a07565b60c052606481013560e05260848101356001600160401b0381116102105761158d9060043691840101612a07565b6101005260a4810135610120526115a73660c48301612bfa565b610140526101a036829003610203190112610210576001600160401b0361162a9161161f6103a4604051926115db846129a1565b6115e861020482016129f3565b84526102248101356020850152610244810135604085015261160e366102648301612bfa565b6060850152610160849052016129f3565b6101805251166143b1565b61163c611635612fcd565b6080614212565b80801561292d575b156128e85760016001600160401b0360e060800151511611156128a3576001600160401b036116716143d1565b816080515151169182911611908161288c575b50156128475760005460805151516006549182159190828061283a575b8061281f575b6001600160401b0382166001600160401b03841611908115612817575b50156127d25760c0515161263b5760a05151606001516125f6575b610100515161236157505050506060608001511580612356575b15612311575b611741608051604051906117128261296b565b600a82527f6f7074696d6973746963000000000000000000000000000000000000000000006020830152613e30565b610180516080515161016051611762929091906001600160401b0316613b9c565b6118ab575b808061188a575b611810575b80611789575b61177f57005b610c816080614034565b5060206080015151516001600160401b03600054166001600160401b038216119081156117b7575b50611779565b61010051511515915081611803575b816117e3575b50806117d9575b816117b1565b50600654156117d3565b90506607ffffffffffff806080515151600d1c1691600d1c1614816117cc565b60c05151151591506117c6565b7f27eafee2f5b2c935fa7666d231360699c41fe21db57034136b1af3c43f13df896080516001600160401b03602082015151519182600355515116806001600160401b0319600254161760025561188260405192839283602090939291936001600160401b0360408201951681520152565b0390a1611773565b506001600160401b036080515151166001600160401b03600254161061176e565b608051608081516001600160401b038151166008549067ffffffffffffffff60401b602084015160401b16916fffffffffffffffffffffffffffffffff1916171760085560408101516009556060810151600a550151600b556020810151602081518051600c5501518051906001600160401b038211610b5457600160401b8211610b5457600d5482600d558083106122cf575b50602001600d60005260005b82811061229b575050506020808201518051600e5501518051906001600160401b038211610b5457600160401b8211610b5457600f5482600f55808310612259575b50602001600f60005260005b82811061222557505050604001518051601055602001518051906001600160401b038211610b5457600160401b8211610b5457601154826011558083106121e3575b50602001601160005260005b8281106121af57505050604001518051601255602001518051906001600160401b038211610b5457600160401b8211610b54576013548260135580831061216d575b50602001601360005260005b8281106121395750505060206080015160808151611a736001600160401b038251166001600160401b03166001600160401b03196014541617601455565b611aad6001600160401b0360208301511667ffffffffffffffff60401b6014549160401b169067ffffffffffffffff60401b191617601455565b604081015160155560608101516016550151601755602081015160208151805160185501518051906001600160401b038211610b5457600160401b8211610b5457601954826019558083106120f7575b50602001601960005260005b8281106120c3575050506020808201518051601a5501518051906001600160401b038211610b5457600160401b8211610b5457601b5482601b55808310612081575b50602001601b60005260005b82811061204d57505050604001518051601c55602001518051906001600160401b038211610b5457600160401b8211610b5457601d5482601d5580831061200b575b50602001601d60005260005b828110611fd757505050604001518051601e55602001518051906001600160401b038211610b5457600160401b8211610b5457601f5482601f55808310611f95575b50602001601f60005260005b828110611f6157505060c051805191506001600160401b038211610b5457600160401b8211610b545760205482602055808310611f1f575b50602001602060005260005b828110611eeb57505060e05160215550610100518051906001600160401b038211610b5457600160401b8211610b545760225482602255808310611ea9575b50602001602260005260005b828110611e75575050610120516023555061014051805160005b60028110611e605750506020810151906026916000905b6002821015611cf257805160005b60028110611cde5750506002602060019201940191019092611cb3565b600190602083519301928188015501611cc1565b50509050604081015160005b60028110611e4b5750506060015160005b60028110611e36575050606060e0608001516001600160401b038151166001600160401b0319602e541617602e556020810151602f5560408101516030550151805160005b60028110611e215750506020810151906033916000905b6002821015611daa57805160005b60028110611d965750506002602060019201940191019092611d6b565b600190602083519301928188015501611d79565b50509050604081015160005b60028110611e0c5750506060015160005b60028110611df75750506001600160401b0361010060800151166001600160401b0319603b541617603b55611767565b60019060208351930192816039015501611dc7565b60019060208351930192816037015501611db6565b60019060208351930192816031015501611d54565b6001906020835193019281602c015501611d0f565b6001906020835193019281602a015501611cfe565b60019060208351930192816024015501611c9c565b60019060208351930192817f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510015501611c82565b7f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908382015b8183018110611edf575050611c76565b60008155600101611ecf565b60019060208351930192817fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb015501611c37565b7fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908382015b8183018110611f55575050611c2b565b60008155600101611f45565b60019060208351930192817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807015501611bf3565b7fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908382015b8183018110611fcb575050611be7565b60008155600101611fbb565b60019060208351930192817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f015501611ba5565b7f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908382015b8183018110612041575050611b99565b60008155600101612031565b60019060208351930192817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1015501611b57565b7f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908382015b81830181106120b7575050611b4b565b600081556001016120a7565b60019060208351930192817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695015501611b09565b7f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908382015b818301811061212d575050611afd565b6000815560010161211d565b60019060208351930192817f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090015501611a35565b7f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908382015b81830181106121a3575050611a29565b60008155600101612193565b60019060208351930192817f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c680155016119e7565b7f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908382015b81830181106122195750506119db565b60008155600101612209565b60019060208351930192817f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802015501611999565b7f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908382015b818301811061228f57505061198d565b6000815560010161227f565b60019060208351930192817fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb501550161194b565b7fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908382015b818301811061230557505061193f565b600081556001016122f5565b60405162461bcd60e51b815260206004820152601c60248201527f6e6f206e6578742073796e6320636f6d6d69747465652070726f6f66000000006044820152606490fd5b5061012051156116f9565b6607ffffffffffff8091600d1c1691600d1c161490816125ed575b5061259a575b5060e0516101005160805151606001519360009391929091905b835185101561244d5760ff85116110cc576001851b156124375760006020916001806037891c1614821461241f576123e16123f4916123db8989614553565b516144fb565b8360405192828480945193849201613dc7565b8101039060025afa156124135761240d60005194614544565b9361239c565b6040513d6000823e3d90fd5b6123e16123f4916124308989614553565b51906144fb565b634e487b7160e01b600052601260045260246000fd5b925092509203612555576001600160a01b03603e5416602060606080015161018460a0608001519160c060800151946124a56040519687958694637a53878160e01b8652600486015260248501526044840190612e7f565b5afa90811561241357600091612526575b506116ff5760405162461bcd60e51b815260206004820152602a60248201527f626164206e6578742073796e6320636f6d6d697474656520726f6f74206d617060448201527f70696e672070726f6f66000000000000000000000000000000000000000000006064820152608490fd5b612548915060203d60201161254e575b61254081836129bc565b810190613b20565b836124b6565b503d612536565b60405162461bcd60e51b815260206004820152601d60248201527f626164206e6578742073796e6320636f6d6d69747465652070726f6f660000006044820152606490fd5b60e051036125a85782612382565b60405162461bcd60e51b815260206004820152601760248201527f626164206e6578742073796e6320636f6d6d69747465650000000000000000006044820152606490fd5b9050158461237c565b60405162461bcd60e51b815260206004820152600c60248201527f6e6f2066696e2070726f6f6600000000000000000000000000000000000000006044820152606490fd5b60a0515180516001600160401b03166126a1575060a0515160600151156116df5760405162461bcd60e51b815260206004820152601e60248201527f67656e65736973206865616465722073686f756c6420626520656d70747900006044820152606490fd5b6126b2909693969592949195614567565b9560406080015194606060805151015197966000975b87518910156127375760ff89116110cc576001891b1561243757600060209160018060698d1c16148214612726576123e1612707916123db8d8d614553565b8101039060025afa156124135761272060005198614544565b976126c8565b6123e1612707916124308d8d614553565b929598919497509295500361278d5760a051604051612788916127598261296b565b600982527f66696e616c697a656400000000000000000000000000000000000000000000006020830152613e30565b6116df565b60405162461bcd60e51b815260206004820152600d60248201527f6261642066696e2070726f6f66000000000000000000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601960248201527f6261642061747420736c6f74206f7220636f6d6d6974746565000000000000006044820152606490fd5b9050876116c4565b506607ffffffffffff8082600d1c169083600d1c16146116a7565b50610100515115156116a1565b60405162461bcd60e51b815260206004820152600860248201527f62616420736c6f740000000000000000000000000000000000000000000000006044820152606490fd5b60a05151516001600160401b031610905083611684565b60405162461bcd60e51b815260206004820152601860248201527f6e6f7420656e6f7567682070617274696369706174696f6e00000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601260248201527f71756f72756d206e6f74207265616368656400000000000000000000000000006044820152606490fd5b5081611644565b61012081019081106001600160401b03821117610b5457604052565b60a081019081106001600160401b03821117610b5457604052565b604081019081106001600160401b03821117610b5457604052565b606081019081106001600160401b03821117610b5457604052565b608081019081106001600160401b03821117610b5457604052565b90601f801991011681019081106001600160401b03821117610b5457604052565b600435906001600160401b038216820361021057565b35906001600160401b038216820361021057565b9080601f83011215610210578135906001600160401b038211610b54578160051b60405193602093612a3b858401876129bc565b85528380860192820101928311610210578301905b828210612a5e575050505090565b81358152908301908301612a50565b91906040838203126102105760405190612a868261296b565b8193803583526020810135916001600160401b03831161021057602092612aad9201612a07565b910152565b91908281039260e0841261021057604090815192612acf84612986565b60a0849612610210578251612ae381612950565b612aec836129f3565b8152612afa602084016129f3565b602082015283830135848201526060830135606082015260808301356080820152845260a08201356001600160401b039081811161021057830160608184031261021057845190612b4a82612986565b80358381116102105784612b5f918301612a6d565b825260208101358381116102105784612b79918301612a6d565b6020830152858101359083821161021057612b9691859101612a6d565b85820152602086015260c083013590811161021057612aad9201612a6d565b9080601f830112156102105760405191612bce8361296b565b82906040810192831161021057905b828210612bea5750505090565b8135815260209182019101612bdd565b9190916101408184031261021057604092835191612c17836129a1565b8294612c238383612bb5565b845282605f83011215610210578051612c3b8161296b565b8060c084019185831161021057838501905b838210612c7b575050928492612c7160609661010094612aad9760208b0152612bb5565b9087015201612bb5565b60208591612c898985612bb5565b815201910190612c4d565b6040519060316000835b60028210612cb457505050612cb28261296b565b565b6001602081928554815201930191019091612c9e565b6040519060376000835b60028210612ce857505050612cb28261296b565b6001602081928554815201930191019091612cd4565b6040519060396000835b60028210612d1c57505050612cb28261296b565b6001602081928554815201930191019091612d08565b60405191906000835b60028210612d4f57505050612cb28261296b565b6001602081928554815201930191019091612d3b565b60609060408301908051845260209283809201519460408382015285518094520193019160005b828110612d9a575050505090565b835185529381019392810192600101612d8c565b612e5491608082516001600160401b0380825116845260208201511660208401526040810151604084015260608101516060840152015160808201526040612e43602084015160e060a0850152612e128151606060e0870152610140860190612d65565b83612e3060208401519260df199384898303016101008a0152612d65565b9201519085830301610120860152612d65565b9201519060c0818403910152612d65565b90565b6000915b60028310612e6857505050565b600190825181526020809101920192019190612e5b565b9190612e8c818451612e57565b60208381015193906040906000908483015b60028310612ed057505050612cb293945081612ec660609261010094015160c0860190612e57565b0151910190612e57565b818482612ee06001948c51612e57565b01980192019196612e9e565b90603d54821015612f2c57603d600052601c8260031c7fece66cfdbd22e3f37d348a3d8e19074452862cd65fd4b9a11f0336d1ac6d1dc3019260021b1690565b634e487b7160e01b600052603260045260246000fd5b90603c54821015612f2c57603c60005260188260021c7fc6bb06cb7f92603de181bf256cd16846b93b752a170ff24824098b31aa008a7e019260031b1690565b15612f8957565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b60408051612fda81612934565b8092825192612fe884612986565b805192612ff484612950565b600854916001600160401b03808416865280602094831c168487015260095482870152600a549560609687820152600b546080820152875281519661303888612986565b8251976130448961296b565b600c5489528351988987600d549b8c81520160009b600d8d527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908d5b8181106136ae57505050816130979103826129bc565b87820152815283516130a88161296b565b600e54815284518088600f54918281520190600f8d527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908d5b81811061369a57505050816130f89103826129bc565b8782015286820152835161310b8161296b565b60105481528451808860115491828152019060118d527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908d5b818110613686575050508161315b9103826129bc565b87820152848201528582015282516131728161296b565b60125481528351808760135491828152019060138c527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908c5b81811061367257505050816131c29103826129bc565b8682015283820152835281516131d781612986565b82516131e281612950565b826014548181168352851c1686820152601554848201526016548882015260175460808201528152825161321581612986565b83516132208161296b565b60185481528451808860195491828152019060198d527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908d5b81811061365e57505050816132709103826129bc565b87820152815283516132818161296b565b601a54815284518088601b54918281520190601b8d527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908d5b81811061364a57505050816132d19103826129bc565b878201528682015283516132e48161296b565b601c54815284518088601d54918281520190601d8d527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908d5b81811061363657505050816133349103826129bc565b878201528482015285820152825161334b8161296b565b601e54815283518087601f54918281520190601f8c527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908c5b818110613622575050508161339b9103826129bc565b81870152818401528385015281518454808252858952818601907fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908a5b81811061360e57505050816133ef9103826129bc565b82840152602154868401528151808560225491828152019060228a527f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908a5b8181106135fa57505050816134459103826129bc565b608084015260235460a084015281519661345e886129a1565b8251602482825b600282106135e4575050506134798161296b565b88528251966134878861296b565b879660269583985b600290818b10156134b65790896001926134a88b612d32565b81520198019901989661348f565b50509398919750939891945085820152875180602a9086905b600282106135ce575050506134e38161296b565b818901528751602c85825b600282106135b8575050506135028161296b565b8682015260c0820152865195613517876129a1565b80602e54168752602f548588015260305488880152875196613538886129a1565b613540612c94565b885288519761354e8961296b565b8897603396985b600290818b101561357c57908960019261356e8b612d32565b815201980199019896613555565b50509398919550939891956101009750840152613597612cca565b908301526135a3612cfe565b8183015282015260e0840152603b5416910152565b82548152600192830192919091019088016134ee565b82548152600192830192919091019088016134cf565b8254815260019283019291909101908801613465565b82548452928801926001928301920161342f565b8254845292880192600192830192016133d9565b82548452928a019260019283019201613385565b82548452928b01926001928301920161331e565b82548452928b0192600192830192016132bb565b82548452928b01926001928301920161325a565b82548452928a0192600192830192016131ac565b82548452928b019260019283019201613145565b82548452928b0192600192830192016130e2565b82548452928b019260019283019201613081565b8181106136cd575050565b600081556001016136c2565b6000806008558060095580600a5580600b5580600c55600d5481600d5580613ade575b5080600e55600f5481600f5580613a9c575b50806010556011548160115580613a5a575b50806012556013548160135580613a18575b50806014558060155580601655806017558060185560195481601955806139d6575b5080601a55601b5481601b5580613994575b5080601c55601d5481601d5580613952575b5080601e55601f5481601f5580613910575b5060205481602055806138ce575b5080602155602254816022558061388c575b508060235560245b60268110613881575060265b602a811061386c5750602a5b602c81106138615750602c5b602e8110613856575080602e5580602f558060305560315b6033811061384b575060335b60378110613836575060375b6039811061382b575060395b603b81106138205750603b55565b818155600101613812565b818155600101613806565b806138456002809301826136c2565b016137fa565b8181556001016137ee565b8181556001016137d6565b8181556001016137ca565b8061387b6002809301826136c2565b016137be565b8181556001016137b2565b602282527f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908101905b8181106138c357506137aa565b8281556001016138b6565b602082527fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908101905b8181106139055750613798565b8281556001016138f8565b601f82527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908101905b818110613947575061378a565b82815560010161393a565b601d82527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908101905b8181106139895750613778565b82815560010161397c565b601b82527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908101905b8181106139cb5750613766565b8281556001016139be565b601982527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908101905b818110613a0d5750613754565b828155600101613a00565b601382527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908101905b818110613a4f5750613732565b828155600101613a42565b601182527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908101905b818110613a915750613720565b828155600101613a84565b600f82527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908101905b818110613ad3575061370e565b828155600101613ac6565b600d82527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908101905b818110613b1557506136fc565b828155600101613b08565b90816020910312610210575180151581036102105790565b9060016001600160401b03809316019182116110cc57565b15613b5757565b60405162461bcd60e51b815260206004820152601160248201527f62616420706f736569646f6e20726f6f740000000000000000000000000000006044820152606490fd5b6607ffffffffffff80600054600d1c169082600d1c16916006541515600014613d60578183148015613d46575b15613d0157602093613bf3613bee6707ffffffffffffff613bf9945b60051c1661440b565b614481565b90614518565b9103613ce7576101c4600554613c13848601518214613b50565b915b6001600160a01b03603e5416613c6b6001600160401b038751169660606040820151910151906040519889978896630291ab6d60e51b885260048801526024870152604486015260648501526084840190612e7f565b5afa90811561241357600091613cc9575b5015613c8457565b60405162461bcd60e51b815260206004820152601160248201527f62616420626c73207369672070726f6f660000000000000000000000000000006044820152606490fd5b613ce1915060203d811161254e5761254081836129bc565b38613c7c565b6101c4600754613cfb848601518214613b50565b91613c15565b60405162461bcd60e51b815260206004820152601060248201527f6261642073696720706572696f642032000000000000000000000000000000006044820152606490fd5b506001600160401b03613d5883613b38565b168314613bc9565b818303613d8257602093613bf3613bee6707ffffffffffffff613bf994613be5565b60405162461bcd60e51b815260206004820152601060248201527f6261642073696720706572696f642031000000000000000000000000000000006044820152606490fd5b60005b838110613dda5750506000910152565b8181015183820152602001613dca565b15613df25750565b6044604051809262461bcd60e51b825260206004830152613e228151809281602486015260208686019101613dc7565b601f01601f19168101030190fd5b9190916020908181015192604094858301608081519451015185855195015194936000945b8651861015613ede5760ff86116110cc57600180871b156124375788916000916019891c811603613ecd57613e91613ea3916123db8a8c614553565b838d5192828480945193849201613dc7565b8101039060025afa15613ec257613ebc60005195614544565b94613e55565b88513d6000823e3d90fd5b613e91613ea3916124308a8c614553565b909397929550613f429194508851907f626164206578656320726f6f742070726f6f662000000000000000000000000088830152885195613f3c6034848b8d0199613f2c818484018d613dc7565b81010360148101865201846129bc565b14613dea565b5192515184845194015193926000935b8551851015613fdb5760ff85116110cc57600180861b156124375787916000916012881c811603613fca57613f8e613fa0916123db898b614553565b838c5192828480945193849201613dc7565b8101039060025afa15613fbf57613fb960005194614544565b93613f52565b87513d6000823e3d90fd5b613f8e613fa091612430898b614553565b9450603a919350947f626164206578656320737461746520726f6f742070726f6f662000000000000095614024612cb298613f3c959a5198899485015251809285850190613dc7565b810103601a8101865201846129bc565b602081019081515151906001600160401b0392838316926607ffffffffffff80600054600d1c1691600d1c169060065486811560001461419f575050810361415a57827fdc7ba15c782b181b9d54a996db4ab8a32182bff2bfb09e4aca8ed9ea9e5380c7916140e06140b960a060606020980151948560065501519283600755613b38565b91604051938493846040919493926001600160401b03606083019616825260208201520152565b0390a15b51015151519060005492831681116140fb57505050565b807f4d75bcddf849ad697dd4b9e37ec69f14240170e980101fcd9e57bb000527c24893836001556001600160401b0319161760005561415560405192839283602090939291936001600160401b0360408201951681520152565b0390a1565b60405162461bcd60e51b815260206004820152600f60248201527f6d69736d6174636820706572696f6400000000000000000000000000000000006044820152606490fd5b6141ae60209693949294613b38565b1681146141be575b5050506140e4565b7fdc7ba15c782b181b9d54a996db4ab8a32182bff2bfb09e4aca8ed9ea9e5380c7926004556007546005556142076140b960a06060850151948560065501519283600755613b38565b0390a13880806141b6565b60e08201906001600160401b039182815151161561436d5760e0820161423b84825151166143b1565b61424885845151166143b1565b1590801591801583150361435757505080614345575b6143345761426b8361437b565b6142748661437b565b15158115150361432b575060408301515115156040860151511515810361432b5784906142e6575b809151511691515116908181036142de575050818151515116828451515116908181036142d6575050816101008092015116920151161190565b109392505050565b119392505050565b50602083015151516607ffffffffffff90818086515151600d1c1691600d1c1614908060208801515151600d1c169087515151600d1c1614810361432b57508361429c565b94505050505090565b909350829150515116915151161090565b5083815151168483515116141561425e565b955095505050505081614368575090565b905090565b5060e0015151161515919050565b6080810151511515908161438d575090565b905061010081515151916607ffffffffffff9182910151600d1c1691600d1c161490565b60036001600160401b03809216029081169081036110cc57610400111590565b7f000000000000000000000000000000000000000000000000000000000000000042034281116110cc57600c6001600160401b0391041690565b603d5460001992600091848101908111614453575b61442981612f42565b906001600160401b03809154600393841b1c16908616101561446757508015614453578401614420565b634e487b7160e01b83526011600452602483fd5b93509093506144769150612eec565b9054911b1c60e01b90565b60006144df6020926040518481019163ffffffff60e01b1682527f00000000000000000000000000000000000000000000000000000000000000006040820152604081526144ce81612986565b604051928392839251928391613dc7565b8101039060025afa156124135760005160201c600760f81b1790565b9190604051926020840152604083015260408252612cb282612986565b6145316123e160209361452c600094614567565b6144fb565b8101039060025afa156124135760005190565b60001981146110cc5760010190565b8051821015612f2c5760209160051b010190565b6001600160401b039061459561457f83835116614716565b61458f6020948585015116614716565b906144fb565b91806040926145ac84519586815194859201613dc7565b82600086819760029581010390855afa156146ff57845183866145ec6145da888601516060870151906144fb565b83895192828480945193849201613dc7565b81010390865afa1561470c578561461b61460986938351906144fb565b83885192828480945193849201613dc7565b81010390855afa156146ff57828561465c608082519401518751848101918252838982015288815261464c81612986565b8851928392839251928391613dc7565b81010390855afa156146ff5784518386614699875183810190838252838a82015289815261468981612986565b8951928392839251928391613dc7565b81010390865afa1561470c57856146b661460986938351906144fb565b81010390855afa156146ff57906146e56146d386938451906144fb565b84865192828480945193849201613dc7565b810103915afa156146f557505190565b51903d90823e3d90fd5b50505051903d90823e3d90fd5b84513d87823e3d90fd5b60009081905b6020821061472957505090565b600892831b60ff821617921c9061473f90614544565b9061471c56fea2646970667358221220a2723db7ba34850202de70a88f740cf3119f0f2956ea56fb0effabccb7f9c5bd64736f6c63430008120033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c8063031523dd146114b5578063124207661461148457806339536c8f146114665780633cf5ea9e1461143f5780633dd3f4aa1461125557806343a6c5a61461122457806365e700de1461120657806367b49cc7146111e8578063715018a61461117c578063751f7f15146111095780638da5cb5b146110e2578063a1a9ad5514610c05578063a4059e0714610be7578063aae3913b14610baf578063ab556e9f14610a62578063ba67ee481461035e578063baa94ea214610318578063bcbaf770146102d7578063c5190436146102b9578063d180236914610292578063d6df096d1461026b578063e153d79914610233578063e1861b08146102155763f2fde38b1461012457600080fd5b34610210576020366003190112610210576004356001600160a01b0380821680920361021057603f549081169061015c338314612f82565b82156101a55773ffffffffffffffffffffffffffffffffffffffff19168217603f557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b600080fd5b34610210576000366003190112610210576020600754604051908152f35b346102105760003660031901126102105760606001600160401b03600054166004546006549060405192835260208301526040820152f35b346102105760003660031901126102105760206001600160a01b03603e5416604051908152f35b346102105760003660031901126102105760206001600160401b0360005416604051908152f35b34610210576000366003190112610210576020600154604051908152f35b3461021057602036600319011261021057600435603c54811015610210576001600160401b03610308602092612f42565b9190546040519260031b1c168152f35b3461021057602036600319011261021057600435603d5481101561021057610341602091612eec565b905460405160039290921b1c60e01b6001600160e01b0319168152f35b346102105760003660031901126102105760405161037b81612986565b60405161038781612950565b6001600160401b03600854818116835260401c1660208201526009546040820152600a549060609182820152600b54608082015282526040516103c981612986565b6040516103d58161296b565b600c548152604051806020600d54918281520190600d6000527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb59060005b818110610a4c57505050816104299103826129bc565b6020820152815260405161043c8161296b565b600e548152604051806020600f54918281520190600f6000527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac8029060005b818110610a3657505050816104909103826129bc565b602082015260208201526040516104a68161296b565b601054815260405180602060115491828152019060116000527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c689060005b818110610a2057505050816104fa9103826129bc565b6020820152604082015260208301526040516105158161296b565b601254815260405180602060135491828152019060136000527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a0909060005b818110610a0a57505050816105699103826129bc565b6020820152604083015260405161057f81612986565b60405161058b81612950565b6001600160401b03601454818116835260401c166020820152601554604082015260165483820152601754608082015281526040516105c981612986565b6040516105d58161296b565b601854815260405180602060195491828152019060196000527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c96959060005b8181106109f457505050816106299103826129bc565b6020820152815260405161063c8161296b565b601a548152604051806020601b54918281520190601b6000527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc19060005b8181106109de57505050816106909103826129bc565b602082015260208201526040516106a68161296b565b601c548152604051806020601d54918281520190601d6000527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f9060005b8181106109c857505050816106fa9103826129bc565b6020820152604082015260208201526040516107158161296b565b601e548152604051806020601f54918281520190601f6000527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d8079060005b8181106109b257505050816107699103826129bc565b60208201526040820152602154916023549060405190610788826129a1565b60405160246000825b6002821061099b575050506107a58161296b565b8252604051936107b48561296b565b84936026976000955b600290818810156107e5579060206001926107d78d612d32565b8152019a01960195986107bd565b50508787959295602084015260405180602a906000905b60028210610984575050506108108161296b565b604084015260405180602c906000905b6002821061096d575050506108348161296b565b8584015260405193610845856129a1565b6001600160401b03602e54168552602f546020860152603054604086015260405161086f816129a1565b610877612c94565b8152604051956108868761296b565b86956033996000975b600290818a10156108b7579060206001926108a98f612d32565b8152019c019801979a61088f565b505061091397509161093360409261096395948c8c60208801526108d9612cca565b868801526108e5612cfe565b818801528085019687526109216001600160401b03603b54169987519d8e9d8e610380908181520190612dae565b8d810360208f015290612dae565b99868c01528a01526080890190612e7f565b6001600160401b038151166101c088015260208101516101e0880152015161020086015251610220850190612e7f565b6103608301520390f35b825481526001928301929190910190602001610820565b8254815260019283019291909101906020016107fc565b825481526001928301929190910190602001610791565b8254845260209093019260019283019201610753565b82548452602090930192600192830192016106e4565b825484526020909301926001928301920161067a565b8254845260209093019260019283019201610613565b8254845260209093019260019283019201610553565b82548452602090930192600192830192016104e4565b825484526020909301926001928301920161047a565b8254845260209093019260019283019201610413565b3461021057604036600319011261021057610a7b6129dd565b602435906001600160e01b031982169081830361021057610aa86001600160a01b03603f54163314612f82565b8115610b6a57603c5491600160401b9283811015610b5457806001610ad09201603c55612f42565b926001600160401b038091169382549060031b9185831b921b1916179055603d5492831015610b54577f3d992c45d9456d8ebe181b6a66a3721421393afaa297791373e7569c1abcc8af93610b2d84600160409601603d55612eec565b63ffffffff829392549160031b9260e01c831b921b191617905582519182526020820152a1005b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152601060248201527f62616420666f726b2076657273696f6e000000000000000000000000000000006044820152606490fd5b34610210576020366003190112610210576004356001600160e01b03198116810361021057610bdf602091614481565b604051908152f35b34610210576000366003190112610210576020600454604051908152f35b3461021057600036600319011261021057610c2c6001600160a01b03603f54163314612f82565b610c346143d1565b6001600160401b0390816000541690620151808201908183116110cc57831611156110875781600854169081156110425782601454161115610c8b575b610c81610c7c612fcd565b614034565b610c896136d9565b005b610cab906001600160401b03166001600160401b03196014541617601455565b610cdf8160085460401c1667ffffffffffffffff60401b6014549160401b169067ffffffffffffffff60401b191617601455565b600954601555600a54601655600b54601755600c54601855600d54818111610b5457600160401b90818111610b545760195481601955808210611001575b507fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb58054906000915b838310610fcb5750505050600e54601a55600f54828111610b5457818111610b5457601b5481601b55808210610f8a575b507f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac8028054906000915b838310610f545750505050601054601c55601154828111610b5457818111610b5457601d5481601d55808210610f13575b507f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c688054906000915b838310610edd5750505050601254601e55601354918211610b54578111610b5457601f5481601f55808210610e9c575b507f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a09090601f60005281546000905b828210610e66575050610c71565b60018091940191825494817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d8070155019092610e58565b817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d80791820191015b818110610ed15750610e2a565b60008155600101610ec4565b60018091920192835492817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f0155019190610dfa565b817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f91820191015b818110610f485750610dd1565b60008155600101610f3b565b60018091920192835492817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc10155019190610da0565b817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc191820191015b818110610fbf5750610d77565b60008155600101610fb2565b60018091920192835492817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c96950155019190610d46565b817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c969591820191015b8181106110365750610d1d565b60008155600101611029565b60405162461bcd60e51b815260206004820152601460248201527f6e6f20626573742076616c6964207570646174650000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601260248201527f74696d656f7574206e6f742070617373656400000000000000000000000000006044820152606490fd5b634e487b7160e01b600052601160045260246000fd5b346102105760003660031901126102105760206001600160a01b03603f5416604051908152f35b3461021057366003190160c081126102105760a0136102105760405161112e81612950565b6001600160401b03600435818116810361021057825260243590811681036102105781610bdf9160208094015260443560408201526064356060820152608435608082015260a43590614518565b34610210576000366003190112610210576000603f5473ffffffffffffffffffffffffffffffffffffffff196001600160a01b038216916111be338414612f82565b16603f557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b34610210576000366003190112610210576020600654604051908152f35b34610210576000366003190112610210576020600554604051908152f35b3461021057600036600319011261021057600354600254604080519283526001600160401b03909116602083015290f35b34610210576102603660031901126102105761126f6129dd565b60a03660231901126102105760405161128781612950565b6001600160401b0390602435828116810361021057815260443592828416840361021057602093848301526064356040830152608435606083015260a43560808301526101a060c31936011261021057604051926112e4846129a1565b60c435908116810361021057835260e43584840152610104356040840152610140366101231901126102105760405161131c816129a1565b366101431215610210576040516113328161296b565b80610164913683116102105787610124915b848310611430575050508252366101831215610210576040516113668161296b565b806101e49236841161021057905b8884831061141857915050830152366102031215610210576040516113988161296b565b8061022492368411610210578890915b84831061140957505050604083015236610243121561021057604051906113ce8261296b565b816102649136831161021057905b8282106113fa57505050610c89955060608201526060840152613b9c565b813581529088019088016113dc565b823581529181019181016113a8565b6040916114253685612bb5565b815201910190611374565b82358152918101918101611344565b346102105760003660031901126102105760206001600160401b0360025416604051908152f35b34610210576000366003190112610210576020600354604051908152f35b3461021057600036600319011261021057600154600054604080519283526001600160401b03909116602083015290f35b346102105760031960203682011261021057600435906001600160401b038211610210576103c0908236030112610210576114f06080612934565b80600401356001600160401b038111610210576115139060043691840101612ab2565b60805260248101356001600160401b038111610210576115399060043691840101612ab2565b60a05260448101356001600160401b0381116102105761155f9060043691840101612a07565b60c052606481013560e05260848101356001600160401b0381116102105761158d9060043691840101612a07565b6101005260a4810135610120526115a73660c48301612bfa565b610140526101a036829003610203190112610210576001600160401b0361162a9161161f6103a4604051926115db846129a1565b6115e861020482016129f3565b84526102248101356020850152610244810135604085015261160e366102648301612bfa565b6060850152610160849052016129f3565b6101805251166143b1565b61163c611635612fcd565b6080614212565b80801561292d575b156128e85760016001600160401b0360e060800151511611156128a3576001600160401b036116716143d1565b816080515151169182911611908161288c575b50156128475760005460805151516006549182159190828061283a575b8061281f575b6001600160401b0382166001600160401b03841611908115612817575b50156127d25760c0515161263b5760a05151606001516125f6575b610100515161236157505050506060608001511580612356575b15612311575b611741608051604051906117128261296b565b600a82527f6f7074696d6973746963000000000000000000000000000000000000000000006020830152613e30565b610180516080515161016051611762929091906001600160401b0316613b9c565b6118ab575b808061188a575b611810575b80611789575b61177f57005b610c816080614034565b5060206080015151516001600160401b03600054166001600160401b038216119081156117b7575b50611779565b61010051511515915081611803575b816117e3575b50806117d9575b816117b1565b50600654156117d3565b90506607ffffffffffff806080515151600d1c1691600d1c1614816117cc565b60c05151151591506117c6565b7f27eafee2f5b2c935fa7666d231360699c41fe21db57034136b1af3c43f13df896080516001600160401b03602082015151519182600355515116806001600160401b0319600254161760025561188260405192839283602090939291936001600160401b0360408201951681520152565b0390a1611773565b506001600160401b036080515151166001600160401b03600254161061176e565b608051608081516001600160401b038151166008549067ffffffffffffffff60401b602084015160401b16916fffffffffffffffffffffffffffffffff1916171760085560408101516009556060810151600a550151600b556020810151602081518051600c5501518051906001600160401b038211610b5457600160401b8211610b5457600d5482600d558083106122cf575b50602001600d60005260005b82811061229b575050506020808201518051600e5501518051906001600160401b038211610b5457600160401b8211610b5457600f5482600f55808310612259575b50602001600f60005260005b82811061222557505050604001518051601055602001518051906001600160401b038211610b5457600160401b8211610b5457601154826011558083106121e3575b50602001601160005260005b8281106121af57505050604001518051601255602001518051906001600160401b038211610b5457600160401b8211610b54576013548260135580831061216d575b50602001601360005260005b8281106121395750505060206080015160808151611a736001600160401b038251166001600160401b03166001600160401b03196014541617601455565b611aad6001600160401b0360208301511667ffffffffffffffff60401b6014549160401b169067ffffffffffffffff60401b191617601455565b604081015160155560608101516016550151601755602081015160208151805160185501518051906001600160401b038211610b5457600160401b8211610b5457601954826019558083106120f7575b50602001601960005260005b8281106120c3575050506020808201518051601a5501518051906001600160401b038211610b5457600160401b8211610b5457601b5482601b55808310612081575b50602001601b60005260005b82811061204d57505050604001518051601c55602001518051906001600160401b038211610b5457600160401b8211610b5457601d5482601d5580831061200b575b50602001601d60005260005b828110611fd757505050604001518051601e55602001518051906001600160401b038211610b5457600160401b8211610b5457601f5482601f55808310611f95575b50602001601f60005260005b828110611f6157505060c051805191506001600160401b038211610b5457600160401b8211610b545760205482602055808310611f1f575b50602001602060005260005b828110611eeb57505060e05160215550610100518051906001600160401b038211610b5457600160401b8211610b545760225482602255808310611ea9575b50602001602260005260005b828110611e75575050610120516023555061014051805160005b60028110611e605750506020810151906026916000905b6002821015611cf257805160005b60028110611cde5750506002602060019201940191019092611cb3565b600190602083519301928188015501611cc1565b50509050604081015160005b60028110611e4b5750506060015160005b60028110611e36575050606060e0608001516001600160401b038151166001600160401b0319602e541617602e556020810151602f5560408101516030550151805160005b60028110611e215750506020810151906033916000905b6002821015611daa57805160005b60028110611d965750506002602060019201940191019092611d6b565b600190602083519301928188015501611d79565b50509050604081015160005b60028110611e0c5750506060015160005b60028110611df75750506001600160401b0361010060800151166001600160401b0319603b541617603b55611767565b60019060208351930192816039015501611dc7565b60019060208351930192816037015501611db6565b60019060208351930192816031015501611d54565b6001906020835193019281602c015501611d0f565b6001906020835193019281602a015501611cfe565b60019060208351930192816024015501611c9c565b60019060208351930192817f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510015501611c82565b7f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908382015b8183018110611edf575050611c76565b60008155600101611ecf565b60019060208351930192817fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb015501611c37565b7fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908382015b8183018110611f55575050611c2b565b60008155600101611f45565b60019060208351930192817fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807015501611bf3565b7fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908382015b8183018110611fcb575050611be7565b60008155600101611fbb565b60019060208351930192817f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f015501611ba5565b7f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908382015b8183018110612041575050611b99565b60008155600101612031565b60019060208351930192817f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1015501611b57565b7f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908382015b81830181106120b7575050611b4b565b600081556001016120a7565b60019060208351930192817f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695015501611b09565b7f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908382015b818301811061212d575050611afd565b6000815560010161211d565b60019060208351930192817f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090015501611a35565b7f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908382015b81830181106121a3575050611a29565b60008155600101612193565b60019060208351930192817f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c680155016119e7565b7f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908382015b81830181106122195750506119db565b60008155600101612209565b60019060208351930192817f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802015501611999565b7f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908382015b818301811061228f57505061198d565b6000815560010161227f565b60019060208351930192817fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb501550161194b565b7fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908382015b818301811061230557505061193f565b600081556001016122f5565b60405162461bcd60e51b815260206004820152601c60248201527f6e6f206e6578742073796e6320636f6d6d69747465652070726f6f66000000006044820152606490fd5b5061012051156116f9565b6607ffffffffffff8091600d1c1691600d1c161490816125ed575b5061259a575b5060e0516101005160805151606001519360009391929091905b835185101561244d5760ff85116110cc576001851b156124375760006020916001806037891c1614821461241f576123e16123f4916123db8989614553565b516144fb565b8360405192828480945193849201613dc7565b8101039060025afa156124135761240d60005194614544565b9361239c565b6040513d6000823e3d90fd5b6123e16123f4916124308989614553565b51906144fb565b634e487b7160e01b600052601260045260246000fd5b925092509203612555576001600160a01b03603e5416602060606080015161018460a0608001519160c060800151946124a56040519687958694637a53878160e01b8652600486015260248501526044840190612e7f565b5afa90811561241357600091612526575b506116ff5760405162461bcd60e51b815260206004820152602a60248201527f626164206e6578742073796e6320636f6d6d697474656520726f6f74206d617060448201527f70696e672070726f6f66000000000000000000000000000000000000000000006064820152608490fd5b612548915060203d60201161254e575b61254081836129bc565b810190613b20565b836124b6565b503d612536565b60405162461bcd60e51b815260206004820152601d60248201527f626164206e6578742073796e6320636f6d6d69747465652070726f6f660000006044820152606490fd5b60e051036125a85782612382565b60405162461bcd60e51b815260206004820152601760248201527f626164206e6578742073796e6320636f6d6d69747465650000000000000000006044820152606490fd5b9050158461237c565b60405162461bcd60e51b815260206004820152600c60248201527f6e6f2066696e2070726f6f6600000000000000000000000000000000000000006044820152606490fd5b60a0515180516001600160401b03166126a1575060a0515160600151156116df5760405162461bcd60e51b815260206004820152601e60248201527f67656e65736973206865616465722073686f756c6420626520656d70747900006044820152606490fd5b6126b2909693969592949195614567565b9560406080015194606060805151015197966000975b87518910156127375760ff89116110cc576001891b1561243757600060209160018060698d1c16148214612726576123e1612707916123db8d8d614553565b8101039060025afa156124135761272060005198614544565b976126c8565b6123e1612707916124308d8d614553565b929598919497509295500361278d5760a051604051612788916127598261296b565b600982527f66696e616c697a656400000000000000000000000000000000000000000000006020830152613e30565b6116df565b60405162461bcd60e51b815260206004820152600d60248201527f6261642066696e2070726f6f66000000000000000000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601960248201527f6261642061747420736c6f74206f7220636f6d6d6974746565000000000000006044820152606490fd5b9050876116c4565b506607ffffffffffff8082600d1c169083600d1c16146116a7565b50610100515115156116a1565b60405162461bcd60e51b815260206004820152600860248201527f62616420736c6f740000000000000000000000000000000000000000000000006044820152606490fd5b60a05151516001600160401b031610905083611684565b60405162461bcd60e51b815260206004820152601860248201527f6e6f7420656e6f7567682070617274696369706174696f6e00000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601260248201527f71756f72756d206e6f74207265616368656400000000000000000000000000006044820152606490fd5b5081611644565b61012081019081106001600160401b03821117610b5457604052565b60a081019081106001600160401b03821117610b5457604052565b604081019081106001600160401b03821117610b5457604052565b606081019081106001600160401b03821117610b5457604052565b608081019081106001600160401b03821117610b5457604052565b90601f801991011681019081106001600160401b03821117610b5457604052565b600435906001600160401b038216820361021057565b35906001600160401b038216820361021057565b9080601f83011215610210578135906001600160401b038211610b54578160051b60405193602093612a3b858401876129bc565b85528380860192820101928311610210578301905b828210612a5e575050505090565b81358152908301908301612a50565b91906040838203126102105760405190612a868261296b565b8193803583526020810135916001600160401b03831161021057602092612aad9201612a07565b910152565b91908281039260e0841261021057604090815192612acf84612986565b60a0849612610210578251612ae381612950565b612aec836129f3565b8152612afa602084016129f3565b602082015283830135848201526060830135606082015260808301356080820152845260a08201356001600160401b039081811161021057830160608184031261021057845190612b4a82612986565b80358381116102105784612b5f918301612a6d565b825260208101358381116102105784612b79918301612a6d565b6020830152858101359083821161021057612b9691859101612a6d565b85820152602086015260c083013590811161021057612aad9201612a6d565b9080601f830112156102105760405191612bce8361296b565b82906040810192831161021057905b828210612bea5750505090565b8135815260209182019101612bdd565b9190916101408184031261021057604092835191612c17836129a1565b8294612c238383612bb5565b845282605f83011215610210578051612c3b8161296b565b8060c084019185831161021057838501905b838210612c7b575050928492612c7160609661010094612aad9760208b0152612bb5565b9087015201612bb5565b60208591612c898985612bb5565b815201910190612c4d565b6040519060316000835b60028210612cb457505050612cb28261296b565b565b6001602081928554815201930191019091612c9e565b6040519060376000835b60028210612ce857505050612cb28261296b565b6001602081928554815201930191019091612cd4565b6040519060396000835b60028210612d1c57505050612cb28261296b565b6001602081928554815201930191019091612d08565b60405191906000835b60028210612d4f57505050612cb28261296b565b6001602081928554815201930191019091612d3b565b60609060408301908051845260209283809201519460408382015285518094520193019160005b828110612d9a575050505090565b835185529381019392810192600101612d8c565b612e5491608082516001600160401b0380825116845260208201511660208401526040810151604084015260608101516060840152015160808201526040612e43602084015160e060a0850152612e128151606060e0870152610140860190612d65565b83612e3060208401519260df199384898303016101008a0152612d65565b9201519085830301610120860152612d65565b9201519060c0818403910152612d65565b90565b6000915b60028310612e6857505050565b600190825181526020809101920192019190612e5b565b9190612e8c818451612e57565b60208381015193906040906000908483015b60028310612ed057505050612cb293945081612ec660609261010094015160c0860190612e57565b0151910190612e57565b818482612ee06001948c51612e57565b01980192019196612e9e565b90603d54821015612f2c57603d600052601c8260031c7fece66cfdbd22e3f37d348a3d8e19074452862cd65fd4b9a11f0336d1ac6d1dc3019260021b1690565b634e487b7160e01b600052603260045260246000fd5b90603c54821015612f2c57603c60005260188260021c7fc6bb06cb7f92603de181bf256cd16846b93b752a170ff24824098b31aa008a7e019260031b1690565b15612f8957565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b60408051612fda81612934565b8092825192612fe884612986565b805192612ff484612950565b600854916001600160401b03808416865280602094831c168487015260095482870152600a549560609687820152600b546080820152875281519661303888612986565b8251976130448961296b565b600c5489528351988987600d549b8c81520160009b600d8d527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908d5b8181106136ae57505050816130979103826129bc565b87820152815283516130a88161296b565b600e54815284518088600f54918281520190600f8d527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908d5b81811061369a57505050816130f89103826129bc565b8782015286820152835161310b8161296b565b60105481528451808860115491828152019060118d527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908d5b818110613686575050508161315b9103826129bc565b87820152848201528582015282516131728161296b565b60125481528351808760135491828152019060138c527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908c5b81811061367257505050816131c29103826129bc565b8682015283820152835281516131d781612986565b82516131e281612950565b826014548181168352851c1686820152601554848201526016548882015260175460808201528152825161321581612986565b83516132208161296b565b60185481528451808860195491828152019060198d527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908d5b81811061365e57505050816132709103826129bc565b87820152815283516132818161296b565b601a54815284518088601b54918281520190601b8d527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908d5b81811061364a57505050816132d19103826129bc565b878201528682015283516132e48161296b565b601c54815284518088601d54918281520190601d8d527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908d5b81811061363657505050816133349103826129bc565b878201528482015285820152825161334b8161296b565b601e54815283518087601f54918281520190601f8c527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908c5b818110613622575050508161339b9103826129bc565b81870152818401528385015281518454808252858952818601907fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908a5b81811061360e57505050816133ef9103826129bc565b82840152602154868401528151808560225491828152019060228a527f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908a5b8181106135fa57505050816134459103826129bc565b608084015260235460a084015281519661345e886129a1565b8251602482825b600282106135e4575050506134798161296b565b88528251966134878861296b565b879660269583985b600290818b10156134b65790896001926134a88b612d32565b81520198019901989661348f565b50509398919750939891945085820152875180602a9086905b600282106135ce575050506134e38161296b565b818901528751602c85825b600282106135b8575050506135028161296b565b8682015260c0820152865195613517876129a1565b80602e54168752602f548588015260305488880152875196613538886129a1565b613540612c94565b885288519761354e8961296b565b8897603396985b600290818b101561357c57908960019261356e8b612d32565b815201980199019896613555565b50509398919550939891956101009750840152613597612cca565b908301526135a3612cfe565b8183015282015260e0840152603b5416910152565b82548152600192830192919091019088016134ee565b82548152600192830192919091019088016134cf565b8254815260019283019291909101908801613465565b82548452928801926001928301920161342f565b8254845292880192600192830192016133d9565b82548452928a019260019283019201613385565b82548452928b01926001928301920161331e565b82548452928b0192600192830192016132bb565b82548452928b01926001928301920161325a565b82548452928a0192600192830192016131ac565b82548452928b019260019283019201613145565b82548452928b0192600192830192016130e2565b82548452928b019260019283019201613081565b8181106136cd575050565b600081556001016136c2565b6000806008558060095580600a5580600b5580600c55600d5481600d5580613ade575b5080600e55600f5481600f5580613a9c575b50806010556011548160115580613a5a575b50806012556013548160135580613a18575b50806014558060155580601655806017558060185560195481601955806139d6575b5080601a55601b5481601b5580613994575b5080601c55601d5481601d5580613952575b5080601e55601f5481601f5580613910575b5060205481602055806138ce575b5080602155602254816022558061388c575b508060235560245b60268110613881575060265b602a811061386c5750602a5b602c81106138615750602c5b602e8110613856575080602e5580602f558060305560315b6033811061384b575060335b60378110613836575060375b6039811061382b575060395b603b81106138205750603b55565b818155600101613812565b818155600101613806565b806138456002809301826136c2565b016137fa565b8181556001016137ee565b8181556001016137d6565b8181556001016137ca565b8061387b6002809301826136c2565b016137be565b8181556001016137b2565b602282527f61035b26e3e9eee00e0d72fd1ee8ddca6894550dca6916ea2ac6baa90d11e510908101905b8181106138c357506137aa565b8281556001016138b6565b602082527fc97bfaf2f8ee708c303a06d134f5ecd8389ae0432af62dc132a24118292866bb908101905b8181106139055750613798565b8281556001016138f8565b601f82527fa03837a25210ee280c2113ff4b77ca23440b19d4866cca721c801278fd08d807908101905b818110613947575061378a565b82815560010161393a565b601d82527f6d4407e7be21f808e6509aa9fa9143369579dd7d760fe20a2c09680fc146134f908101905b8181106139895750613778565b82815560010161397c565b601b82527f3ad8aa4f87544323a9d1e5dd902f40c356527a7955687113db5f9a85ad579dc1908101905b8181106139cb5750613766565b8281556001016139be565b601982527f944998273e477b495144fb8794c914197f3ccb46be2900f4698fd0ef743c9695908101905b818110613a0d5750613754565b828155600101613a00565b601382527f66de8ffda797e3de9c05e8fc57b3bf0ec28a930d40b0d285d93c06501cf6a090908101905b818110613a4f5750613732565b828155600101613a42565b601182527f31ecc21a745e3968a04e9570e4425bc18fa8019c68028196b546d1669c200c68908101905b818110613a915750613720565b828155600101613a84565b600f82527f8d1108e10bcb7c27dddfc02ed9d693a074039d026cf4ea4240b40f7d581ac802908101905b818110613ad3575061370e565b828155600101613ac6565b600d82527fd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb5908101905b818110613b1557506136fc565b828155600101613b08565b90816020910312610210575180151581036102105790565b9060016001600160401b03809316019182116110cc57565b15613b5757565b60405162461bcd60e51b815260206004820152601160248201527f62616420706f736569646f6e20726f6f740000000000000000000000000000006044820152606490fd5b6607ffffffffffff80600054600d1c169082600d1c16916006541515600014613d60578183148015613d46575b15613d0157602093613bf3613bee6707ffffffffffffff613bf9945b60051c1661440b565b614481565b90614518565b9103613ce7576101c4600554613c13848601518214613b50565b915b6001600160a01b03603e5416613c6b6001600160401b038751169660606040820151910151906040519889978896630291ab6d60e51b885260048801526024870152604486015260648501526084840190612e7f565b5afa90811561241357600091613cc9575b5015613c8457565b60405162461bcd60e51b815260206004820152601160248201527f62616420626c73207369672070726f6f660000000000000000000000000000006044820152606490fd5b613ce1915060203d811161254e5761254081836129bc565b38613c7c565b6101c4600754613cfb848601518214613b50565b91613c15565b60405162461bcd60e51b815260206004820152601060248201527f6261642073696720706572696f642032000000000000000000000000000000006044820152606490fd5b506001600160401b03613d5883613b38565b168314613bc9565b818303613d8257602093613bf3613bee6707ffffffffffffff613bf994613be5565b60405162461bcd60e51b815260206004820152601060248201527f6261642073696720706572696f642031000000000000000000000000000000006044820152606490fd5b60005b838110613dda5750506000910152565b8181015183820152602001613dca565b15613df25750565b6044604051809262461bcd60e51b825260206004830152613e228151809281602486015260208686019101613dc7565b601f01601f19168101030190fd5b9190916020908181015192604094858301608081519451015185855195015194936000945b8651861015613ede5760ff86116110cc57600180871b156124375788916000916019891c811603613ecd57613e91613ea3916123db8a8c614553565b838d5192828480945193849201613dc7565b8101039060025afa15613ec257613ebc60005195614544565b94613e55565b88513d6000823e3d90fd5b613e91613ea3916124308a8c614553565b909397929550613f429194508851907f626164206578656320726f6f742070726f6f662000000000000000000000000088830152885195613f3c6034848b8d0199613f2c818484018d613dc7565b81010360148101865201846129bc565b14613dea565b5192515184845194015193926000935b8551851015613fdb5760ff85116110cc57600180861b156124375787916000916012881c811603613fca57613f8e613fa0916123db898b614553565b838c5192828480945193849201613dc7565b8101039060025afa15613fbf57613fb960005194614544565b93613f52565b87513d6000823e3d90fd5b613f8e613fa091612430898b614553565b9450603a919350947f626164206578656320737461746520726f6f742070726f6f662000000000000095614024612cb298613f3c959a5198899485015251809285850190613dc7565b810103601a8101865201846129bc565b602081019081515151906001600160401b0392838316926607ffffffffffff80600054600d1c1691600d1c169060065486811560001461419f575050810361415a57827fdc7ba15c782b181b9d54a996db4ab8a32182bff2bfb09e4aca8ed9ea9e5380c7916140e06140b960a060606020980151948560065501519283600755613b38565b91604051938493846040919493926001600160401b03606083019616825260208201520152565b0390a15b51015151519060005492831681116140fb57505050565b807f4d75bcddf849ad697dd4b9e37ec69f14240170e980101fcd9e57bb000527c24893836001556001600160401b0319161760005561415560405192839283602090939291936001600160401b0360408201951681520152565b0390a1565b60405162461bcd60e51b815260206004820152600f60248201527f6d69736d6174636820706572696f6400000000000000000000000000000000006044820152606490fd5b6141ae60209693949294613b38565b1681146141be575b5050506140e4565b7fdc7ba15c782b181b9d54a996db4ab8a32182bff2bfb09e4aca8ed9ea9e5380c7926004556007546005556142076140b960a06060850151948560065501519283600755613b38565b0390a13880806141b6565b60e08201906001600160401b039182815151161561436d5760e0820161423b84825151166143b1565b61424885845151166143b1565b1590801591801583150361435757505080614345575b6143345761426b8361437b565b6142748661437b565b15158115150361432b575060408301515115156040860151511515810361432b5784906142e6575b809151511691515116908181036142de575050818151515116828451515116908181036142d6575050816101008092015116920151161190565b109392505050565b119392505050565b50602083015151516607ffffffffffff90818086515151600d1c1691600d1c1614908060208801515151600d1c169087515151600d1c1614810361432b57508361429c565b94505050505090565b909350829150515116915151161090565b5083815151168483515116141561425e565b955095505050505081614368575090565b905090565b5060e0015151161515919050565b6080810151511515908161438d575090565b905061010081515151916607ffffffffffff9182910151600d1c1691600d1c161490565b60036001600160401b03809216029081169081036110cc57610400111590565b7f000000000000000000000000000000000000000000000000000000000000000042034281116110cc57600c6001600160401b0391041690565b603d5460001992600091848101908111614453575b61442981612f42565b906001600160401b03809154600393841b1c16908616101561446757508015614453578401614420565b634e487b7160e01b83526011600452602483fd5b93509093506144769150612eec565b9054911b1c60e01b90565b60006144df6020926040518481019163ffffffff60e01b1682527f00000000000000000000000000000000000000000000000000000000000000006040820152604081526144ce81612986565b604051928392839251928391613dc7565b8101039060025afa156124135760005160201c600760f81b1790565b9190604051926020840152604083015260408252612cb282612986565b6145316123e160209361452c600094614567565b6144fb565b8101039060025afa156124135760005190565b60001981146110cc5760010190565b8051821015612f2c5760209160051b010190565b6001600160401b039061459561457f83835116614716565b61458f6020948585015116614716565b906144fb565b91806040926145ac84519586815194859201613dc7565b82600086819760029581010390855afa156146ff57845183866145ec6145da888601516060870151906144fb565b83895192828480945193849201613dc7565b81010390865afa1561470c578561461b61460986938351906144fb565b83885192828480945193849201613dc7565b81010390855afa156146ff57828561465c608082519401518751848101918252838982015288815261464c81612986565b8851928392839251928391613dc7565b81010390855afa156146ff5784518386614699875183810190838252838a82015289815261468981612986565b8951928392839251928391613dc7565b81010390865afa1561470c57856146b661460986938351906144fb565b81010390855afa156146ff57906146e56146d386938451906144fb565b84865192828480945193849201613dc7565b810103915afa156146f557505190565b51903d90823e3d90fd5b50505051903d90823e3d90fd5b84513d87823e3d90fd5b60009081905b6020821061472957505090565b600892831b60ff821617921c9061473f90614544565b9061471c56fea2646970667358221220a2723db7ba34850202de70a88f740cf3119f0f2956ea56fb0effabccb7f9c5bd64736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "computeDomain(bytes4)": {
+        "notice": "https://github.com/ethereum/consensus-specs/blob/dev/specs/phase0/beacon-chain.md#compute_domain"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 60147,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "finalizedSlot",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint64"
+      },
+      {
+        "astId": 60149,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "finalizedExecutionStateRoot",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60151,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "optimisticSlot",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint64"
+      },
+      {
+        "astId": 60153,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "optimisticExecutionStateRoot",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60155,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "currentSyncCommitteeRoot",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60157,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "currentSyncCommitteePoseidonRoot",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60159,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "nextSyncCommitteeRoot",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60161,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "nextSyncCommitteePoseidonRoot",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 60164,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "bestValidUpdate",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_struct(LightClientUpdate)60657_storage"
+      },
+      {
+        "astId": 60167,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "forkEpochs",
+        "offset": 0,
+        "slot": "60",
+        "type": "t_array(t_uint64)dyn_storage"
+      },
+      {
+        "astId": 60170,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "forkVersions",
+        "offset": 0,
+        "slot": "61",
+        "type": "t_array(t_bytes4)dyn_storage"
+      },
+      {
+        "astId": 60173,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "zkVerifier",
+        "offset": 0,
+        "slot": "62",
+        "type": "t_contract(IBeaconVerifier)66882"
+      },
+      {
+        "astId": 7,
+        "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "63",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_array(t_uint256)2_storage)2_storage": {
+        "base": "t_array(t_uint256)2_storage",
+        "encoding": "inplace",
+        "label": "uint256[2][2]",
+        "numberOfBytes": "128"
+      },
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_bytes4)dyn_storage": {
+        "base": "t_bytes4",
+        "encoding": "dynamic_array",
+        "label": "bytes4[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)2_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[2]",
+        "numberOfBytes": "64"
+      },
+      "t_array(t_uint64)dyn_storage": {
+        "base": "t_uint64",
+        "encoding": "dynamic_array",
+        "label": "uint64[]",
+        "numberOfBytes": "32"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_bytes4": {
+        "encoding": "inplace",
+        "label": "bytes4",
+        "numberOfBytes": "4"
+      },
+      "t_contract(IBeaconVerifier)66882": {
+        "encoding": "inplace",
+        "label": "contract IBeaconVerifier",
+        "numberOfBytes": "20"
+      },
+      "t_struct(BeaconBlockHeader)60748_storage": {
+        "encoding": "inplace",
+        "label": "struct BeaconBlockHeader",
+        "members": [
+          {
+            "astId": 60739,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "slot",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint64"
+          },
+          {
+            "astId": 60741,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "proposerIndex",
+            "offset": 8,
+            "slot": "0",
+            "type": "t_uint64"
+          },
+          {
+            "astId": 60743,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "parentRoot",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60745,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "stateRoot",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60747,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "bodyRoot",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(ExecutionPayload)60695_storage": {
+        "encoding": "inplace",
+        "label": "struct ExecutionPayload",
+        "members": [
+          {
+            "astId": 60688,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "stateRoot",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(LeafWithBranch)60737_storage"
+          },
+          {
+            "astId": 60691,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "blockHash",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_struct(LeafWithBranch)60737_storage"
+          },
+          {
+            "astId": 60694,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "blockNumber",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_struct(LeafWithBranch)60737_storage"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(HeaderWithExecution)60667_storage": {
+        "encoding": "inplace",
+        "label": "struct HeaderWithExecution",
+        "members": [
+          {
+            "astId": 60660,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "beacon",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(BeaconBlockHeader)60748_storage"
+          },
+          {
+            "astId": 60663,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "execution",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_struct(ExecutionPayload)60695_storage"
+          },
+          {
+            "astId": 60666,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "executionRoot",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_struct(LeafWithBranch)60737_storage"
+          }
+        ],
+        "numberOfBytes": "384"
+      },
+      "t_struct(LeafWithBranch)60737_storage": {
+        "encoding": "inplace",
+        "label": "struct LeafWithBranch",
+        "members": [
+          {
+            "astId": 60733,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "leaf",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60736,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "branch",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_bytes32)dyn_storage"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(LightClientUpdate)60657_storage": {
+        "encoding": "inplace",
+        "label": "struct LightClientUpdate",
+        "members": [
+          {
+            "astId": 60635,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "attestedHeader",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(HeaderWithExecution)60667_storage"
+          },
+          {
+            "astId": 60638,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "finalizedHeader",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_struct(HeaderWithExecution)60667_storage"
+          },
+          {
+            "astId": 60641,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "finalityBranch",
+            "offset": 0,
+            "slot": "24",
+            "type": "t_array(t_bytes32)dyn_storage"
+          },
+          {
+            "astId": 60643,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "nextSyncCommitteeRoot",
+            "offset": 0,
+            "slot": "25",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60646,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "nextSyncCommitteeBranch",
+            "offset": 0,
+            "slot": "26",
+            "type": "t_array(t_bytes32)dyn_storage"
+          },
+          {
+            "astId": 60648,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "nextSyncCommitteePoseidonRoot",
+            "offset": 0,
+            "slot": "27",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60651,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "nextSyncCommitteeRootMappingProof",
+            "offset": 0,
+            "slot": "28",
+            "type": "t_struct(Proof)66853_storage"
+          },
+          {
+            "astId": 60654,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "syncAggregate",
+            "offset": 0,
+            "slot": "38",
+            "type": "t_struct(SyncAggregate)60758_storage"
+          },
+          {
+            "astId": 60656,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "signatureSlot",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_uint64"
+          }
+        ],
+        "numberOfBytes": "1664"
+      },
+      "t_struct(Proof)66853_storage": {
+        "encoding": "inplace",
+        "label": "struct IBeaconVerifier.Proof",
+        "members": [
+          {
+            "astId": 66838,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "a",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_array(t_uint256)2_storage"
+          },
+          {
+            "astId": 66844,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "b",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_array(t_uint256)2_storage)2_storage"
+          },
+          {
+            "astId": 66848,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "c",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_array(t_uint256)2_storage"
+          },
+          {
+            "astId": 66852,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "commitment",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_array(t_uint256)2_storage"
+          }
+        ],
+        "numberOfBytes": "320"
+      },
+      "t_struct(SyncAggregate)60758_storage": {
+        "encoding": "inplace",
+        "label": "struct SyncAggregate",
+        "members": [
+          {
+            "astId": 60750,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "participation",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint64"
+          },
+          {
+            "astId": 60752,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "poseidonRoot",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 60754,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "commitment",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 60757,
+            "contract": "contracts/light-client/EthereumLightClient.sol:EthereumLightClient",
+            "label": "proof",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_struct(Proof)66853_storage"
+          }
+        ],
+        "numberOfBytes": "416"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  }
+}

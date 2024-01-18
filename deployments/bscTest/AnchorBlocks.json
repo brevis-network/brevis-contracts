@@ -1,0 +1,667 @@
+{
+  "address": "0xb65346A8ade3dF4b563459d98af21891EEff7859",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_lightClient",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "blockHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AnchorBlockUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "blocks",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestBlockNum",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "lightClient",
+      "outputs": [
+        {
+          "internalType": "contract IEthereumLightClient",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint64",
+                      "name": "slot",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "uint64",
+                      "name": "proposerIndex",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "parentRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "stateRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "bodyRoot",
+                      "type": "bytes32"
+                    }
+                  ],
+                  "internalType": "struct BeaconBlockHeader",
+                  "name": "beacon",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "stateRoot",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockHash",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockNumber",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct ExecutionPayload",
+                  "name": "execution",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "executionRoot",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct HeaderWithExecution",
+              "name": "attestedHeader",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "participation",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "poseidonRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "commitment",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "a",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2][2]",
+                      "name": "b",
+                      "type": "uint256[2][2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "c",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "commitment",
+                      "type": "uint256[2]"
+                    }
+                  ],
+                  "internalType": "struct IBeaconVerifier.Proof",
+                  "name": "proof",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SyncAggregate",
+              "name": "syncAggregate",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint64",
+              "name": "signatureSlot",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct LightClientOptimisticUpdate",
+          "name": "hb",
+          "type": "tuple"
+        }
+      ],
+      "name": "processUpdate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint64",
+                      "name": "slot",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "uint64",
+                      "name": "proposerIndex",
+                      "type": "uint64"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "parentRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "stateRoot",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32",
+                      "name": "bodyRoot",
+                      "type": "bytes32"
+                    }
+                  ],
+                  "internalType": "struct BeaconBlockHeader",
+                  "name": "beacon",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "stateRoot",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockHash",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bytes32",
+                          "name": "leaf",
+                          "type": "bytes32"
+                        },
+                        {
+                          "internalType": "bytes32[]",
+                          "name": "branch",
+                          "type": "bytes32[]"
+                        }
+                      ],
+                      "internalType": "struct LeafWithBranch",
+                      "name": "blockNumber",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct ExecutionPayload",
+                  "name": "execution",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "leaf",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "bytes32[]",
+                      "name": "branch",
+                      "type": "bytes32[]"
+                    }
+                  ],
+                  "internalType": "struct LeafWithBranch",
+                  "name": "executionRoot",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct HeaderWithExecution",
+              "name": "attestedHeader",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "participation",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "poseidonRoot",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "commitment",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "a",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2][2]",
+                      "name": "b",
+                      "type": "uint256[2][2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "c",
+                      "type": "uint256[2]"
+                    },
+                    {
+                      "internalType": "uint256[2]",
+                      "name": "commitment",
+                      "type": "uint256[2]"
+                    }
+                  ],
+                  "internalType": "struct IBeaconVerifier.Proof",
+                  "name": "proof",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SyncAggregate",
+              "name": "syncAggregate",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint64",
+              "name": "signatureSlot",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct LightClientOptimisticUpdate",
+          "name": "hb",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "blockHash",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "left",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "right",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct AnchorBlocks.BlockHashWitness[]",
+          "name": "chainProof",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "processUpdateWithChainProof",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_lightClient",
+          "type": "address"
+        }
+      ],
+      "name": "setLightClient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xf8fdefc8650426782a68adac6a6c85e8610ad551d2d29c5e2b7ca3fa6eb13fc6",
+  "receipt": {
+    "to": null,
+    "from": "0x9532f934EfcE6c4Bf5BA078b25fDd81a780FBdfB",
+    "contractAddress": "0xb65346A8ade3dF4b563459d98af21891EEff7859",
+    "transactionIndex": 13,
+    "gasUsed": "1036184",
+    "logsBloom": "0x00000000000000000000000000000002000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000840000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020840000000000000000000000000000000000000000000000000800000000000000",
+    "blockHash": "0x46107154b65596ffbd7bac378192123f58fb3c7dd2ac486a240c9de46ee412a9",
+    "transactionHash": "0xf8fdefc8650426782a68adac6a6c85e8610ad551d2d29c5e2b7ca3fa6eb13fc6",
+    "logs": [
+      {
+        "transactionIndex": 13,
+        "blockNumber": 30076938,
+        "transactionHash": "0xf8fdefc8650426782a68adac6a6c85e8610ad551d2d29c5e2b7ca3fa6eb13fc6",
+        "address": "0xb65346A8ade3dF4b563459d98af21891EEff7859",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000009532f934efce6c4bf5ba078b25fdd81a780fbdfb"
+        ],
+        "data": "0x",
+        "logIndex": 5,
+        "blockHash": "0x46107154b65596ffbd7bac378192123f58fb3c7dd2ac486a240c9de46ee412a9"
+      }
+    ],
+    "blockNumber": 30076938,
+    "cumulativeGasUsed": "1618822",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x958D7C94595BDf9067FC473C2141b432033F9759"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "73e654e6b7af01b8885ee72617afe181",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_lightClient\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNum\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"}],\"name\":\"AnchorBlockUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"blocks\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"latestBlockNum\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lightClient\",\"outputs\":[{\"internalType\":\"contract IEthereumLightClient\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"attestedHeader\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"participation\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"struct SyncAggregate\",\"name\":\"syncAggregate\",\"type\":\"tuple\"},{\"internalType\":\"uint64\",\"name\":\"signatureSlot\",\"type\":\"uint64\"}],\"internalType\":\"struct LightClientOptimisticUpdate\",\"name\":\"hb\",\"type\":\"tuple\"}],\"name\":\"processUpdate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"components\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"slot\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposerIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"parentRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"bodyRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct BeaconBlockHeader\",\"name\":\"beacon\",\"type\":\"tuple\"},{\"components\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"stateRoot\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockHash\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"blockNumber\",\"type\":\"tuple\"}],\"internalType\":\"struct ExecutionPayload\",\"name\":\"execution\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leaf\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"branch\",\"type\":\"bytes32[]\"}],\"internalType\":\"struct LeafWithBranch\",\"name\":\"executionRoot\",\"type\":\"tuple\"}],\"internalType\":\"struct HeaderWithExecution\",\"name\":\"attestedHeader\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"participation\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"poseidonRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IBeaconVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"struct SyncAggregate\",\"name\":\"syncAggregate\",\"type\":\"tuple\"},{\"internalType\":\"uint64\",\"name\":\"signatureSlot\",\"type\":\"uint64\"}],\"internalType\":\"struct LightClientOptimisticUpdate\",\"name\":\"hb\",\"type\":\"tuple\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"bytes\",\"name\":\"left\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"right\",\"type\":\"bytes\"}],\"internalType\":\"struct AnchorBlocks.BlockHashWitness[]\",\"name\":\"chainProof\",\"type\":\"tuple[]\"}],\"name\":\"processUpdateWithChainProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_lightClient\",\"type\":\"address\"}],\"name\":\"setLightClient\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"processUpdateWithChainProof((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64),bytes32,(bytes,bytes)[])\":{\"details\":\"It is possible that an attested block doesn't collect enough sync committee signatures in its corresponding signature slot and thus cannot be used in an anchor update. In that case, the updater can pick a later block that has enough sigs, and supply a chainProof to show that the block they want to sync can chain to the head block.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"processUpdate((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64))\":{\"notice\":\"Updates an \\\"anchor block\\\" of a specific block number to the contract state\"},\"processUpdateWithChainProof((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64),bytes32,(bytes,bytes)[])\":{\"notice\":\"Updates an \\\"anchor block\\\" of a specific block number to the contract state\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/light-client/AnchorBlocks.sol\":\"AnchorBlocks\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/light-client/AnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\nimport \\\"./interfaces/IEthereumLightClient.sol\\\";\\nimport \\\"./interfaces/IAnchorBlocks.sol\\\";\\n\\nimport \\\"./common/Helpers.sol\\\";\\nimport \\\"./common/Constants.sol\\\";\\nimport \\\"./common/Types.sol\\\";\\n\\nuint256 constant EXECUTION_BLOCK_LEFT_PREFIX_LEN = 4;\\n\\ncontract AnchorBlocks is IAnchorBlocks, Ownable {\\n    // BlockHashWitness is the RLP code that witnesses the generation of block hash given the ParentHash field\\n    struct BlockHashWitness {\\n        bytes left;\\n        bytes right;\\n    }\\n\\n    event AnchorBlockUpdated(uint256 blockNum, bytes32 blockHash);\\n\\n    IEthereumLightClient public lightClient;\\n    // execution block number => execution block hash\\n    mapping(uint256 => bytes32) public blocks;\\n    uint256 public latestBlockNum;\\n\\n    constructor(address _lightClient) {\\n        lightClient = IEthereumLightClient(_lightClient);\\n    }\\n\\n    /// @notice Updates an \\\"anchor block\\\" of a specific block number to the contract state\\n    function processUpdate(LightClientOptimisticUpdate memory hb) external {\\n        (uint256 blockNum, bytes32 blockHash) = verifyHeadBlock(hb);\\n        require(blockHash != bytes32(0), \\\"empty blockHash\\\");\\n        doUpdate(blockNum, blockHash);\\n    }\\n\\n    /// @notice Updates an \\\"anchor block\\\" of a specific block number to the contract state\\n    /// @dev It is possible that an attested block doesn't collect enough sync committee signatures in its corresponding\\n    /// signature slot and thus cannot be used in an anchor update. In that case, the updater can pick a later block\\n    /// that has enough sigs, and supply a chainProof to show that the block they want to sync can chain to the head block.\\n    function processUpdateWithChainProof(\\n        LightClientOptimisticUpdate memory hb,\\n        bytes32 blockHash,\\n        BlockHashWitness[] memory chainProof\\n    ) external {\\n        require(chainProof.length > 0, \\\"invalid proof length\\\");\\n        (uint256 headBlockNum, bytes32 headBlockHash) = verifyHeadBlock(hb);\\n        uint256 blockNum = headBlockNum - chainProof.length;\\n        verifyChainProof(blockHash, chainProof, headBlockHash);\\n        doUpdate(blockNum, blockHash);\\n    }\\n\\n    function verifyHeadBlock(LightClientOptimisticUpdate memory hb) private view returns (uint256, bytes32) {\\n        require(hasSupermajority(hb.syncAggregate.participation), \\\"quorum not reached\\\");\\n        verifyExecutionPayload(hb.attestedHeader);\\n        lightClient.verifyCommitteeSignature(hb.signatureSlot, hb.attestedHeader.beacon, hb.syncAggregate);\\n        HeaderWithExecution memory h = hb.attestedHeader;\\n        uint256 blockNum = Helpers.revertEndian(uint256(h.execution.blockNumber.leaf));\\n        return (blockNum, h.execution.blockHash.leaf);\\n    }\\n\\n    function verifyExecutionPayload(HeaderWithExecution memory h) private pure {\\n        bool valid = Helpers.isValidMerkleBranch(h.executionRoot, EXECUTION_PAYLOAD_ROOT_INDEX, h.beacon.bodyRoot);\\n        require(valid, \\\"bad exec root proof\\\");\\n        verifyMerkleProof(h.execution.blockNumber, EXECUTION_BLOCK_NUMBER_LOCAL_INDEX, h.executionRoot.leaf);\\n        verifyMerkleProof(h.execution.blockHash, EXECUTION_BLOCK_HASH_LOCAL_INDEX, h.executionRoot.leaf);\\n    }\\n\\n    function doUpdate(uint256 blockNum, bytes32 blockHash) private {\\n        require(blocks[blockNum] == bytes32(0), \\\"block hash already exists\\\");\\n        blocks[blockNum] = blockHash;\\n        if (blockNum > latestBlockNum) {\\n            latestBlockNum = blockNum;\\n        }\\n        emit AnchorBlockUpdated(blockNum, blockHash);\\n    }\\n\\n    function verifyChainProof(\\n        bytes32 blockHash,\\n        BlockHashWitness[] memory chainProof,\\n        bytes32 headBlockHash\\n    ) private pure {\\n        bytes32 h = blockHash;\\n        for (uint256 i = 0; i < chainProof.length; i++) {\\n            // small hack to save some RLP encoding:\\n            // We only care about whether the given blockHash can somehow combine with something to hash into headBlockHash.\\n            // The RLP oding of a block always has 3 bytes for total length prefix and 1 byte (0xa0) for bytes32's length\\n            // prefix; and the ParentHash field is always the first element. So there are always 8 bytes preceding ParentHash.\\n            require(chainProof[i].left.length == EXECUTION_BLOCK_LEFT_PREFIX_LEN, \\\"invalid left len\\\");\\n            h = keccak256(bytes.concat(chainProof[i].left, h, chainProof[i].right));\\n        }\\n        require(h == headBlockHash, \\\"invalid chainProof\\\");\\n    }\\n\\n    function verifyMerkleProof(LeafWithBranch memory proof, uint256 index, bytes32 root) private pure {\\n        require(Helpers.isValidMerkleBranch(proof, index, root), \\\"bad proof\\\");\\n    }\\n\\n    function hasSupermajority(uint64 participation) private pure returns (bool) {\\n        return participation * 3 >= SYNC_COMMITTEE_SIZE * 2;\\n    }\\n\\n    function setLightClient(address _lightClient) external onlyOwner {\\n        lightClient = IEthereumLightClient(_lightClient);\\n    }\\n}\\n\",\"keccak256\":\"0xfdc789761244d93c12e284cfb0e672bfc8ba91f4134cb804cb84c7b741743446\",\"license\":\"MIT\"},\"contracts/light-client/common/Constants.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\n// light client security params\\nuint256 constant MIN_SYNC_COMMITTEE_PARTICIPANTS = 1;\\nuint256 constant UPDATE_TIMEOUT = 86400;\\n\\n// beacon chain constants\\nuint256 constant FINALIZED_ROOT_INDEX = 105;\\nuint256 constant NEXT_SYNC_COMMITTEE_INDEX = 55;\\nuint256 constant SYNC_COMMITTEE_SIZE = 512;\\nuint64 constant SLOTS_PER_EPOCH = 32;\\nuint64 constant EPOCHS_PER_SYNC_COMMITTEE_PERIOD = 256;\\nbytes32 constant DOMAIN_SYNC_COMMITTEE = bytes32(uint256(0x07) << 248);\\nuint256 constant SLOT_LENGTH_SECONDS = 12;\\n\\n// https://github.com/ethereum/consensus-specs/blob/dev/specs/capella/light-client/sync-protocol.md\\n// beaconBodyRoot -> stateRoot gindex: 2 << 7 | 9 * 2 << 3 | 2\\nuint256 constant EXECUTION_STATE_ROOT_INDEX = 402;\\n// beaconBodyRoot -> blockHash gindex: 2 << 7 | 9 * 2 << 3 | 12\\nuint256 constant EXECUTION_BLOCK_HASH_INDEX = 412;\\n\\n// the following indices are gindices counting from the executionPayloadRoot\\n// beaconBodyRoot -> executionPayloadRoot gindex: 2 << 4 | 9\\nuint256 constant EXECUTION_PAYLOAD_ROOT_INDEX = 25;\\n// executionPayloadRoot -> stateRoot gindex: 2 << 4 | 2\\nuint256 constant EXECUTION_STATE_ROOT_LOCAL_INDEX = 18;\\n// executionPayloadRoot -> blockNumber gindex: 2 << 4 | 6\\nuint256 constant EXECUTION_BLOCK_NUMBER_LOCAL_INDEX = 22;\\n// executionPayloadRoot -> blockHash gindex: 2 << 4 | 12\\nuint256 constant EXECUTION_BLOCK_HASH_LOCAL_INDEX = 28;\\n\",\"keccak256\":\"0xfff6b15056895cc970f6327ace9a5e86f849a1dc8177297de3b84d3e895774c5\",\"license\":\"MIT\"},\"contracts/light-client/common/Helpers.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"./Types.sol\\\";\\n\\nlibrary Helpers {\\n    function isValidMerkleBranch(LeafWithBranch memory lwb, uint256 index, bytes32 root) internal pure returns (bool) {\\n        bytes32 restoredMerkleRoot = restoreMerkleRoot(lwb.leaf, lwb.branch, index);\\n        return root == restoredMerkleRoot;\\n    }\\n\\n    function isValidMerkleBranch(\\n        bytes32 leaf,\\n        bytes32[] memory branch,\\n        uint256 index,\\n        bytes32 root\\n    ) internal pure returns (bool) {\\n        bytes32 restoredMerkleRoot = restoreMerkleRoot(leaf, branch, index);\\n        return root == restoredMerkleRoot;\\n    }\\n\\n    function concatMerkleBranches(bytes32[] memory a, bytes32[] memory b) internal pure returns (bytes32[] memory) {\\n        bytes32[] memory c = new bytes32[](a.length + b.length);\\n        for (uint256 i = 0; i < a.length + b.length; i++) {\\n            if (i < a.length) {\\n                c[i] = a[i];\\n            } else {\\n                c[i] = b[i - a.length];\\n            }\\n        }\\n        return c;\\n    }\\n\\n    function restoreMerkleRoot(bytes32 leaf, bytes32[] memory branch, uint256 index) internal pure returns (bytes32) {\\n        bytes32 value = leaf;\\n        for (uint256 i = 0; i < branch.length; i++) {\\n            if ((index / (2 ** i)) % 2 == 1) {\\n                value = sha256(bytes.concat(branch[i], value));\\n            } else {\\n                value = sha256(bytes.concat(value, branch[i]));\\n            }\\n        }\\n        return value;\\n    }\\n\\n    function hashTreeRoot(BeaconBlockHeader memory header) internal pure returns (bytes32) {\\n        bytes32 left = sha256(\\n            bytes.concat(\\n                sha256(bytes.concat(bytes32(revertEndian(header.slot)), bytes32(revertEndian(header.proposerIndex)))),\\n                sha256(bytes.concat(header.parentRoot, header.stateRoot))\\n            )\\n        );\\n        bytes32 right = sha256(\\n            bytes.concat(\\n                sha256(bytes.concat(header.bodyRoot, bytes32(0))),\\n                sha256(bytes.concat(bytes32(0), bytes32(0)))\\n            )\\n        );\\n        return sha256(bytes.concat(left, right));\\n    }\\n\\n    function revertEndian(uint256 x) internal pure returns (uint256) {\\n        uint256 res;\\n        for (uint256 i = 0; i < 32; i++) {\\n            res = (res << 8) | (x & 0xff);\\n            x >>= 8;\\n        }\\n        return res;\\n    }\\n}\\n\",\"keccak256\":\"0x155bc54a458320de76c24d21269169c3b2f5bcd573f85d078c7d5a1285ffa0cb\",\"license\":\"MIT\"},\"contracts/light-client/common/Types.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"../../verifiers/interfaces/IBeaconVerifier.sol\\\";\\n\\nstruct LightClientOptimisticUpdate {\\n    // Header attested to by the sync committee\\n    HeaderWithExecution attestedHeader;\\n    // Sync committee aggregate signature participation & zk proof\\n    SyncAggregate syncAggregate;\\n    // Slot at which the aggregate signature was created (untrusted)\\n    uint64 signatureSlot;\\n}\\n\\nstruct LightClientUpdate {\\n    // Header attested to by the sync committee\\n    HeaderWithExecution attestedHeader;\\n    HeaderWithExecution finalizedHeader;\\n    // merkle branch from finalized beacon header root to attestedHeader.stateRoot\\n    bytes32[] finalityBranch;\\n    bytes32 nextSyncCommitteeRoot;\\n    bytes32[] nextSyncCommitteeBranch;\\n    bytes32 nextSyncCommitteePoseidonRoot;\\n    IBeaconVerifier.Proof nextSyncCommitteeRootMappingProof;\\n    // Sync committee aggregate signature participation & zk proof\\n    SyncAggregate syncAggregate;\\n    // Slot at which the aggregate signature was created (untrusted)\\n    uint64 signatureSlot;\\n}\\n\\nstruct HeaderWithExecution {\\n    BeaconBlockHeader beacon;\\n    ExecutionPayload execution;\\n    // merkle branch from execution payload root to beacon block root\\n    LeafWithBranch executionRoot;\\n}\\n\\nfunction isEmpty(HeaderWithExecution memory header) pure returns (bool) {\\n    return header.beacon.stateRoot == bytes32(0);\\n}\\n\\n// only contains the fields we care about in execution payload\\nstruct ExecutionPayload {\\n    // merkle branch from execution state root to execution payload root\\n    LeafWithBranch stateRoot;\\n    // merkle branch from execution block hash to execution payload root\\n    LeafWithBranch blockHash;\\n    // merkle branch from execution block number to execution payload root\\n    LeafWithBranch blockNumber;\\n}\\n\\nfunction isEmpty(ExecutionPayload memory payload) pure returns (bool) {\\n    return\\n        payload.stateRoot.leaf == bytes32(0) &&\\n        payload.blockHash.leaf == bytes32(0) &&\\n        payload.blockNumber.leaf == bytes32(0);\\n}\\n\\nstruct LeafWithBranch {\\n    bytes32 leaf;\\n    bytes32[] branch;\\n}\\n\\nstruct BeaconBlockHeader {\\n    uint64 slot;\\n    uint64 proposerIndex;\\n    bytes32 parentRoot;\\n    bytes32 stateRoot;\\n    bytes32 bodyRoot;\\n}\\n\\nstruct SyncAggregate {\\n    uint64 participation;\\n    bytes32 poseidonRoot;\\n    uint256 commitment;\\n    IBeaconVerifier.Proof proof;\\n}\\n\",\"keccak256\":\"0xfdce2463221d4f52cb738108e0a49d0edcac45dcfc04f1436d51ec7147880a4e\",\"license\":\"MIT\"},\"contracts/light-client/interfaces/IAnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IAnchorBlocks {\\n    function blocks(uint256 blockNum) external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x8217ece106cbbe5768afd067401f8b9b61a9a7d6410ba1f7f6c9eb8f3e06a335\",\"license\":\"MIT\"},\"contracts/light-client/interfaces/IEthereumLightClient.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"../common/Types.sol\\\";\\n\\ninterface IEthereumLightClient {\\n    function optimisticExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot);\\n\\n    function finalizedExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot);\\n\\n    // reverts if check fails\\n    function verifyCommitteeSignature(\\n        uint64 signatureSlot,\\n        BeaconBlockHeader memory header,\\n        SyncAggregate memory syncAggregate\\n    ) external view;\\n}\\n\",\"keccak256\":\"0xdffff054c93ea078e756e8e5c2bf63a158b4d76f4bce3d7ab707315f447ab9e2\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IBeaconVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface IBeaconVerifier {\\n    struct Proof {\\n        uint256[2] a;\\n        uint256[2][2] b;\\n        uint256[2] c;\\n        uint256[2] commitment;\\n    }\\n\\n    function verifySignatureProof(\\n        bytes32 signingRoot,\\n        bytes32 syncCommitteePoseidonRoot,\\n        uint256 participation,\\n        uint256 commitment,\\n        Proof memory p\\n    ) external view returns (bool);\\n\\n    function verifySyncCommitteeRootMappingProof(\\n        bytes32 sszRoot,\\n        bytes32 poseidonRoot,\\n        Proof memory p\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xed1ad52868352df8cd01a387549559c672c0714da7175e7a8660c77fd06c2d00\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080346100a757601f6111b738819003918201601f19168301916001600160401b038311848410176100ac578084926020946040528339810103126100a757516001600160a01b0390818116908190036100a75760005460018060a01b0319903382821617600055604051933391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a360015416176001556110f490816100c38239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe6040608081526004908136101561001557600080fd5b600091823560e01c9081632e3466f6146105755781633e553bab14610520578163715018a6146104b35781638da5cb5b1461048d578163b5700e6814610465578163f25b3f991461043d578163f2fde38b14610347578163fb8cfb51146100a7575063fbbea34c1461008657600080fd5b346100a357816003193601126100a3576020906003549051908152f35b5080fd5b8383346100a35760603660031901126100a35767ffffffffffffffff8335818111610343576100d9903690860161079c565b9160249485359560449081359585871161033f573660238801121561033f578684013596610106886106aa565b976101138751998a61066e565b80895260209784898b019260051b8401019236841161033b57858101925b8484106102c65750505050508651156102865761014d90610a8a565b97909887518a03998a11610275578099829a5b89518c101561021d57866101748d8c61104a565b515151036101dc5789896101cd6101d6938f836101a0826101986101bf948961104a565b51519761104a565b5101518d519485936101b58286018099611074565b9081520190611074565b03601f19810183528261066e565b5190209b611025565b9a610160565b875162461bcd60e51b81528088018a90526010818701527f696e76616c6964206c656674206c656e0000000000000000000000000000000081880152606490fd5b85858a8a8e8b950361023757876102348888610f78565b80f35b5162461bcd60e51b8152938401526012908301527f696e76616c696420636861696e50726f6f66000000000000000000000000000090820152606490fd5b50634e487b7160e01b815260118452fd5b506014906064957f696e76616c69642070726f6f66206c656e6774680000000000000000000000009495519562461bcd60e51b8752860152840152820152fd5b83358381116103375782018a6023198236030112610337578a51906102ea82610604565b8881013585811161033357610304908a36918401016109c0565b82528981013585811161033357916103248e94928b8695369201016109c0565b83820152815201930192610131565b8f80fd5b8d80fd5b8b80fd5b8780fd5b8380fd5b91905034610439576020366003190112610439578135916001600160a01b039081841680940361043557845491821692610382338514610a17565b84156103cc57505073ffffffffffffffffffffffffffffffffffffffff1916821783557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b906020608492519162461bcd60e51b8352820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152fd5b8480fd5b8280fd5b9050346104395760203660031901126104395760209282913581526002845220549051908152f35b5050346100a357816003193601126100a3576020906001600160a01b03600154169051908152f35b5050346100a357816003193601126100a3576001600160a01b0360209254169051908152f35b833461051d578060031936011261051d5780805473ffffffffffffffffffffffffffffffffffffffff196001600160a01b038216916104f3338414610a17565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b80fd5b8390346100a35760203660031901126100a357356001600160a01b0380821680920361043957610554908354163314610a17565b73ffffffffffffffffffffffffffffffffffffffff19600154161760015580f35b839150346100a35760203660031901126100a357803567ffffffffffffffff8111610439576105aa6105af913690840161079c565b610a8a565b9182156105c157509061023491610f78565b606490602086519162461bcd60e51b8352820152600f60248201527f656d70747920626c6f636b4861736800000000000000000000000000000000006044820152fd5b6040810190811067ffffffffffffffff82111761062057604052565b634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761062057604052565b6080810190811067ffffffffffffffff82111761062057604052565b90601f8019910116810190811067ffffffffffffffff82111761062057604052565b359067ffffffffffffffff821682036106a557565b600080fd5b67ffffffffffffffff81116106205760051b60200190565b91906040838203126106a557604051926106db84610604565b8381358152602091828101359067ffffffffffffffff82116106a557019280601f850112156106a557833561070f816106aa565b9461071d604051968761066e565b818652848087019260051b8201019283116106a55784809101915b83831061074757505050500152565b8235815291810191859101610738565b9080601f830112156106a5576040519161077083610604565b8290604081019283116106a557905b82821061078c5750505090565b813581526020918201910161077f565b9190828103926101e084126106a5576040908151926107ba84610636565b839582359067ffffffffffffffff918281116106a55784019182840360e081126106a55760a08751916107ec83610636565b126106a55786519160a083018381108282111761062057885261080e85610690565b835260209461081e868201610690565b868501528881013589850152606093848201358582015260808201356080820152835260a08101358281116106a557810184818903126106a55789519061086482610636565b80358481116106a557896108799183016106c2565b8252878101358481116106a557896108929183016106c2565b888301528a810135908482116106a5576108ae918a91016106c2565b8a8201528684015260c08101359182116106a5576108ce918791016106c2565b8188015287526101a0601f198301126106a5578551936108ed85610652565b6108f8848701610690565b8552868601358486015281860135878601526101408093607f1901126106a55786519261092484610652565b6109318260808901610757565b84528160df880112156106a557875161094981610604565b80918801918383116106a5578960c08a01915b8483106109a757505050826109848694889694610992946109a29c9a6101c09c9a0152610757565b8a8501526101808701610757565b8183015283015286015201610690565b910152565b88906109b38785610757565b8152019101908a9061095c565b81601f820112156106a55780359067ffffffffffffffff821161062057604051926109f5601f8401601f19166020018561066e565b828452602083830101116106a557816000926020809301838601378301015290565b15610a1e57565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b6000915b60028310610a7357505050565b600190825181526020809101920192019190610a66565b60209182820192835192600094600367ffffffffffffffff8096511602858116908103610f645761040011610f1f57815191604094858401908151936080865101519887865196015195968b975b8751891015610b8a5760ff8911610b76576001808a1b15610b62578a918e9160198c1c811603610b4a57610b19610b2491610b138d8d61104a565b5161109f565b8d5191828092611074565b039060025afa15610b4057610b3a8c5198611025565b97610ad8565b89513d8d823e3d90fd5b610b19610b2491610b5b8d8d61104a565b519061109f565b634e487b7160e01b8e52601260045260248efd5b634e487b7160e01b8d52601160045260248dfd5b92959a9194975092955003610edb578501938685510151938151519887865196015195968b975b8751891015610c195760ff8911610b76576001808a1b15610b62578a918e9160168c1c811603610c0857610b19610bec91610b138d8d61104a565b039060025afa15610b4057610c028c5198611025565b97610bb1565b610b19610bec91610b5b8d8d61104a565b92959a9194975092955003610eab57859051015192515196858451940151939489955b8551871015610ce15760ff8711610ccd57600180881b15610cb95788918c91601c8a1c811603610ca857610c77610c8291610b138b8b61104a565b8b5191828092611074565b039060025afa15610c9e57610c988a5196611025565b95610c3c565b87513d8b823e3d90fd5b610c77610c8291610b5b8b8b61104a565b634e487b7160e01b8c52601260045260248cfd5b634e487b7160e01b8b52601160045260248bfd5b929550929790935095949503610e7b5760016001600160a01b0381541690828686015116938551519051833b15610e77579160608b9492969360808a51988996631ee9fa5560e11b88526004880152888151166024880152888d8201511660448801528b8101516064880152838101516084880152015160a48601528681511660c48601528a81015160e486015289810151610104860152015190610d8b61012485018351610a62565b818a0151858b8b61016488015b60028410610e4c5750610264969450610dd3935060609250859150610dc690889601516101e4870190610a62565b0151610224840190610a62565b5afa8015610e4257610e1b575b50508290510190815101515184905b838210610dff5750505101515190565b600895861b60ff821617951c90610e1590611025565b90610def565b8196929611610e2e578252938238610de0565b634e487b7160e01b82526041600452602482fd5b84513d89823e3d90fd5b9091929496985083959750610e6381889551610a62565b0193019101908c9593918b8b8a9795610d98565b8a80fd5b835162461bcd60e51b81526004810186905260096024820152683130b210383937b7b360b91b6044820152606490fd5b865162461bcd60e51b81526004810187905260096024820152683130b210383937b7b360b91b6044820152606490fd5b865162461bcd60e51b815260048101879052601360248201527f626164206578656320726f6f742070726f6f66000000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260048101849052601260248201527f71756f72756d206e6f74207265616368656400000000000000000000000000006044820152606490fd5b634e487b7160e01b87526011600452602487fd5b90816000526002602052604060002054610fe057816040917fa9aaf84657c346a7eafe57cf0403ab0be7867b79a5fdd5e5ab3527fbfc739d859360005260026020528083600020556003548211610fd7575b82519182526020820152a1565b81600355610fca565b60405162461bcd60e51b815260206004820152601960248201527f626c6f636b206861736820616c726561647920657869737473000000000000006044820152606490fd5b60001981146110345760010190565b634e487b7160e01b600052601160045260246000fd5b805182101561105e5760209160051b010190565b634e487b7160e01b600052603260045260246000fd5b9081519160005b83811061108c575050016000815290565b806020809284010151818501520161107b565b91906040519260208401526040830152604082526110bc82610636565b56fea26469706673582212207b0e496f028b13c5670d9506610e40fbe798a489873e7c35b9d1f641d6ef9c7a64736f6c63430008120033",
+  "deployedBytecode": "0x6040608081526004908136101561001557600080fd5b600091823560e01c9081632e3466f6146105755781633e553bab14610520578163715018a6146104b35781638da5cb5b1461048d578163b5700e6814610465578163f25b3f991461043d578163f2fde38b14610347578163fb8cfb51146100a7575063fbbea34c1461008657600080fd5b346100a357816003193601126100a3576020906003549051908152f35b5080fd5b8383346100a35760603660031901126100a35767ffffffffffffffff8335818111610343576100d9903690860161079c565b9160249485359560449081359585871161033f573660238801121561033f578684013596610106886106aa565b976101138751998a61066e565b80895260209784898b019260051b8401019236841161033b57858101925b8484106102c65750505050508651156102865761014d90610a8a565b97909887518a03998a11610275578099829a5b89518c101561021d57866101748d8c61104a565b515151036101dc5789896101cd6101d6938f836101a0826101986101bf948961104a565b51519761104a565b5101518d519485936101b58286018099611074565b9081520190611074565b03601f19810183528261066e565b5190209b611025565b9a610160565b875162461bcd60e51b81528088018a90526010818701527f696e76616c6964206c656674206c656e0000000000000000000000000000000081880152606490fd5b85858a8a8e8b950361023757876102348888610f78565b80f35b5162461bcd60e51b8152938401526012908301527f696e76616c696420636861696e50726f6f66000000000000000000000000000090820152606490fd5b50634e487b7160e01b815260118452fd5b506014906064957f696e76616c69642070726f6f66206c656e6774680000000000000000000000009495519562461bcd60e51b8752860152840152820152fd5b83358381116103375782018a6023198236030112610337578a51906102ea82610604565b8881013585811161033357610304908a36918401016109c0565b82528981013585811161033357916103248e94928b8695369201016109c0565b83820152815201930192610131565b8f80fd5b8d80fd5b8b80fd5b8780fd5b8380fd5b91905034610439576020366003190112610439578135916001600160a01b039081841680940361043557845491821692610382338514610a17565b84156103cc57505073ffffffffffffffffffffffffffffffffffffffff1916821783557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b906020608492519162461bcd60e51b8352820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152fd5b8480fd5b8280fd5b9050346104395760203660031901126104395760209282913581526002845220549051908152f35b5050346100a357816003193601126100a3576020906001600160a01b03600154169051908152f35b5050346100a357816003193601126100a3576001600160a01b0360209254169051908152f35b833461051d578060031936011261051d5780805473ffffffffffffffffffffffffffffffffffffffff196001600160a01b038216916104f3338414610a17565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b80fd5b8390346100a35760203660031901126100a357356001600160a01b0380821680920361043957610554908354163314610a17565b73ffffffffffffffffffffffffffffffffffffffff19600154161760015580f35b839150346100a35760203660031901126100a357803567ffffffffffffffff8111610439576105aa6105af913690840161079c565b610a8a565b9182156105c157509061023491610f78565b606490602086519162461bcd60e51b8352820152600f60248201527f656d70747920626c6f636b4861736800000000000000000000000000000000006044820152fd5b6040810190811067ffffffffffffffff82111761062057604052565b634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761062057604052565b6080810190811067ffffffffffffffff82111761062057604052565b90601f8019910116810190811067ffffffffffffffff82111761062057604052565b359067ffffffffffffffff821682036106a557565b600080fd5b67ffffffffffffffff81116106205760051b60200190565b91906040838203126106a557604051926106db84610604565b8381358152602091828101359067ffffffffffffffff82116106a557019280601f850112156106a557833561070f816106aa565b9461071d604051968761066e565b818652848087019260051b8201019283116106a55784809101915b83831061074757505050500152565b8235815291810191859101610738565b9080601f830112156106a5576040519161077083610604565b8290604081019283116106a557905b82821061078c5750505090565b813581526020918201910161077f565b9190828103926101e084126106a5576040908151926107ba84610636565b839582359067ffffffffffffffff918281116106a55784019182840360e081126106a55760a08751916107ec83610636565b126106a55786519160a083018381108282111761062057885261080e85610690565b835260209461081e868201610690565b868501528881013589850152606093848201358582015260808201356080820152835260a08101358281116106a557810184818903126106a55789519061086482610636565b80358481116106a557896108799183016106c2565b8252878101358481116106a557896108929183016106c2565b888301528a810135908482116106a5576108ae918a91016106c2565b8a8201528684015260c08101359182116106a5576108ce918791016106c2565b8188015287526101a0601f198301126106a5578551936108ed85610652565b6108f8848701610690565b8552868601358486015281860135878601526101408093607f1901126106a55786519261092484610652565b6109318260808901610757565b84528160df880112156106a557875161094981610604565b80918801918383116106a5578960c08a01915b8483106109a757505050826109848694889694610992946109a29c9a6101c09c9a0152610757565b8a8501526101808701610757565b8183015283015286015201610690565b910152565b88906109b38785610757565b8152019101908a9061095c565b81601f820112156106a55780359067ffffffffffffffff821161062057604051926109f5601f8401601f19166020018561066e565b828452602083830101116106a557816000926020809301838601378301015290565b15610a1e57565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b6000915b60028310610a7357505050565b600190825181526020809101920192019190610a66565b60209182820192835192600094600367ffffffffffffffff8096511602858116908103610f645761040011610f1f57815191604094858401908151936080865101519887865196015195968b975b8751891015610b8a5760ff8911610b76576001808a1b15610b62578a918e9160198c1c811603610b4a57610b19610b2491610b138d8d61104a565b5161109f565b8d5191828092611074565b039060025afa15610b4057610b3a8c5198611025565b97610ad8565b89513d8d823e3d90fd5b610b19610b2491610b5b8d8d61104a565b519061109f565b634e487b7160e01b8e52601260045260248efd5b634e487b7160e01b8d52601160045260248dfd5b92959a9194975092955003610edb578501938685510151938151519887865196015195968b975b8751891015610c195760ff8911610b76576001808a1b15610b62578a918e9160168c1c811603610c0857610b19610bec91610b138d8d61104a565b039060025afa15610b4057610c028c5198611025565b97610bb1565b610b19610bec91610b5b8d8d61104a565b92959a9194975092955003610eab57859051015192515196858451940151939489955b8551871015610ce15760ff8711610ccd57600180881b15610cb95788918c91601c8a1c811603610ca857610c77610c8291610b138b8b61104a565b8b5191828092611074565b039060025afa15610c9e57610c988a5196611025565b95610c3c565b87513d8b823e3d90fd5b610c77610c8291610b5b8b8b61104a565b634e487b7160e01b8c52601260045260248cfd5b634e487b7160e01b8b52601160045260248bfd5b929550929790935095949503610e7b5760016001600160a01b0381541690828686015116938551519051833b15610e77579160608b9492969360808a51988996631ee9fa5560e11b88526004880152888151166024880152888d8201511660448801528b8101516064880152838101516084880152015160a48601528681511660c48601528a81015160e486015289810151610104860152015190610d8b61012485018351610a62565b818a0151858b8b61016488015b60028410610e4c5750610264969450610dd3935060609250859150610dc690889601516101e4870190610a62565b0151610224840190610a62565b5afa8015610e4257610e1b575b50508290510190815101515184905b838210610dff5750505101515190565b600895861b60ff821617951c90610e1590611025565b90610def565b8196929611610e2e578252938238610de0565b634e487b7160e01b82526041600452602482fd5b84513d89823e3d90fd5b9091929496985083959750610e6381889551610a62565b0193019101908c9593918b8b8a9795610d98565b8a80fd5b835162461bcd60e51b81526004810186905260096024820152683130b210383937b7b360b91b6044820152606490fd5b865162461bcd60e51b81526004810187905260096024820152683130b210383937b7b360b91b6044820152606490fd5b865162461bcd60e51b815260048101879052601360248201527f626164206578656320726f6f742070726f6f66000000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260048101849052601260248201527f71756f72756d206e6f74207265616368656400000000000000000000000000006044820152606490fd5b634e487b7160e01b87526011600452602487fd5b90816000526002602052604060002054610fe057816040917fa9aaf84657c346a7eafe57cf0403ab0be7867b79a5fdd5e5ab3527fbfc739d859360005260026020528083600020556003548211610fd7575b82519182526020820152a1565b81600355610fca565b60405162461bcd60e51b815260206004820152601960248201527f626c6f636b206861736820616c726561647920657869737473000000000000006044820152606490fd5b60001981146110345760010190565b634e487b7160e01b600052601160045260246000fd5b805182101561105e5760209160051b010190565b634e487b7160e01b600052603260045260246000fd5b9081519160005b83811061108c575050016000815290565b806020809284010151818501520161107b565b91906040519260208401526040830152604082526110bc82610636565b56fea26469706673582212207b0e496f028b13c5670d9506610e40fbe798a489873e7c35b9d1f641d6ef9c7a64736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "processUpdateWithChainProof((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64),bytes32,(bytes,bytes)[])": {
+        "details": "It is possible that an attested block doesn't collect enough sync committee signatures in its corresponding signature slot and thus cannot be used in an anchor update. In that case, the updater can pick a later block that has enough sigs, and supply a chainProof to show that the block they want to sync can chain to the head block."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "processUpdate((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64))": {
+        "notice": "Updates an \"anchor block\" of a specific block number to the contract state"
+      },
+      "processUpdateWithChainProof((((uint64,uint64,bytes32,bytes32,bytes32),((bytes32,bytes32[]),(bytes32,bytes32[]),(bytes32,bytes32[])),(bytes32,bytes32[])),(uint64,bytes32,uint256,(uint256[2],uint256[2][2],uint256[2],uint256[2])),uint64),bytes32,(bytes,bytes)[])": {
+        "notice": "Updates an \"anchor block\" of a specific block number to the contract state"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/light-client/AnchorBlocks.sol:AnchorBlocks",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 58481,
+        "contract": "contracts/light-client/AnchorBlocks.sol:AnchorBlocks",
+        "label": "lightClient",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IEthereumLightClient)60797"
+      },
+      {
+        "astId": 58485,
+        "contract": "contracts/light-client/AnchorBlocks.sol:AnchorBlocks",
+        "label": "blocks",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_bytes32)"
+      },
+      {
+        "astId": 58487,
+        "contract": "contracts/light-client/AnchorBlocks.sol:AnchorBlocks",
+        "label": "latestBlockNum",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IEthereumLightClient)60797": {
+        "encoding": "inplace",
+        "label": "contract IEthereumLightClient",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint256,t_bytes32)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bytes32)",
+        "numberOfBytes": "32",
+        "value": "t_bytes32"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

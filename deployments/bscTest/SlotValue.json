@@ -1,0 +1,148 @@
+{
+  "address": "0xc2307a0596a69f1f4C55D2f30DF32Eb9Ef513980",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISlotValueVerifier",
+          "name": "_verifier",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "addrHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "slotKey",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "slotValue",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "blkNum",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "blkHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "VerifiedSlotValueProof",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "slotValueVerifier",
+      "outputs": [
+        {
+          "internalType": "contract ISlotValueVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proofData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "blkVerifyInfo",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitSlotValuePoof",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xf38b338c39c178fa799b79e585819e0dec74aa40003bc54cb7abb7be397f7529",
+  "receipt": {
+    "to": null,
+    "from": "0x9532f934EfcE6c4Bf5BA078b25fDd81a780FBdfB",
+    "contractAddress": "0xc2307a0596a69f1f4C55D2f30DF32Eb9Ef513980",
+    "transactionIndex": 7,
+    "gasUsed": "250754",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x9b0133d020dd49e9b0fa26a1a5842ac2dfb04b61e8e5cb6af48069b88c1efd71",
+    "transactionHash": "0xf38b338c39c178fa799b79e585819e0dec74aa40003bc54cb7abb7be397f7529",
+    "logs": [],
+    "blockNumber": 30506283,
+    "cumulativeGasUsed": "1323387",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x19b7aF7A7739E27413F5CB6a6ad916ffF78fD9C1"
+  ],
+  "numDeployments": 2,
+  "solcInputHash": "ce59f34ab3a9265892ad529586d4507a",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract ISlotValueVerifier\",\"name\":\"_verifier\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"addrHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"slotKey\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"slotValue\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"blkNum\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"blkHash\",\"type\":\"bytes32\"}],\"name\":\"VerifiedSlotValueProof\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"slotValueVerifier\",\"outputs\":[{\"internalType\":\"contract ISlotValueVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"proofData\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"blkVerifyInfo\",\"type\":\"bytes\"}],\"name\":\"submitSlotValuePoof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/apps/slotvalue/SlotValue.sol\":\"SlotValue\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/apps/slotvalue/SlotValue.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\nimport \\\"../../verifiers/interfaces/ISlotValueVerifier.sol\\\";\\n\\ncontract SlotValue {\\n    ISlotValueVerifier public slotValueVerifier;\\n\\n    event VerifiedSlotValueProof(\\n        uint64 chainId,\\n        bytes32 addrHash,\\n        bytes32 slotKey,\\n        bytes32 slotValue,\\n        uint32 blkNum,\\n        bytes32 blkHash\\n    );\\n\\n    constructor(ISlotValueVerifier _verifier) {\\n        slotValueVerifier = _verifier;\\n    }\\n\\n    function submitSlotValuePoof(uint64 chainId, bytes calldata proofData, bytes calldata blkVerifyInfo) external {\\n        ISlotValueVerifier.SlotInfo memory slotInfo = slotValueVerifier.verifySlotValue(\\n            chainId,\\n            proofData,\\n            blkVerifyInfo\\n        );\\n        emit VerifiedSlotValueProof(\\n            slotInfo.chainId,\\n            slotInfo.addrHash,\\n            slotInfo.slotKey,\\n            slotInfo.slotValue,\\n            slotInfo.blkNum,\\n            slotInfo.blkHash\\n        );\\n    }\\n}\\n\",\"keccak256\":\"0x68f501ef6f8d7b0701f50a347b774042884974050ecbe8633f274667ab43594c\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/ISlotValueVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.18;\\n\\ninterface ISlotValueVerifier {\\n    struct SlotInfo {\\n        uint64 chainId;\\n        bytes32 addrHash;\\n        bytes32 blkHash;\\n        bytes32 slotKey;\\n        bytes32 slotValue;\\n        uint32 blkNum;\\n    }\\n\\n    function verifySlotValue(\\n        uint64 chainId,\\n        bytes calldata proofData,\\n        bytes calldata blkVerifyInfo\\n    ) external view returns (SlotInfo memory slotInfo);\\n}\\n\",\"keccak256\":\"0xef9cd54c629e195e924bc9e92eee67df53fc906f46daacdb4388d8b73352ac58\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461007457601f6103b638819003918201601f19168301916001600160401b038311848410176100795780849260209460405283398101031261007457516001600160a01b0381169081900361007457600080546001600160a01b03191691909117905560405161032690816100908239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe608060408181526004908136101561001657600080fd5b600092833560e01c90816363c6ccb214610268575063de833bb21461003a57600080fd5b3461026457600319906060368301811361026057833567ffffffffffffffff80821680920361021c576024358181116102205761007a903690880161029c565b60449391933583811161025c576100949036908a0161029c565b979092896100f173ffffffffffffffffffffffffffffffffffffffff8d5416936100dd8b51998a9788968796630b885e5360e01b88528701528c602487015260648601916102cf565b9083820301604484015260c09b8c976102cf565b03915afa918215610252578792610169575b507fef78dd50ef8d260919879b24e31d3f411c6014c0b43f575b9539fef1ad185897955081511692602082015192808301516080840151928063ffffffff60a0870151169501519581519788526020880152860152840152608083015260a0820152a180f35b90915084953d861161024a575b601f8701601f19168201968388118389101761023757828791810103126102205785870190878210848311176102245750845280519082821682036102205760a091875260208101516020880152848101518588015283810151848801526080810151608088015201519463ffffffff8616860361021c577fef78dd50ef8d260919879b24e31d3f411c6014c0b43f575b9539fef1ad1858979560a08201529038610103565b8680fd5b8780fd5b634e487b7160e01b895260419052602488fd5b634e487b7160e01b895260418252602489fd5b3d9650610176565b84513d89823e3d90fd5b8980fd5b8480fd5b8280fd5b84903461029857816003193601126102985773ffffffffffffffffffffffffffffffffffffffff60209254168152f35b5080fd5b9181601f840112156102ca5782359167ffffffffffffffff83116102ca57602083818601950101116102ca57565b600080fd5b908060209392818452848401376000828201840152601f01601f191601019056fea26469706673582212205c90ebecdfde7cefb1cdf60372d0d5765e98d012947769b56f37f38e6fe8b79364736f6c63430008120033",
+  "deployedBytecode": "0x608060408181526004908136101561001657600080fd5b600092833560e01c90816363c6ccb214610268575063de833bb21461003a57600080fd5b3461026457600319906060368301811361026057833567ffffffffffffffff80821680920361021c576024358181116102205761007a903690880161029c565b60449391933583811161025c576100949036908a0161029c565b979092896100f173ffffffffffffffffffffffffffffffffffffffff8d5416936100dd8b51998a9788968796630b885e5360e01b88528701528c602487015260648601916102cf565b9083820301604484015260c09b8c976102cf565b03915afa918215610252578792610169575b507fef78dd50ef8d260919879b24e31d3f411c6014c0b43f575b9539fef1ad185897955081511692602082015192808301516080840151928063ffffffff60a0870151169501519581519788526020880152860152840152608083015260a0820152a180f35b90915084953d861161024a575b601f8701601f19168201968388118389101761023757828791810103126102205785870190878210848311176102245750845280519082821682036102205760a091875260208101516020880152848101518588015283810151848801526080810151608088015201519463ffffffff8616860361021c577fef78dd50ef8d260919879b24e31d3f411c6014c0b43f575b9539fef1ad1858979560a08201529038610103565b8680fd5b8780fd5b634e487b7160e01b895260419052602488fd5b634e487b7160e01b895260418252602489fd5b3d9650610176565b84513d89823e3d90fd5b8980fd5b8480fd5b8280fd5b84903461029857816003193601126102985773ffffffffffffffffffffffffffffffffffffffff60209254168152f35b5080fd5b9181601f840112156102ca5782359167ffffffffffffffff83116102ca57602083818601950101116102ca57565b600080fd5b908060209392818452848401376000828201840152601f01601f191601019056fea26469706673582212205c90ebecdfde7cefb1cdf60372d0d5765e98d012947769b56f37f38e6fe8b79364736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1861,
+        "contract": "contracts/apps/slotvalue/SlotValue.sol:SlotValue",
+        "label": "slotValueVerifier",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(ISlotValueVerifier)6418"
+      }
+    ],
+    "types": {
+      "t_contract(ISlotValueVerifier)6418": {
+        "encoding": "inplace",
+        "label": "contract ISlotValueVerifier",
+        "numberOfBytes": "20"
+      }
+    }
+  }
+}

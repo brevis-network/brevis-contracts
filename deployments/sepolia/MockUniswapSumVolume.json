@@ -1,0 +1,60 @@
+{
+  "address": "0xEbD4E2dF7F6F7CeEf8b6747682e16b91bd7c234e",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getAttestedSwapSumVolume",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x37b388e40a0d83fdca48417d5795825846c8a6f1ad44f6a196d76bdd1d6652f3",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0xEbD4E2dF7F6F7CeEf8b6747682e16b91bd7c234e",
+    "transactionIndex": 5,
+    "gasUsed": "85831",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x06c8c77baddf35a7699f617bb5173d7dfdb22b69eb26ad9e4b5a84c754042197",
+    "transactionHash": "0x37b388e40a0d83fdca48417d5795825846c8a6f1ad44f6a196d76bdd1d6652f3",
+    "logs": [],
+    "blockNumber": 4460549,
+    "cumulativeGasUsed": "1131863",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "ac5d8826f3833ba3792d37fc27973b65",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getAttestedSwapSumVolume\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/uniswap-v4-demo/MockUniswapSumVolume.sol\":\"MockUniswapSumVolume\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/uniswap-v4-demo/MockUniswapSumVolume.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ncontract MockUniswapSumVolume {\\n    function getAttestedSwapSumVolume(address) external pure returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0xaed760f6433fe1e4c285b769bde0f2eb4fd9c5cb2490aeb04dd6e22910289135\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608080604052346014576096908161001a8239f35b600080fdfe6080806040526004361015601257600080fd5b600090813560e01c63950650c114602857600080fd5b34605c576020366003190112605c5760043573ffffffffffffffffffffffffffffffffffffffff811603605c576020918152f35b5080fdfea26469706673582212206d7b87731f223268896505f6e30e7a2cb74feedb13d343153fa297375148fcc164736f6c63430008140033",
+  "deployedBytecode": "0x6080806040526004361015601257600080fd5b600090813560e01c63950650c114602857600080fd5b34605c576020366003190112605c5760043573ffffffffffffffffffffffffffffffffffffffff811603605c576020918152f35b5080fdfea26469706673582212206d7b87731f223268896505f6e30e7a2cb74feedb13d343153fa297375148fcc164736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
