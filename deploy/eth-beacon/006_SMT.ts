@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
-import {DeployFunction} from 'hardhat-deploy/types';
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import {verify} from '../utils/utils';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { verify } from '../utils/utils';
 
 dotenv.config();
 
-const defaultSmtRoot = '0x02e4b36d42d41af9db0526f588fa0c12113da9ad7db4e3e1a73b006c96a20364';
+const defaultSmtRoot = '0x107334981623fae5e855eca2f97b33b0243b1812f72259602aa7505b35bdc087';
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
