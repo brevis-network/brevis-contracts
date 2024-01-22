@@ -12,7 +12,11 @@ interface IBrevisProof {
 
     function hasProof(bytes32 _requestId) external view returns (bool);
 
+    // used by contract app
     function validateRequest(bytes32 _requestId, uint64 _chainId, Brevis.ExtractInfos memory _info) external view;
 
     function getProofData(bytes32 _requestId) external view returns (Brevis.ProofData memory);
+
+    // return appCommitHash and appVkHash
+    function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32);
 }

@@ -19,10 +19,10 @@ abstract contract BrevisApp {
         return true;
     }
 
-    function callback(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
-        Brevis.ProofData memory proofData = IBrevisProof(brevisProof).getProofData(_requestId);
-        require(proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, proofData.appVkHash, _appCircuitOutput);
+    function brevisCallback(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
+        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
+        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
     }
 
     function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {

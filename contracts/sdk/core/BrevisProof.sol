@@ -7,19 +7,18 @@ import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisProof is Ownable {
+    uint32 constant PUBLIC_BYTES_START_IDX = 11 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment), the 11th 32bytes is cPub
+
     struct ChainZKVerifier {
         IZkpVerifier contractAppZkVerifier;
         IZkpVerifier circuitAppZkVerifier;
     }
-
-    mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost
-
-    mapping(bytes32 => uint256) public vkHashesToBatchSize; // batch tier vk hashes => tier batch size
     mapping(uint64 => ChainZKVerifier) public verifierAddresses; // chainid => snark verifier contract address
 
-    ISMT public smtContract;
+    mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost
+    mapping(bytes32 => uint256) public vkHashesToBatchSize; // batch tier vk hashes => tier batch size
 
-    uint32 constant PUBLIC_BYTES_START_IDX = 11 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment), the 11th 32bytes is cPub
+    ISMT public smtContract;
 
     event VerifierAddressesUpdated(uint64[] chainIds, ChainZKVerifier[] newAddresses);
     event SmtContractUpdated(ISMT smtContract);
@@ -45,10 +44,10 @@ contract BrevisProof is Ownable {
         }
 
         proofs[data.commitHash] = data;
-
         _requestId = data.commitHash;
     }
 
+    // used by contract app
     function validateRequest(
         bytes32 _requestId,
         uint64 _chainId,
@@ -137,6 +136,10 @@ contract BrevisProof is Ownable {
 
     function getProofData(bytes32 _requestId) external view returns (Brevis.ProofData memory) {
         return proofs[_requestId];
+    }
+
+    function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32) {
+        return (proofs[_requestId].appCommitHash, proofs[_requestId].appVkHash);
     }
 
     function verifyRaw(
