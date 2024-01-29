@@ -74,4 +74,8 @@ contract RewardApp is BrevisApp, Ownable {
     function setVkHash(bytes32 _vkHash) external onlyOwner {
         vkHash = _vkHash;
     }
+
+    function setRewardToken(address _rewardToken) external onlyOwner {
+        rewardToken = _rewardToken;
+    }
 }
