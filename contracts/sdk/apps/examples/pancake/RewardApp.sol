@@ -47,7 +47,10 @@ contract RewardApp is BrevisApp, Ownable {
         // Verifying proof
         bytes32 leaf = keccak256(abi.encode(user, fromEpoch, amount));
         require(_verifyProof(leaf, merkleProof), "not valid proof");
-        require(fromEpoch >= userClaimedTo[user], "illegal claim");
+        uint64 lastClaimedEpoch = userClaimedTo[user];
+        if (lastClaimedEpoch > 0) {
+            require(fromEpoch == lastClaimedEpoch + 1, "illegal claim");
+        }
 
         userClaimedTo[user] = rewardsToEpoch;
         IERC20(rewardToken).safeTransfer(user, amount);
