@@ -15,6 +15,7 @@ contract RewardApp is BrevisApp, Ownable {
     bytes32 public rewardsMerkleRoot; //leaf (address user, uint64 fromEpoch, uint amount) 
     uint64 public rewardsToEpoch;
     address public rewardToken;
+    event RewardPosted(uint64 rewardsToEpoch, bytes32 rewardsMerkleRoot);
     event Claimed(address indexed user, uint64 fromEpoch, uint64 toEpoch, uint256 amount);
 
     mapping(address => uint64) userClaimedTo; // user => toEpoch
@@ -32,6 +33,8 @@ contract RewardApp is BrevisApp, Ownable {
         require(vkHash == _vkHash, "invalid vk");
 
         (rewardsToEpoch, rewardsMerkleRoot) = decodeOutput(_circuitOutput);
+
+        emit RewardPosted(rewardsToEpoch, rewardsMerkleRoot);
     }
 
     function decodeOutput(bytes calldata o) internal pure returns (uint64 epoch, bytes32 merkleRoot) {
