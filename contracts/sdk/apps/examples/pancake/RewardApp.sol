@@ -18,7 +18,7 @@ contract RewardApp is BrevisApp, Ownable {
     event RewardPosted(uint64 rewardsToEpoch, bytes32 rewardsMerkleRoot);
     event Claimed(address indexed user, uint64 fromEpoch, uint64 toEpoch, uint256 amount);
 
-    mapping(address => uint64) userClaimedTo; // user => toEpoch
+    mapping(address => uint64) public userClaimedTo; // user => toEpoch
 
     constructor(address brevisProof) BrevisApp(IBrevisProof(brevisProof)) {}
 
