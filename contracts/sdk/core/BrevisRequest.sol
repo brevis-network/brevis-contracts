@@ -57,6 +57,8 @@ contract BrevisRequest is FeeVault {
         chargeFee(_requestId); // will be reverted when failed to charge fee
         requests[_requestId].status = RequestStatus.ZkAttested;
 
+        emit RequestFulfilled(_requestId);
+
         address app = requests[_requestId].callback;
         if (app != address(0)) {
             // No matter if the call is success or not. The relayer should set correct gas limit.
@@ -64,8 +66,6 @@ contract BrevisRequest is FeeVault {
             // anyone can still call the app.callback directly to proceed
             app.call(abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput));
         }
-
-        emit RequestFulfilled(_requestId);
     }
 
     function chargeFee(bytes32 _requestId) public {
