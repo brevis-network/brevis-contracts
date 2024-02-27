@@ -204,4 +204,20 @@ contract BrevisProof is Ownable {
 
         emit BatchTierVkHashesUpdated(_vkHashes, _sizes);
     }
+
+    address public brevisRequest;
+    event BrevisRequestUpdated(address brevisRequest);
+    modifier onlyBrevisRequest() {
+        require(brevisRequest == msg.sender, "not brevisRequest");
+        _;
+    }
+
+    function updateBrevisRequest(address _brevisRequest) public onlyOwner {
+        brevisRequest = _brevisRequest;
+        emit BrevisRequestUpdated(_brevisRequest);
+    }
+
+    function submitOpResult(bytes32 _requestId) external onlyBrevisRequest {
+        proofs[_requestId].commitHash = _requestId;
+    }
 }

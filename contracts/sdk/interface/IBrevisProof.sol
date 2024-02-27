@@ -19,4 +19,6 @@ interface IBrevisProof {
 
     // return appCommitHash and appVkHash
     function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32);
+
+    function submitOpResult(bytes32 _requestId) external;
 }
