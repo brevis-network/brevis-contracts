@@ -43,8 +43,8 @@ contract TotalFeeApp is BrevisApp, Ownable {
 
     function decodeOutput(bytes calldata o) internal pure returns (uint64, uint256, uint256) {
         uint64 epoch = uint64(bytes8(o[0:8])); 
-        uint256 token0Amt = uint256(bytes32(o[8:40])); 
-        uint256 token1Amt = uint256(bytes32(o[40:72])); 
+        uint256 token0Amt = uint256(uint248(bytes31(o[8:39]))); 
+        uint256 token1Amt = uint256(uint248(bytes31(o[39:70]))); 
         return (epoch, token0Amt, token1Amt);
     }
 
