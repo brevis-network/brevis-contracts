@@ -22,6 +22,8 @@ const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const arbitrumSepoliaEndpoint = process.env.ARBITRUM_SEPOLIA_ENDPOINT || DEFAULT_ENDPOINT;
+const arbitrumSepoliaPrivateKey = process.env.ARBITRUM_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -46,6 +48,10 @@ const config: HardhatUserConfig = {
     avalancheTest: {
       url: avalancheTestEndpoint,
       accounts: [`0x${avalancheTestPrivateKey}`]
+    },
+    arbitrumSepolia: {
+      url: arbitrumSepoliaEndpoint,
+      accounts: [`0x${arbitrumSepoliaPrivateKey}`]
     }
   },
   namedAccounts: {
@@ -77,8 +83,19 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY as string,
       sepolia: process.env.ETHERSCAN_API_KEY as string,
       bscTestnet: process.env.BSCSCAN_API_KEY as string,
-      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string
-    }
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string,
+      arbitrumSepolia: process.env.ARBISCAN_API_KEY as string,
+    },
+    customChains: [
+      {
+        network: "arbitrumSepolia",
+        chainId: 421614,
+        urls: {
+          apiURL: "https://api-sepolia.arbiscan.io/api",
+          browserURL: "https://sepolia.arbiscan.io"
+        }
+      }
+    ]
   }
 };
 
