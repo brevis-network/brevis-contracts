@@ -11,7 +11,8 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
 
   const proof = await deployments.get('BrevisProof');
-  const args = [proof.address];
+  const totalFeeApp = await deployments.get('TotalFeeApp');
+  const args = [proof.address, totalFeeApp.address];
   const deployment = await deploy('SingleRewardApp', {
     from: deployer,
     log: true,

@@ -8,16 +8,28 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../../framework/BrevisApp.sol";
 import "../../../interface/IBrevisProof.sol";
 
+struct TotalFee {
+    uint256 token0Amt;
+    uint256 token1Amt;
+}
+
+interface ITotalFeeApp {
+    function totalFees(uint64 epoch) external view returns(TotalFee memory); 
+}
+
 contract SingleRewardApp is BrevisApp, Ownable {
     using SafeERC20 for IERC20;
 
     bytes32 public vkHash;
     address public rewardToken;
+    ITotalFeeApp public totalFeeApp;
     event Claimed(address indexed user, uint64 fromEpoch, uint64 toEpoch, uint256 amount);
 
     mapping(address => uint64) public userClaimedTo; // user => toEpoch
 
-    constructor(address brevisProof) BrevisApp(IBrevisProof(brevisProof)) {}
+    constructor(address _brevisProof, ITotalFeeApp _totalFeeApp) BrevisApp(IBrevisProof(_brevisProof)) {
+        totalFeeApp = _totalFeeApp;
+    }
 
     // BrevisQuery contract will call our callback once Brevis backend submits the proof.
     function handleProofResult(
@@ -29,20 +41,36 @@ contract SingleRewardApp is BrevisApp, Ownable {
         // our designated verifying key. This proves that the _circuitOutput is authentic
         require(vkHash == _vkHash, "invalid vk");
 
-        (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt) = decodeOutput(_circuitOutput);
-
+        (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt, uint256[] memory token0Fees, uint256[] memory token1Fees) = decodeOutput(_circuitOutput);
         uint64 lastClaimedEpoch = userClaimedTo[user];
         if (lastClaimedEpoch > 0) {
             require(fromEpoch == lastClaimedEpoch + 1, "illegal claim");
         }
-
+        for (uint64 i = fromEpoch; i <= toEpoch; i++) {
+            TotalFee memory epochTotalFee = totalFeeApp.totalFees(i);
+            require(epochTotalFee.token0Amt == token0Fees[i - fromEpoch], "epoch total fee not right");
+            require(epochTotalFee.token1Amt == token1Fees[i - fromEpoch], "epoch total fee not right");
+        }
+        
         userClaimedTo[user] = toEpoch;
         IERC20(rewardToken).safeTransfer(user, amt);
         emit Claimed(user, fromEpoch, toEpoch, amt);
     }
 
-    function decodeOutput(bytes calldata o) internal pure returns (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt) {
-        return (address(bytes20(o[0:20])), uint64(bytes8(o[20:28])), uint64(bytes8(o[28:36])), uint256(bytes32(o[36:68])));
+    function decodeOutput(bytes calldata o) internal pure returns (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt, uint256[] memory token0Fees, uint256[] memory token1Fees) {
+        user = address(bytes20(o[0:20]));
+        fromEpoch = uint64(bytes8(o[20:28]));
+        toEpoch = uint64(bytes8(o[28:36]));
+        amt = uint256(uint248(bytes31(o[36:67])));
+        uint8 arrayLength = uint8(bytes1(o[67:68]));
+        require(arrayLength >= toEpoch - fromEpoch + 1, "epoch length not match");
+        token0Fees = new uint256[](arrayLength);
+        token1Fees = new uint256[](arrayLength);
+        uint256 token1FeeStartByte = 68 + 31 * arrayLength;
+        for (uint256 i = 0; i < arrayLength; i++) {
+            token0Fees[i] = uint256(uint248(bytes31(o[68+31*i:68+31*(i+1)])));
+            token1Fees[i] = uint256(uint248(bytes31(o[token1FeeStartByte+31*i:token1FeeStartByte+31*(i+1)])));
+        }
     }
 
     function setVkHash(bytes32 _vkHash) external onlyOwner {
