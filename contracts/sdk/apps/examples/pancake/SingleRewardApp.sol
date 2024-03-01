@@ -20,6 +20,9 @@ interface ITotalFeeApp {
 contract SingleRewardApp is BrevisApp, Ownable {
     using SafeERC20 for IERC20;
 
+    uint8 public maxEpochPerPosition; // max epochs per position in the zk circuit
+    uint8 public maxPositionsPerUser; // max positions per user in the zk circuit
+    
     bytes32 public vkHash;
     address public rewardToken;
     ITotalFeeApp public totalFeeApp;
@@ -41,36 +44,42 @@ contract SingleRewardApp is BrevisApp, Ownable {
         // our designated verifying key. This proves that the _circuitOutput is authentic
         require(vkHash == _vkHash, "invalid vk");
 
-        (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt, uint256[] memory token0Fees, uint256[] memory token1Fees) = decodeOutput(_circuitOutput);
+        (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt) = decodeOutput(_circuitOutput);
         uint64 lastClaimedEpoch = userClaimedTo[user];
         if (lastClaimedEpoch > 0) {
-            require(fromEpoch == lastClaimedEpoch + 1, "illegal claim");
+            require(fromEpoch > lastClaimedEpoch, "illegal claim");
         }
-        for (uint64 i = fromEpoch; i <= toEpoch; i++) {
-            TotalFee memory epochTotalFee = totalFeeApp.totalFees(i);
-            require(epochTotalFee.token0Amt == token0Fees[i - fromEpoch], "epoch total fee not right");
-            require(epochTotalFee.token1Amt == token1Fees[i - fromEpoch], "epoch total fee not right");
-        }
-        
+
         userClaimedTo[user] = toEpoch;
         IERC20(rewardToken).safeTransfer(user, amt);
         emit Claimed(user, fromEpoch, toEpoch, amt);
     }
 
-    function decodeOutput(bytes calldata o) internal pure returns (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt, uint256[] memory token0Fees, uint256[] memory token1Fees) {
+    function decodeOutput(bytes calldata o) internal view returns (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt) {
         user = address(bytes20(o[0:20]));
-        fromEpoch = uint64(bytes8(o[20:28]));
-        toEpoch = uint64(bytes8(o[28:36]));
-        amt = uint256(uint248(bytes31(o[36:67])));
-        uint8 arrayLength = uint8(bytes1(o[67:68]));
-        require(arrayLength >= toEpoch - fromEpoch + 1, "epoch length not match");
-        token0Fees = new uint256[](arrayLength);
-        token1Fees = new uint256[](arrayLength);
-        uint256 token1FeeStartByte = 68 + 31 * arrayLength;
-        for (uint256 i = 0; i < arrayLength; i++) {
-            token0Fees[i] = uint256(uint248(bytes31(o[68+31*i:68+31*(i+1)])));
-            token1Fees[i] = uint256(uint248(bytes31(o[token1FeeStartByte+31*i:token1FeeStartByte+31*(i+1)])));
+        uint256 bytesPerPosition = 8 + 8 + 31 * 2 * maxEpochPerPosition;
+        for (uint8 i = 0; i < maxPositionsPerUser; i++) {
+            uint256 startBytes = 20 + bytesPerPosition * i;
+            uint64 startEpoch = uint64(bytes8(o[startBytes:startBytes+8]));
+            uint64 endEpoch = uint64(bytes8(o[startBytes+8:startBytes+16]));
+            for (uint8 j = 0; j < maxEpochPerPosition; j++) {
+                uint248 token0FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*j:startBytes+16+31*(j+1)]));
+                uint248 token1FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*(j+1):startBytes+16+31*(j+2)]));
+                if (startEpoch + j <= endEpoch) {
+                    TotalFee memory epochTotalFee = totalFeeApp.totalFees(startEpoch + j);
+                    require(epochTotalFee.token0Amt == token0FeeInTheEpoch, "epoch total fee not right");
+                    require(epochTotalFee.token1Amt == token1FeeInTheEpoch, "epoch total fee not right");
+                }
+            }
+            if (fromEpoch == 0 || fromEpoch > startEpoch) {
+                fromEpoch = startEpoch;
+            }
+            if (toEpoch == 0 || toEpoch < endEpoch) {
+                toEpoch = endEpoch;
+            }
         }
+
+        amt = uint256(uint248(bytes31(o[20+bytesPerPosition*maxPositionsPerUser:20+bytesPerPosition*maxPositionsPerUser+31])));
     }
 
     function setVkHash(bytes32 _vkHash) external onlyOwner {
@@ -79,5 +88,13 @@ contract SingleRewardApp is BrevisApp, Ownable {
 
     function setRewardToken(address _rewardToken) external onlyOwner {
         rewardToken = _rewardToken;
+    }
+
+    function setMaxEpochPerPosition(uint8 _maxEpochPerPosition) external onlyOwner {
+        maxEpochPerPosition = _maxEpochPerPosition;
+    }
+
+    function setMaxPositionsPerUser(uint8 _maxPositionsPerUser) external onlyOwner {
+        maxPositionsPerUser = _maxPositionsPerUser;
     }
 }
