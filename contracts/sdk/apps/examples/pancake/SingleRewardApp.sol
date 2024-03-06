@@ -59,22 +59,23 @@ contract SingleRewardApp is BrevisApp, Ownable {
 
     function decodeOutput(bytes calldata o) internal view returns (address user, uint64 fromEpoch, uint64 toEpoch, uint256 amt) {
         user = address(bytes20(o[0:20]));
-        uint256 bytesPerPosition = 8 + 8 + 31 * 2 * maxEpochPerPosition;
+        uint256 bytesPerPosition = 8 + 8 + 8 + 31 * 2 * maxEpochPerPosition;
         for (uint8 i = 0; i < maxPositionsPerUser; i++) {
             uint256 startBytes = 20 + bytesPerPosition * i;
             uint64 startEpoch = uint64(bytes8(o[startBytes:startBytes+8]));
             uint64 endEpoch = uint64(bytes8(o[startBytes+8:startBytes+16]));
+            uint64 tokenId = uint64(bytes8(o[startBytes+16:startBytes+24]));
             for (uint8 j = 0; j < maxEpochPerPosition; j++) {
                 uint248 token0FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*j:startBytes+16+31*(j+1)]));
                 uint248 token1FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*(j+1):startBytes+16+31*(j+2)]));
-                if (startEpoch + j <= endEpoch) {
+                if (tokenId > 0 && j > 0 && startEpoch + j <= endEpoch) {
                     TotalFee memory epochTotalFee = totalFeeApp.totalFees(startEpoch + j);
                     require(epochTotalFee.token0Amt == token0FeeInTheEpoch, "epoch total fee not right");
                     require(epochTotalFee.token1Amt == token1FeeInTheEpoch, "epoch total fee not right");
                 }
             }
-            if (fromEpoch == 0 || fromEpoch > startEpoch) {
-                fromEpoch = startEpoch;
+            if (tokenId > 0 && (fromEpoch == 0 || fromEpoch > startEpoch + 1)) {
+                fromEpoch = startEpoch + 1;
             }
             if (toEpoch == 0 || toEpoch < endEpoch) {
                 toEpoch = endEpoch;
