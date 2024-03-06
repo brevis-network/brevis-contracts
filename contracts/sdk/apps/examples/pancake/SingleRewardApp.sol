@@ -51,7 +51,9 @@ contract SingleRewardApp is BrevisApp, Ownable {
         }
 
         userClaimedTo[user] = toEpoch;
-        IERC20(rewardToken).safeTransfer(user, amt);
+        if (amt > 0) {
+            IERC20(rewardToken).safeTransfer(user, amt);
+        }
         emit Claimed(user, fromEpoch, toEpoch, amt);
     }
 
