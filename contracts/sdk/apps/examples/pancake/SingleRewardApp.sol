@@ -100,4 +100,8 @@ contract SingleRewardApp is BrevisApp, Ownable {
     function setMaxPositionsPerUser(uint8 _maxPositionsPerUser) external onlyOwner {
         maxPositionsPerUser = _maxPositionsPerUser;
     }
+
+    function setTotalFeeApp(ITotalFeeApp _totalFeeApp) external onlyOwner {
+        totalFeeApp = _totalFeeApp;
+    }
 }
