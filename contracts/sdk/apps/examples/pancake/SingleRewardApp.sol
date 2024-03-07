@@ -66,8 +66,8 @@ contract SingleRewardApp is BrevisApp, Ownable {
             uint64 endEpoch = uint64(bytes8(o[startBytes+8:startBytes+16]));
             uint64 tokenId = uint64(bytes8(o[startBytes+16:startBytes+24]));
             for (uint8 j = 0; j < maxEpochPerPosition; j++) {
-                uint248 token0FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*j:startBytes+16+31*(j+1)]));
-                uint248 token1FeeInTheEpoch = uint248(bytes31(o[startBytes+16+31*(j+1):startBytes+16+31*(j+2)]));
+                uint248 token0FeeInTheEpoch = uint248(bytes31(o[startBytes+24+31*j:startBytes+24+31*(j+1)]));
+                uint248 token1FeeInTheEpoch = uint248(bytes31(o[startBytes+24+31*(j+1):startBytes+24+31*(j+2)]));
                 if (tokenId > 0 && j > 0 && startEpoch + j <= endEpoch) {
                     TotalFee memory epochTotalFee = totalFeeApp.totalFees(startEpoch + j);
                     require(epochTotalFee.token0Amt == token0FeeInTheEpoch, "epoch total fee not right");
