@@ -51,6 +51,8 @@
     "@uniswap/v4-core": "uniswap/v4-core",
     "merkletreejs": "0.3.10",
     "solidity-bytes-utils": "^0.8.0",
-    "solidity-rlp": "^2.0.7"
+    "solidity-rlp": "^2.0.7",
+    "@rumblefishdev/hardhat-kms-signer": "1.1.2",
+    "aws-sdk": "2.1419.0"
   }
 }

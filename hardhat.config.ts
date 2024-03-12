@@ -5,6 +5,7 @@ import '@typechain/hardhat';
 import 'hardhat-contract-sizer';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
+import '@rumblefishdev/hardhat-kms-signer';
 
 import * as dotenv from 'dotenv';
 import { HardhatUserConfig } from 'hardhat/types';
@@ -81,5 +82,11 @@ const config: HardhatUserConfig = {
     }
   }
 };
+
+if (config.networks?.bscTest) {
+  config.networks.bscTest.minMaxPriorityFeePerGas = 3000000000;
+  config.networks.bscTest.minMaxFeePerGas = 3000000000;
+  config.networks.bscTest.gasPrice = 10000000000;
+}
 
 export default config;
