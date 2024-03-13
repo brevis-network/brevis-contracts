@@ -4,12 +4,15 @@ pragma solidity ^0.8.18;
 import "./FeeVault.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
+import "../interface/IBrevisEigen.sol";
 import "../../interfaces/ISigsVerifier.sol";
 
+
 contract BrevisRequest is FeeVault {
+    ISigsVerifier public immutable sigsVerifier;
     uint256 public requestTimeout;
     IBrevisProof public brevisProof;
-    ISigsVerifier public immutable sigsVerifier;
+    IBrevisEigen public brevisEigen;
 
     enum RequestStatus {
         Pending,
@@ -43,9 +46,10 @@ contract BrevisRequest is FeeVault {
     event RequestFulfilled(bytes32 requestId);
     event RequestRefunded(bytes32 requestId);
 
-    constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
+    constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier, IBrevisEigen _brevisEigen) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
         sigsVerifier = _sigsVerifier;
+        brevisEigen = _brevisEigen;
     }
 
     function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable {
@@ -170,6 +174,9 @@ contract BrevisRequest is FeeVault {
     ) external {
         require(_requestIds.length > 0, "invalid requestIds");
         require(_requestIds.length == _queryURLs.length);
+        
+        // must already verified in brevisEigen
+        brevisEigen.mustVerified(_requestIds);
 
         bytes memory signBytes = abi.encodePacked(block.chainid);
         for (uint256 i = 0; i < _requestIds.length; i++) {
