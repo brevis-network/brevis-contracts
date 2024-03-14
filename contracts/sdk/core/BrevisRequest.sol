@@ -173,11 +173,7 @@ contract BrevisRequest is FeeVault {
 
         bytes memory signBytes = abi.encodePacked(block.chainid);
         for (uint256 i = 0; i < _requestIds.length; i++) {
-            if (i != _requestIds.length - 1) {
-                signBytes = abi.encodePacked(signBytes, _requestIds[i], ",");
-            } else {
-                signBytes = abi.encodePacked(signBytes, _requestIds[i]);
-            }
+            signBytes = abi.encodePacked(signBytes, _requestIds[i]);
         }
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         sigsVerifier.verifySigs(abi.encodePacked(domain, signBytes), _sigs, _signers, _powers);
