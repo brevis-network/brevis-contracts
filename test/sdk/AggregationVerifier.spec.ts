@@ -2,19 +2,16 @@ import { expect } from 'chai';
 import { Fixture } from 'ethereum-waffle';
 import { BigNumber, BigNumberish, Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
-import {
-  BN254NewVerifier__factory,
-  BN254NewVerifier,
-  AggregationVerifier,
-  AggregationVerifier__factory
-} from '../../typechain';
+import { AggregationVerifier, VerifierGasReport } from '../../typechain';
 import assert from 'assert';
 import { hexToBytes } from '../util';
 
 async function deployContract(admin: Wallet) {
   const _factory = await ethers.getContractFactory('AggregationVerifier');
-  const _contract = await _factory.connect(admin).deploy();
-  return _contract;
+  const verifierContract = await _factory.connect(admin).deploy();
+  const gasFactory = await ethers.getContractFactory('VerifierGasReport');
+  const gasContract = (await gasFactory.connect(admin).deploy(verifierContract.address)) as VerifierGasReport;
+  return {verifierContract, gasContract};
 }
 
 describe('BN254 final_emulate proof verifier', async () => {
@@ -24,15 +21,19 @@ describe('BN254 final_emulate proof verifier', async () => {
   }
 
   async function fixture([admin]: Wallet[]) {
-    const contract = await deployContract(admin);
-    return { admin, contract };
+    const contracts = await deployContract(admin);
+    const contract = contracts.verifierContract
+    const gasContract = contracts.gasContract
+    return { admin, contract, gasContract };
   }
 
   let contract: AggregationVerifier;
+  let gasContract: VerifierGasReport;
   let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     contract = res.contract;
+    gasContract = res.gasContract;
     admin = res.admin;
   });
 
@@ -98,8 +99,10 @@ describe('BN254 final_emulate proof verifier', async () => {
       hexValues += value.toHexString().slice(2).padStart(64, '0');
     });
 
-    const result = await contract.verifyRaw(hexToBytes('0x' + hexValues));
-
-    assert.equal(result, true);
+    await expect(
+      gasContract.verifyRaw(hexToBytes('0x' + hexValues))
+    )
+      .to.emit(gasContract, 'ProofVerified')
+      .withArgs(true);
   });
 });
