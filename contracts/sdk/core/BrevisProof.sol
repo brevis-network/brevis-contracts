@@ -39,12 +39,14 @@ contract BrevisProof is Ownable {
         uint256 batchSize = vkHashesToBatchSize[data.vkHash];
         require(batchSize > 0, "vkHash not valid");
 
+        _requestId = data.commitHash;
         if (_withAppProof) {
             require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
+            proofs[_requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas
+            proofs[_requestId].appVkHash = data.appVkHash;
+        } else {
+            proofs[_requestId].commitHash = data.commitHash;
         }
-
-        proofs[data.commitHash] = data;
-        _requestId = data.commitHash;
     }
 
     // used by contract app
@@ -131,7 +133,7 @@ contract BrevisProof is Ownable {
     }
 
     function hasProof(bytes32 _requestId) external view returns (bool) {
-        return proofs[_requestId].commitHash != bytes32(0);
+        return proofs[_requestId].commitHash != bytes32(0) || proofs[_requestId].appCommitHash != bytes32(0);
     }
 
     function getProofData(bytes32 _requestId) external view returns (Brevis.ProofData memory) {
@@ -173,9 +175,7 @@ contract BrevisProof is Ownable {
             );
         } else {
             data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
-            data.length = uint256(
-                bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32])
-            );
+            // data length field in between no need to be unpacked
             data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
         }
     }
