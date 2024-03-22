@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../../framework/BrevisApp.sol";
 import "../../../interface/IBrevisProof.sol";
+import "./ISwapVolume.sol";
 
-contract IntegralSwapVolume is BrevisApp, Ownable {
+contract IntegralSwapVolume is BrevisApp, Ownable, ISwapVolume {
     event SwapVolumeAttested(address user, uint256 volume);
 
     bytes32 public vkHash;

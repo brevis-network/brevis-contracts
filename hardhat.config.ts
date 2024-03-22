@@ -22,6 +22,8 @@ const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const holeskyTestEndpoint = process.env.HOLESKY_ENDPOINT || DEFAULT_ENDPOINT;
+const holeskyTestPrivateKey = process.env.HOLESKY_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const holeskyEndpoint = process.env.HOLESKY_ENDPOINT
 const holeskyPrivateKey =  process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
