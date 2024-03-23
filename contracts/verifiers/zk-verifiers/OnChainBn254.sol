@@ -421,7 +421,8 @@ contract OnChainBn254Verifier {
     /// @return x The X coordinate of the resulting G1 point.
     /// @return y The Y coordinate of the resulting G1 point.
     function publicInputMSMWithCommit(
-        uint256[2] calldata input,
+        uint256[1] calldata input,
+        uint256 publicCommit,
         uint256[2] calldata commit
     ) internal view returns (uint256 x, uint256 y) {
         // Note: The ECMUL precompile does not reject unreduced values, so we check this.
@@ -447,8 +448,8 @@ contract OnChainBn254Verifier {
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_1_X)
             mstore(add(g, 0x20), PUB_1_Y)
-            s := calldataload(add(input, 32))
-            mstore(add(g, 0x40), s)
+
+            mstore(add(g, 0x40), publicCommit)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
@@ -549,83 +550,18 @@ contract OnChainBn254Verifier {
         }
     }
 
-    /// Verify an uncompressed Groth16 proof.
-    /// @notice Reverts with InvalidProof if the proof is invalid or
-    /// with PublicInputNotInField the public input is not reduced.
-    /// @notice There is no return value. If the function does not revert, the
-    /// proof was successfully verified.
-    /// @param proof the points (A, B, C) in EIP-197 format matching the output
-    /// of compressProof.
-    /// @param input the public input field elements in the scalar field Fr.
-    /// Elements must be reduced.
-    function verifyProof(
-        uint256[8] calldata proof,
-        uint256[2] calldata input
-    ) public view {
-        (uint256 x, uint256 y) = publicInputMSM(input);
-
-        // Note: The precompile expects the F2 coefficients in big-endian order.
-        // Note: The pairing precompile rejects unreduced values, so we won't check that here.
-        
-        bool success;
-        assembly ("memory-safe") {
-            let f := mload(0x40) // Free memory pointer.
-
-            // Copy points (A, B, C) to memory. They are already in correct encoding.
-            // This is pairing e(A, B) and G1 of e(C, -δ).
-            calldatacopy(f, proof, 0x100)
-
-            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-            // OPT: This could be better done using a single codecopy, but
-            //      Solidity (unlike standalone Yul) doesn't provide a way to
-            //      to do this.
-            mstore(add(f, 0x100), DELTA_NEG_X_1)
-            mstore(add(f, 0x120), DELTA_NEG_X_0)
-            mstore(add(f, 0x140), DELTA_NEG_Y_1)
-            mstore(add(f, 0x160), DELTA_NEG_Y_0)
-            mstore(add(f, 0x180), ALPHA_X)
-            mstore(add(f, 0x1a0), ALPHA_Y)
-            mstore(add(f, 0x1c0), BETA_NEG_X_1)
-            mstore(add(f, 0x1e0), BETA_NEG_X_0)
-            mstore(add(f, 0x200), BETA_NEG_Y_1)
-            mstore(add(f, 0x220), BETA_NEG_Y_0)
-            mstore(add(f, 0x240), x)
-            mstore(add(f, 0x260), y)
-            mstore(add(f, 0x280), GAMMA_NEG_X_1)
-            mstore(add(f, 0x2a0), GAMMA_NEG_X_0)
-            mstore(add(f, 0x2c0), GAMMA_NEG_Y_1)
-            mstore(add(f, 0x2e0), GAMMA_NEG_Y_0)
-
-            // Check pairing equation.
-            success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x300, f, 0x20)
-            // Also check returned value (both are either 1 or 0).
-            success := and(success, mload(f))
-        }
-        if (!success) {
-            // Either proof or verification key invalid.
-            // We assume the contract is correctly generated, so the verification key is valid.
-            revert ProofInvalid();
-        }
-    }
-
     function verifyProofWithCommitAll(
         uint256[8] calldata proof,
         uint256[2] calldata commit,
-        uint256[2] calldata input,
+        uint256[1] calldata input,
         uint256[2] calldata knowledgeProof
     ) public view {
         uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
-        require(inputFr == input[1], "witness fr mismatch");
 
-        (uint256 x, uint256 y) = publicInputMSMWithCommit(input, commit);
-
-        console.log(input[1]);
+        (uint256 x, uint256 y) = publicInputMSMWithCommit(input, inputFr, commit);
 
         // Note: The precompile expects the F2 coefficients in big-endian order.
         // Note: The pairing precompile rejects unreduced values, so we won't check that here.
-
-        console.log(x);
-        console.log(y);
 
         bool success;
         assembly ("memory-safe") {
@@ -682,112 +618,6 @@ contract OnChainBn254Verifier {
         // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
-        if (!success) {
-            // Either proof or verification key invalid.
-            // We assume the contract is correctly generated, so the verification key is valid.
-            revert ProofInvalid();
-        }
-    }
-
-	/// Verify an uncompressed Groth16 proof.
-    /// @notice Reverts with InvalidProof if the proof is invalid or
-    /// with PublicInputNotInField the public input is not reduced.
-    /// @notice There is no return value. If the function does not revert, the
-    /// proof was successfully verified.
-    /// @param proof the points (A, B, C) in EIP-197 format matching the output
-    /// of compressProof.
-    /// @param input the public input field elements in the scalar field Fr.
-    /// Elements must be reduced.
-    function verifyProofWithCommit(
-        uint256[8] calldata proof,
-        uint256[2] calldata commit,
-        uint256[2] calldata input
-    ) public view {
-        //(uint256 x, uint256 y) = publicInputMSM(input);
-        (uint256 x, uint256 y) = publicInputMSMWithCommit(input, commit);
-
-        console.log(input[1]);
-
-        // Note: The precompile expects the F2 coefficients in big-endian order.
-        // Note: The pairing precompile rejects unreduced values, so we won't check that here.
-
-        console.log(x);
-        console.log(y);
-
-        bool success;
-        assembly ("memory-safe") {
-            let f := mload(0x40) // Free memory pointer.
-
-            // Copy points (A, B, C) to memory. They are already in correct encoding.
-            // This is pairing e(A, B) and G1 of e(C, -δ).
-            calldatacopy(f, proof, 0x100)
-
-            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-            // OPT: This could be better done using a single codecopy, but
-            //      Solidity (unlike standalone Yul) doesn't provide a way to
-            //      to do this.
-            mstore(add(f, 0x100), DELTA_NEG_X_1)
-            mstore(add(f, 0x120), DELTA_NEG_X_0)
-            mstore(add(f, 0x140), DELTA_NEG_Y_1)
-            mstore(add(f, 0x160), DELTA_NEG_Y_0)
-            mstore(add(f, 0x180), ALPHA_X)
-            mstore(add(f, 0x1a0), ALPHA_Y)
-            mstore(add(f, 0x1c0), BETA_NEG_X_1)
-            mstore(add(f, 0x1e0), BETA_NEG_X_0)
-            mstore(add(f, 0x200), BETA_NEG_Y_1)
-            mstore(add(f, 0x220), BETA_NEG_Y_0)
-            mstore(add(f, 0x240), x)
-            mstore(add(f, 0x260), y)
-            mstore(add(f, 0x280), GAMMA_NEG_X_1)
-            mstore(add(f, 0x2a0), GAMMA_NEG_X_0)
-            mstore(add(f, 0x2c0), GAMMA_NEG_Y_1)
-            mstore(add(f, 0x2e0), GAMMA_NEG_Y_0)
-
-            // Check pairing equation.
-            success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x300, f, 0x20)
-            // Also check returned value (both are either 1 or 0).
-            success := and(success, mload(f))
-        }
-        if (!success) {
-            // Either proof or verification key invalid.
-            // We assume the contract is correctly generated, so the verification key is valid.
-            revert ProofInvalid();
-        }
-    }
-
-    // commitment and knowledgeProof are g1
-    function verifyCommitmentCommitted(uint256[2] calldata commitment, uint256[2] calldata knowledgeProof) public view {
-        bool success;
-        assembly ("memory-safe") {
-            let f := mload(0x40) // Free memory pointer.
-
-            let c
-            c := calldataload(commitment)
-            mstore(f, c) // save commitment[0]
-            c := calldataload(add(commitment, 32))
-            mstore(add(f, 0x020), c) // save commitment[1]
-
-            mstore(add(f, 0x040), VK_PEDERSEN_G_X_1)
-            mstore(add(f, 0x060), VK_PEDERSEN_G_X_0)
-            mstore(add(f, 0x080), VK_PEDERSEN_G_Y_1)
-            mstore(add(f, 0x0a0), VK_PEDERSEN_G_Y_0)
-
-            c := calldataload(knowledgeProof)
-            mstore(add(f, 0x0c0), c) // save knowledgeProof[0]
-            c := calldataload(add(knowledgeProof, 32))
-            mstore(add(f, 0x0e0), c) // save knowledgeProof[1]
-
-            mstore(add(f, 0x100), VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1)
-            mstore(add(f, 0x120), VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_0)
-            mstore(add(f, 0x140), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1)
-            mstore(add(f, 0x160), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0)
-
-        // Check pairing equation.
-            success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x180, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
-            success := and(success, mload(f))
-        }
-
         if (!success) {
             // Either proof or verification key invalid.
             // We assume the contract is correctly generated, so the verification key is valid.
