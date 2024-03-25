@@ -15,8 +15,8 @@ dotenv.config();
 const DEFAULT_ENDPOINT = 'http://localhost:8545';
 const DEFAULT_PRIVATE_KEY =
   process.env.DEFAULT_PRIVATE_KEY || 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-const goerliEndpoint = process.env.GOERLI_ENDPOINT || DEFAULT_ENDPOINT;
-const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || DEFAULT_ENDPOINT;
+const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const sepoliaEndpoint = process.env.SEPOLIA_ENDPOINT || DEFAULT_ENDPOINT;
 const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || DEFAULT_ENDPOINT;
@@ -32,9 +32,9 @@ const config: HardhatUserConfig = {
       blockGasLimit: 120_000_000
     },
     localhost: { timeout: 600000 },
-    goerli: {
-      url: goerliEndpoint,
-      accounts: [`0x${goerliPrivateKey}`]
+    holesky: {
+      url: holeskyEndpoint,
+      accounts: [`0x${holeskyPrivateKey}`]
     },
     sepolia: {
       url: sepoliaEndpoint,
