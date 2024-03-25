@@ -52,6 +52,10 @@ contract BrevisRequest is FeeVault {
         brevisEigen = _brevisEigen;
     }
 
+    function setBrevisEigen(IBrevisEigen _brevisEigen) external onlyOwner {
+        brevisEigen = _brevisEigen;
+    }
+
     function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable {
         require(requests[_requestId].deadline == 0, "request already in queue");
         require(_refundee != address(0), "refundee not provided");
