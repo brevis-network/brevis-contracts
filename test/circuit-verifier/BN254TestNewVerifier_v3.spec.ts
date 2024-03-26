@@ -50,6 +50,10 @@ describe('on chain BN254 new proof verifier', async () => {
                 BigNumber.from('0x22447eb0af135719dc80ffa01e59636308fc7f6ac426a55923cfbfe3ef037f37')
             ],
             [
+                BigNumber.from('0x0a556c3eb619dbdfd2942e1d9e458577c2e8e52710156d8a2ac9985b02ed95e9'),
+                BigNumber.from('0x184685fbc8c917833963e9dae24bc3c8ac91650e57a9e936fd095c6b27d76e23'),
+            ],
+            [
                 BigNumber.from('0x04b64a227c4e2ce2ba210d54ed3969fc2891de5d323ae3c5d6277adc11bdc109'),
                 BigNumber.from('0x08646494e28db9b84dbf61f1725e5174'),
                 BigNumber.from('0xf7eaee5265971f0d92f33559810e4428'),
@@ -57,10 +61,6 @@ describe('on chain BN254 new proof verifier', async () => {
                 BigNumber.from('0x00000000000000000000000000000000'),
                 BigNumber.from('0x00000000000000000000000000000000'),
                 BigNumber.from('0x122e1d04b13e148af66f8fd91acb354519af92b46558fc2b4eb31f2b50cfcb60'),
-            ],
-            [
-                BigNumber.from('0x0a556c3eb619dbdfd2942e1d9e458577c2e8e52710156d8a2ac9985b02ed95e9'),
-                BigNumber.from('0x184685fbc8c917833963e9dae24bc3c8ac91650e57a9e936fd095c6b27d76e23'),
             ]
         );
         console.log('result4', result);

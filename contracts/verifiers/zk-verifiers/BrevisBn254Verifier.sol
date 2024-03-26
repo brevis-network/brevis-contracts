@@ -221,8 +221,8 @@ contract BrevisBn254Verifier {
     function verifyProof(
         uint256[8] calldata proof,
         uint256[2] calldata commit,
-        uint256[7] calldata input,
-        uint256[2] calldata knowledgeProof
+        uint256[2] calldata knowledgeProof,
+        uint256[7] calldata input
     ) public view {
         uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
         (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commit);
