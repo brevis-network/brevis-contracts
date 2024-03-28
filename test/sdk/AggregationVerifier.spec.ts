@@ -3,8 +3,6 @@ import { Fixture } from 'ethereum-waffle';
 import { BigNumber, BigNumberish, Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
 import {
-  BN254NewVerifier__factory,
-  BN254NewVerifier,
   AggregationVerifier,
   AggregationVerifier__factory
 } from '../../typechain';
