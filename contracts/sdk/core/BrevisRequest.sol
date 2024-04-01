@@ -69,6 +69,16 @@ contract BrevisRequest is FeeVault {
         }
     }
 
+    function fullfillAggRequests(uint64 _chainId, bytes32[] calldata _requestIds, bytes calldata _proof) external {
+        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+
+        for (uint8 i = 1; i < _requestIds.length; i++) {
+            bytes32 requestId = _requestIds[i];
+            requests[requestId].status = RequestStatus.ZkAttested;
+            emit RequestFulfilled(requestId);
+        }
+    }
+
     function refund(bytes32 _requestId) public {
         require(block.timestamp > requests[_requestId].deadline);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");

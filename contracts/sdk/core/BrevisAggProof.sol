@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./BrevisProof.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
@@ -15,6 +14,7 @@ contract BrevisAggProof is Ownable {
     }
 
     mapping(bytes32 => bool) public merkleRoots;
+    mapping(bytes32 => bool) public requestIds;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
     event SmtContractUpdated(ISMT smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
@@ -26,7 +26,7 @@ contract BrevisAggProof is Ownable {
         uint64 _chainId,
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
-        bytes32[TREE_DEPTH] calldata _merkleProof,
+        bytes32[] calldata _merkleProof,
         bool _isLeftSide
     ) external view {
         require(merkleRoots[_merkleRoot], "merkle root not exists");
@@ -52,17 +52,30 @@ contract BrevisAggProof is Ownable {
         require(_merkleRoot == root, "invalid data");
     }
 
-    function submitAggProof(uint64 _chainId, bytes calldata _proofWithPubInputs) external {
+    function mustSubmitAggProof(
+        uint64 _chainId,
+        bytes32[] calldata _requestIds,
+        bytes calldata _proofWithPubInputs
+    ) external {
         IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
         require(address(verifier) != address(0), "chain agg proof verifier not set");
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
 
-        bytes32 root = unpackMerkleRoot(_proofWithPubInputs);
+        (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
+        require(keccak256(abi.encodePacked(_requestIds)) == commitHash, "requestIds not right");
         merkleRoots[root] = true;
+        for (uint8 i = 0; i < _requestIds.length; i++) {
+            requestIds[_requestIds[i]] = true;
+        }
     }
 
-    function unpackMerkleRoot(bytes calldata _proofWithPubInputs) internal pure returns (bytes32) {
-        return bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
+    function inAgg(bytes32 _requestId) public view returns (bool) {
+        return requestIds[_requestId];
+    }
+
+    function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {
+        merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
+        commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
     }
 
     function updateSmtContract(ISMT _smtContract) public onlyOwner {

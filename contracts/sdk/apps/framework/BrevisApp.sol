@@ -28,4 +28,18 @@ abstract contract BrevisApp {
     function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
     }
+
+    // handle request in AggProof case, called by biz side
+    function fulfill(
+        uint64 _chainId,
+        Brevis.ProofData calldata _proofData,
+        bytes32 _merkleRoot,
+        bytes32[] calldata _merkleProof,
+        bool _isLeftSide,
+        bytes calldata _appCircuitOutput
+    ) external {
+        IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _isLeftSide);
+        require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
+    }
 }
