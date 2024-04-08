@@ -72,7 +72,8 @@ contract BrevisRequest is FeeVault {
     function refund(bytes32 _requestId) public {
         require(block.timestamp > requests[_requestId].deadline);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-        requests[_requestId].deadline = 0; //reset deadline, then user is able to sent request again
+        require(requests[_requestId].deadline != 0, "request not in queue");
+        requests[_requestId].deadline = 0; //reset deadline, then user is able to send request again
         (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
         require(sent, "send native failed");
         requests[_requestId].status = RequestStatus.Refunded;
