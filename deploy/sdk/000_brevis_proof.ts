@@ -10,7 +10,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const smt = await deployments.get('SMT');
+  const smt = await deployments.get('MockSMT');
   const args = [smt.address];
   const deployment = await deploy('BrevisProof', {
     from: deployer,
