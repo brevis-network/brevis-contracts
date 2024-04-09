@@ -52,9 +52,10 @@ contract BrevisRequest is FeeVault {
         bool _withAppProof,
         bytes calldata _appCircuitOutput
     ) external {
+        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
+
         bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // will revert if proof is not valid
         require(_requestId == reqIdFromProof, "requestId and proof not match");
-        chargeFee(_requestId); // will be reverted when failed to charge fee
         requests[_requestId].status = RequestStatus.ZkAttested;
 
         emit RequestFulfilled(_requestId);
@@ -68,16 +69,11 @@ contract BrevisRequest is FeeVault {
         }
     }
 
-    function chargeFee(bytes32 _requestId) public {
-        require(requests[_requestId].deadline != 0, "request not in queue");
-        require(IBrevisProof(brevisProof).hasProof(_requestId), "proof not generated");
-        requests[_requestId].deadline = 0; //simply set deadline to 0, then fee is not able be refunded
-    }
-
     function refund(bytes32 _requestId) public {
-        require(requests[_requestId].deadline != 0, "request not in queue");
         require(block.timestamp > requests[_requestId].deadline);
-        requests[_requestId].deadline = 0;
+        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
+        require(requests[_requestId].deadline != 0, "request not in queue");
+        requests[_requestId].deadline = 0; //reset deadline, then user is able to send request again
         (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
         require(sent, "send native failed");
         requests[_requestId].status = RequestStatus.Refunded;
