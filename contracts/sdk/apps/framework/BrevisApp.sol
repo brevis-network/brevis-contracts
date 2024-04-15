@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "../../interface/IBrevisProof.sol";
+import "../../lib/Lib.sol";
 
 abstract contract BrevisApp {
     IBrevisProof public immutable brevisProof;
@@ -29,8 +30,24 @@ abstract contract BrevisApp {
         // to be overrided by custom app
     }
 
+    function brevisBatchCallback(
+        uint64 _chainId,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs
+    ) external {
+        require(_proofDataArray.length == _appCircuitOutputs.length, "length not match");
+        IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+        for (uint i = 0; i < _proofDataArray.length; i++) {
+            require(
+                _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
+                "failed to open output commitment"
+            );
+            handleProofResult(_proofDataArray[i].commitHash, _proofDataArray[i].appVkHash, _appCircuitOutputs[i]);
+        }
+    }
+
     // handle request in AggProof case, called by biz side
-    function fulfill(
+    function singleRun(
         uint64 _chainId,
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,

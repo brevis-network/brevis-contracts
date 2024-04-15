@@ -28,6 +28,8 @@ interface IBrevisProof {
         bool _isLeftSide
     ) external view;
 
+    function mustValidateRequests(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view;
+
     function mustSubmitAggProof(
         uint64 _chainId,
         bytes32[] calldata _requestIds,

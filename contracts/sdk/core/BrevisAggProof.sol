@@ -21,6 +21,7 @@ contract BrevisAggProof is Ownable {
 
     uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
     uint8 constant TREE_DEPTH = 5;
+    uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;
 
     function mustValidateRequest(
         uint64 _chainId,
@@ -52,6 +53,36 @@ contract BrevisAggProof is Ownable {
         require(_merkleRoot == root, "invalid data");
     }
 
+    function mustValidateRequests(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view {
+        uint dataLen = _proofDataArray.length;
+        require(dataLen <= LEAF_NODES_LEN, "size exceeds");
+        bytes32[2 * LEAF_NODES_LEN - 1] memory hashes;
+        for (uint i = 0; i < dataLen; i++) {
+            require(smtContract.isSmtRootValid(_chainId, _proofDataArray[i].smtRoot), "invalid smt root");
+            hashes[i] = keccak256(
+                abi.encodePacked(
+                    _proofDataArray[i].commitHash,
+                    _proofDataArray[i].smtRoot,
+                    _proofDataArray[i].vkHash,
+                    _proofDataArray[i].appCommitHash,
+                    _proofDataArray[i].appVkHash
+                )
+            );
+        }
+        // note, hashes[dataLen] to hashes[LEAF_NODES_LEN - 1] defaults to 0
+        uint shift = 0;
+        uint counter = LEAF_NODES_LEN;
+        while (counter > 0) {
+            for (uint i = 0; i < counter - 1; i += 2) {
+                hashes[shift + counter + i / 2] = keccak256(abi.encodePacked(hashes[shift + i], hashes[shift + i + 1]));
+            }
+            shift += counter;
+            counter /= 2;
+        }
+
+        require(merkleRoots[hashes[hashes.length - 1]], "merkle root not exists");
+    }
+
     function mustSubmitAggProof(
         uint64 _chainId,
         bytes32[] calldata _requestIds,
@@ -64,7 +95,7 @@ contract BrevisAggProof is Ownable {
         (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
         require(keccak256(abi.encodePacked(_requestIds)) == commitHash, "requestIds not right");
         merkleRoots[root] = true;
-        for (uint8 i = 0; i < _requestIds.length; i++) {
+        for (uint i = 0; i < _requestIds.length; i++) {
             requestIds[_requestIds[i]] = true;
         }
     }

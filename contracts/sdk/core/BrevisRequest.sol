@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import "./FeeVault.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
+import "../lib/Lib.sol";
 
 contract BrevisRequest is FeeVault {
     uint256 public requestTimeout;
@@ -27,6 +28,7 @@ contract BrevisRequest is FeeVault {
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback);
     event RequestFulfilled(bytes32 requestId);
+    event RequestsFulfilled(bytes32[] requestId);
 
     constructor(address _feeCollector, IBrevisProof _brevisProof) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
@@ -69,13 +71,32 @@ contract BrevisRequest is FeeVault {
         }
     }
 
-    function fullfillAggRequests(uint64 _chainId, bytes32[] calldata _requestIds, bytes calldata _proof) external {
+    function fullfillAggRequests(
+        uint64 _chainId,
+        bytes32[] calldata _requestIds,
+        bytes calldata _proof,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs,
+        address _callback
+    ) external {
         IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
 
         for (uint8 i = 1; i < _requestIds.length; i++) {
             bytes32 requestId = _requestIds[i];
             requests[requestId].status = RequestStatus.ZkAttested;
-            emit RequestFulfilled(requestId);
+        }
+
+        emit RequestsFulfilled(_requestIds);
+
+        if (_callback != address(0)) {
+            _callback.call(
+                abi.encodeWithSelector(
+                    IBrevisApp.brevisBatchCallback.selector,
+                    _chainId,
+                    _proofDataArray,
+                    _appCircuitOutputs
+                )
+            );
         }
     }
 
