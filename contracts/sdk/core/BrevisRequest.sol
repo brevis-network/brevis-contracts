@@ -71,7 +71,7 @@ contract BrevisRequest is FeeVault {
         }
     }
 
-    function fullfillAggRequests(
+    function fulfillAggRequests(
         uint64 _chainId,
         bytes32[] calldata _requestIds,
         bytes calldata _proof,
