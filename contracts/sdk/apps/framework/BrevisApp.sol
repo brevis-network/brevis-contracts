@@ -52,10 +52,10 @@ abstract contract BrevisApp {
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
         bytes32[] calldata _merkleProof,
-        bool _isLeftSide,
+        uint8 _nodeIndex,
         bytes calldata _appCircuitOutput
     ) external {
-        IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _isLeftSide);
+        IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
         require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
     }

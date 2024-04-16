@@ -28,7 +28,7 @@ contract BrevisAggProof is Ownable {
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
         bytes32[] calldata _merkleProof,
-        bool _isLeftSide
+        uint8 _nodeIndex
     ) external view {
         require(merkleRoots[_merkleRoot], "merkle root not exists");
         require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), "invalid smt root");
@@ -44,7 +44,7 @@ contract BrevisAggProof is Ownable {
         );
         bytes32 root = proofDataHash;
         for (uint8 depth = 0; depth < TREE_DEPTH; depth++) {
-            if (_isLeftSide) {
+            if ((_nodeIndex >> depth) & 1 == 0) {
                 root = keccak256(abi.encodePacked(root, _merkleProof[depth]));
             } else {
                 root = keccak256(abi.encodePacked(_merkleProof[depth], root));

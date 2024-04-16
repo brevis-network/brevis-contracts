@@ -25,7 +25,7 @@ interface IBrevisProof {
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
         bytes32[] calldata _merkleProof,
-        bool _isLeftSide
+        uint8 _nodeIndex
     ) external view;
 
     function mustValidateRequests(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view;
