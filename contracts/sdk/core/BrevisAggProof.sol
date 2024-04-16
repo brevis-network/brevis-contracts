@@ -20,7 +20,7 @@ contract BrevisAggProof is Ownable {
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
 
     uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
-    uint8 constant TREE_DEPTH = 5;
+    uint8 constant TREE_DEPTH = 4;
     uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;
 
     function mustValidateRequest(
