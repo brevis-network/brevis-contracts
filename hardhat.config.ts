@@ -22,6 +22,8 @@ const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || DEFAULT_ENDPOINT;
 const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
+const holeskyPrivateKey =  process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -46,6 +48,10 @@ const config: HardhatUserConfig = {
     avalancheTest: {
       url: avalancheTestEndpoint,
       accounts: [`0x${avalancheTestPrivateKey}`]
+    },
+    holesky:{
+      url: holeskyEndpoint,
+      accounts: [`0x${holeskyPrivateKey}`]
     }
   },
   namedAccounts: {
@@ -77,8 +83,19 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY as string,
       sepolia: process.env.ETHERSCAN_API_KEY as string,
       bscTestnet: process.env.BSCSCAN_API_KEY as string,
-      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string
-    }
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string,
+      holesky: process.env.ETHERSCAN_API_KEY as string,
+    },
+    customChains: [
+      {
+        network: "holesky",
+        chainId: 17000,
+        urls: {
+          apiURL: "https://api-holesky.etherscan.io/api",
+          browserURL: "https://holesky.etherscan.io/"
+        }
+      }
+    ]
   }
 };
 
