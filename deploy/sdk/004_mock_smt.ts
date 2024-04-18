@@ -9,17 +9,15 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-
-  const smt = await deployments.get('MockSMT');
-  const args = [smt.address];
-  const deployment = await deploy('BrevisProof', {
+  const args:string[] = [];
+  const deployment = await deploy('MockSMT', {
     from: deployer,
     log: true,
-    args: args
+    args: args,
   });
   await verify(hre, deployment, args);
 };
 
-deployFunc.tags = ['BrevisProof'];
+deployFunc.tags = ['MockSMT'];
 deployFunc.dependencies = [];
 export default deployFunc;
