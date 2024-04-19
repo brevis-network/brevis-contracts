@@ -69,7 +69,13 @@ contract BrevisAggProof is Ownable {
                 )
             );
         }
-        // note, hashes[dataLen] to hashes[LEAF_NODES_LEN - 1] defaults to 0
+        // note, hashes[dataLen] to hashes[LEAF_NODES_LEN - 1] filled with last real one
+        if (dataLen < LEAF_NODES_LEN) {
+            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {
+                hashes[i] = hashes[dataLen - 1];
+            }
+        }
+
         uint shift = 0;
         uint counter = LEAF_NODES_LEN;
         while (counter > 0) {
@@ -93,7 +99,19 @@ contract BrevisAggProof is Ownable {
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
 
         (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
-        require(keccak256(abi.encodePacked(_requestIds)) == commitHash, "requestIds not right");
+
+        uint dataLen = _requestIds.length;
+        bytes32[LEAF_NODES_LEN] memory rIds;
+        for (uint i = 0; i < dataLen; i++) {
+            rIds[i] = _requestIds[i];
+        }
+        // note, to align with circuit, rIds[dataLen] to rIds[LEAF_NODES_LEN - 1] filled with last real one
+        if (dataLen < LEAF_NODES_LEN) {
+            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {
+                rIds[i] = rIds[dataLen - 1];
+            }
+        }
+        require(keccak256(abi.encodePacked(rIds)) == commitHash, "requestIds not right");
         merkleRoots[root] = true;
         for (uint i = 0; i < _requestIds.length; i++) {
             requestIds[_requestIds[i]] = true;
