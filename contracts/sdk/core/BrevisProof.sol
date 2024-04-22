@@ -7,7 +7,7 @@ import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisProof is Ownable {
-    uint32 constant PUBLIC_BYTES_START_IDX = 11 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment) 11 is CommitmentPOK0
+    uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
 
     struct ChainZKVerifier {
         IZkpVerifier contractAppZkVerifier;

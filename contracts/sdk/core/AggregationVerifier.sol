@@ -323,19 +323,18 @@ contract AggregationVerifier {
         commitment[0] = uint256(bytes32(proofData[256:288]));
         commitment[1] = uint256(bytes32(proofData[288:320]));
 
-        // Make brevis proof backward-compatible
         uint256[2] memory commitmentPOK;
         commitmentPOK[0] = uint256(bytes32(proofData[320:352]));
-        commitmentPOK[1] = uint256(bytes32(proofData[512:544]));
+        commitmentPOK[1] = uint256(bytes32(proofData[352:384]));
 
         uint256[7] memory input;
-        input[0] = uint256(bytes32(proofData[352:384]));
-        input[1] = uint256(uint128(bytes16(proofData[384:400])));
-        input[2] = uint256(uint128(bytes16(proofData[400:416])));
-        input[3] = uint256(bytes32(proofData[416:448]));
-        input[4] = uint256(uint128(bytes16(proofData[448:464])));
-        input[5] = uint256(uint128(bytes16(proofData[464:480])));
-        input[6] = uint256(bytes32(proofData[480:512]));
+        input[0] = uint256(bytes32(proofData[384:416]));
+        input[1] = uint256(uint128(bytes16(proofData[416:432])));
+        input[2] = uint256(uint128(bytes16(proofData[432:448])));
+        input[3] = uint256(bytes32(proofData[448:480]));
+        input[4] = uint256(uint128(bytes16(proofData[480:496])));
+        input[5] = uint256(uint128(bytes16(proofData[496:512])));
+        input[6] = uint256(bytes32(proofData[512:544]));
 
         return verifyProof(proof, commitment, commitmentPOK, input);
     }

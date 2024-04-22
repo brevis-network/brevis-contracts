@@ -15,7 +15,7 @@ async function deployContract(admin: Wallet) {
   return _contract;
 }
 
-describe('Aggregation verifier', async () => {
+describe('BN254 final_emulate proof verifier', async () => {
   function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
     const provider = waffle.provider;
     return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
@@ -86,14 +86,13 @@ describe('Aggregation verifier', async () => {
       BigNumber.from('0x22dfb97d1ce87049bd43f3aa5c2c2247d6e69c9afabbb903d8755ac85f45f79f'), // Commitment 1
 
       BigNumber.from('0x10860b6d156136db85afcc5615b34474dc448f2cbf74dd162552f06f1b687eb4'), // Commitment POK0
+      BigNumber.from('0x1a7ca928cc8e20afa2464649f5d62c3b07acb8c3e63ba4f18bb6d2e1d394d675'), // Commitment POK1
 
       BigNumber.from('0x21245b6b0756614544af32ea81d9dd81923d13c48afd3aabe1e81aabbd5a93c7'), // Query Hash
       BigNumber.from('0x1166a98a66ffadcc0d211e59f2dadc370c38ef8683b3908515283d98227c9c64'), // SMT Root 
       BigNumber.from('0x22935546fb8b3a680600fcabfe361e5c0a16a99390415abe8aab491838dffca7'), // Aggregation VK Hash
       BigNumber.from('0x16f3086a7b81b13af4d01a78533c686ccb0c329caafd7509e12d666d0ae1ab69'), // App Circuit Output Commitment 
-      BigNumber.from('0x1b3738642fbaef19b5b7f1d6e516905af845deb4215458037f76a5d435aee13e'), // App Circuit VK Hash
-
-      BigNumber.from('0x1a7ca928cc8e20afa2464649f5d62c3b07acb8c3e63ba4f18bb6d2e1d394d675'), // Commitment POK1
+      BigNumber.from('0x1b3738642fbaef19b5b7f1d6e516905af845deb4215458037f76a5d435aee13e') // App Circuit VK Hash
     ];
 
     var hexValues = '';
