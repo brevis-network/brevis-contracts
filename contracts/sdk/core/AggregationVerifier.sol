@@ -79,10 +79,14 @@ contract AggregationVerifier {
     uint256 constant VK_PEDERSEN_G_Y_1 = 834977644800539851243602822366909668747653955574809155046777611984277771776;
 
     // VK CommitmentKey pedersen GRootSigmaNeg
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_0 = 2200585081879595640584858710253685932171753361453491594146898213239013911282;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1 = 18049108820983202804944453697657571551769488507736702873053007083714948165248;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0 = 133313209624682832535108325381034698477936306159075009510964451507662397140;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1 = 7284716207005576333081510645859571066483492723588236030807110008433085609567;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_0 =
+        2200585081879595640584858710253685932171753361453491594146898213239013911282;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1 =
+        18049108820983202804944453697657571551769488507736702873053007083714948165248;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0 =
+        133313209624682832535108325381034698477936306159075009510964451507662397140;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1 =
+        7284716207005576333081510645859571066483492723588236030807110008433085609567;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 6007902370513106954063927857306896407269873771373783576471927701052459218140;
@@ -134,49 +138,49 @@ contract AggregationVerifier {
             mstore(add(f, 0x20), CONSTANT_Y)
             mstore(g, PUB_0_X)
             mstore(add(g, 0x20), PUB_0_Y)
-            s :=  mload(input)
+            s := mload(input)
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_1_X)
             mstore(add(g, 0x20), PUB_1_Y)
-            s :=  mload(add(input, 32))
+            s := mload(add(input, 32))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_2_X)
             mstore(add(g, 0x20), PUB_2_Y)
-            s :=  mload(add(input, 64))
+            s := mload(add(input, 64))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_3_X)
             mstore(add(g, 0x20), PUB_3_Y)
-            s :=  mload(add(input, 96))
+            s := mload(add(input, 96))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_4_X)
             mstore(add(g, 0x20), PUB_4_Y)
-            s :=  mload(add(input, 128))
+            s := mload(add(input, 128))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_5_X)
             mstore(add(g, 0x20), PUB_5_Y)
-            s :=  mload(add(input, 160))
+            s := mload(add(input, 160))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_6_X)
             mstore(add(g, 0x20), PUB_6_Y)
-            s :=  mload(add(input, 192))
+            s := mload(add(input, 192))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
@@ -184,7 +188,7 @@ contract AggregationVerifier {
             mstore(g, PUB_7_X)
             mstore(add(g, 0x20), PUB_7_Y)
 
-            s :=  mload(add(input, 224))
+            s := mload(add(input, 224))
             mstore(add(g, 0x40), publicCommit)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
@@ -242,8 +246,8 @@ contract AggregationVerifier {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             mstore(f, a0)
             mstore(add(f, 0x20), a1)
             mstore(add(f, 0x40), b00)
@@ -253,10 +257,10 @@ contract AggregationVerifier {
             mstore(add(f, 0xc0), c0)
             mstore(add(f, 0xe0), c1)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -295,9 +299,9 @@ contract AggregationVerifier {
             mstore(add(f, 0x440), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1)
             mstore(add(f, 0x460), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {
@@ -308,7 +312,7 @@ contract AggregationVerifier {
         return success;
     }
 
-     function verifyRaw(bytes calldata proofData) external view returns (bool) {
+    function verifyRaw(bytes calldata proofData) external view returns (bool) {
         uint256[8] memory proof;
         proof[0] = uint256(bytes32(proofData[:32]));
         proof[1] = uint256(bytes32(proofData[32:64]));

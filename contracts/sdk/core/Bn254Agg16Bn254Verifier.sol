@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -10,7 +9,6 @@ pragma solidity ^0.8.0;
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
 contract Bn254Agg16Bn254Verifier {
-    
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -85,10 +83,14 @@ contract Bn254Agg16Bn254Verifier {
     uint256 constant PEDERSEN_G_Y_1 = 19181010027527305347086822924084846014678367928458620110851926246811149924856;
 
     // Pedersen GRootSigmaNeg point in G2 in powers of i
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 = 1364659900616619261366837825352415018281838459958758994298972335695928663992;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 = 8539606595213343683994667486011158634175978350433009945885353496301776477429;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 = 4189300617291115316791544645370959035880022218495965504661993378452301869987;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 = 11401306171979238369177558573213960126147089129804204285535711539750966120541;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 =
+        1364659900616619261366837825352415018281838459958758994298972335695928663992;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 =
+        8539606595213343683994667486011158634175978350433009945885353496301776477429;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 =
+        4189300617291115316791544645370959035880022218495965504661993378452301869987;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 =
+        11401306171979238369177558573213960126147089129804204285535711539750966120541;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 14218196459025072344164335469527566142437235019634603139488016000363196487251;
@@ -114,9 +116,9 @@ contract Bn254Agg16Bn254Verifier {
     /// @return x The X coordinate of the resulting G1 point.
     /// @return y The Y coordinate of the resulting G1 point.
     function publicInputMSM(
-        uint256[4] calldata input,
+        uint256[4] memory input,
         uint256 publicCommit,
-        uint256[2] calldata commit
+        uint256[2] memory commit
     ) internal view returns (uint256 x, uint256 y) {
         // Note: The ECMUL precompile does not reject unreduced values, so we check this.
         // Note: Unrolling this loop does not cost much extra in code-size, the bulk of the
@@ -134,28 +136,28 @@ contract Bn254Agg16Bn254Verifier {
             mstore(add(f, 0x20), CONSTANT_Y)
             mstore(g, PUB_0_X)
             mstore(add(g, 0x20), PUB_0_Y)
-            s :=  calldataload(input)
+            s := calldataload(input)
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_1_X)
             mstore(add(g, 0x20), PUB_1_Y)
-            s :=  calldataload(add(input, 32))
+            s := calldataload(add(input, 32))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_2_X)
             mstore(add(g, 0x20), PUB_2_Y)
-            s :=  calldataload(add(input, 64))
+            s := calldataload(add(input, 64))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_3_X)
             mstore(add(g, 0x20), PUB_3_Y)
-            s :=  calldataload(add(input, 96))
+            s := calldataload(add(input, 96))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
@@ -163,8 +165,7 @@ contract Bn254Agg16Bn254Verifier {
             mstore(g, PUB_4_X)
             mstore(add(g, 0x20), PUB_4_Y)
 
-
-            s :=  calldataload(add(input, 128))
+            s := calldataload(add(input, 128))
             mstore(add(g, 0x40), publicCommit)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
@@ -197,10 +198,10 @@ contract Bn254Agg16Bn254Verifier {
     /// @param input the public input field elements in the scalar field Fr.
     /// Elements must be reduced.
     function verifyProof(
-        uint256[8] calldata proof,
-        uint256[2] calldata commit,
-        uint256[2] calldata knowledgeProof,
-        uint256[4] calldata input
+        uint256[8] memory proof,
+        uint256[2] memory commit,
+        uint256[2] memory knowledgeProof,
+        uint256[4] memory input
     ) public view returns (bool) {
         uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
         (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commit);
@@ -212,14 +213,14 @@ contract Bn254Agg16Bn254Verifier {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             calldatacopy(f, proof, 0x100)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -258,9 +259,9 @@ contract Bn254Agg16Bn254Verifier {
             mstore(add(f, 0x440), PEDERSEN_GROOTSIGMANEG_Y_1)
             mstore(add(f, 0x460), PEDERSEN_GROOTSIGMANEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {
@@ -269,5 +270,33 @@ contract Bn254Agg16Bn254Verifier {
             revert ProofInvalid();
         }
         return success;
+    }
+
+    function verifyRaw(bytes calldata proofData) external view returns (bool) {
+        uint256[8] memory proof;
+        proof[0] = uint256(bytes32(proofData[:32]));
+        proof[1] = uint256(bytes32(proofData[32:64]));
+        proof[2] = uint256(bytes32(proofData[64:96]));
+        proof[3] = uint256(bytes32(proofData[96:128]));
+        proof[4] = uint256(bytes32(proofData[128:160]));
+        proof[5] = uint256(bytes32(proofData[160:192]));
+        proof[6] = uint256(bytes32(proofData[192:224]));
+        proof[7] = uint256(bytes32(proofData[224:256]));
+
+        uint256[2] memory commitment;
+        commitment[0] = uint256(bytes32(proofData[256:288]));
+        commitment[1] = uint256(bytes32(proofData[288:320]));
+
+        uint256[2] memory commitmentPOK;
+        commitmentPOK[0] = uint256(bytes32(proofData[320:352]));
+        commitmentPOK[1] = uint256(bytes32(proofData[352:384]));
+
+        uint256[4] memory input;
+        input[0] = uint256(uint128(bytes16(proofData[384:400])));
+        input[1] = uint256(uint128(bytes16(proofData[400:416])));
+        input[2] = uint256(uint128(bytes16(proofData[416:432])));
+        input[3] = uint256(uint128(bytes16(proofData[432:448])));
+
+        return verifyProof(proof, commitment, commitmentPOK, input);
     }
 }
