@@ -116,9 +116,9 @@ contract Bn254Agg16Bn254Verifier {
     /// @return x The X coordinate of the resulting G1 point.
     /// @return y The Y coordinate of the resulting G1 point.
     function publicInputMSM(
-        uint256[4] memory input,
+        uint256[4] calldata input,
         uint256 publicCommit,
-        uint256[2] memory commit
+        uint256[2] calldata commit
     ) internal view returns (uint256 x, uint256 y) {
         // Note: The ECMUL precompile does not reject unreduced values, so we check this.
         // Note: Unrolling this loop does not cost much extra in code-size, the bulk of the
@@ -198,10 +198,10 @@ contract Bn254Agg16Bn254Verifier {
     /// @param input the public input field elements in the scalar field Fr.
     /// Elements must be reduced.
     function verifyProof(
-        uint256[8] memory proof,
-        uint256[2] memory commit,
-        uint256[2] memory knowledgeProof,
-        uint256[4] memory input
+        uint256[8] calldata proof,
+        uint256[2] calldata commit,
+        uint256[2] calldata knowledgeProof,
+        uint256[4] calldata input
     ) public view returns (bool) {
         uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
         (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commit);
@@ -297,6 +297,6 @@ contract Bn254Agg16Bn254Verifier {
         input[2] = uint256(uint128(bytes16(proofData[416:432])));
         input[3] = uint256(uint128(bytes16(proofData[432:448])));
 
-        return verifyProof(proof, commitment, commitmentPOK, input);
+        return this.verifyProof(proof, commitment, commitmentPOK, input);
     }
 }
