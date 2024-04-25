@@ -292,10 +292,10 @@ contract Bn254Agg16Bn254Verifier {
         commitmentPOK[1] = uint256(bytes32(proofData[352:384]));
 
         uint256[4] memory input;
-        input[0] = uint256(uint128(bytes16(proofData[384:400])));
-        input[1] = uint256(uint128(bytes16(proofData[400:416])));
-        input[2] = uint256(uint128(bytes16(proofData[416:432])));
-        input[3] = uint256(uint128(bytes16(proofData[432:448])));
+        input[1] = uint256(uint128(bytes16(proofData[384:400])));
+        input[0] = uint256(uint128(bytes16(proofData[400:416])));
+        input[3] = uint256(uint128(bytes16(proofData[416:432])));
+        input[2] = uint256(uint128(bytes16(proofData[432:448])));
 
         return this.verifyProof(proof, commitment, commitmentPOK, input);
     }
