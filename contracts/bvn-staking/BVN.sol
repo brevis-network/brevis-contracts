@@ -27,6 +27,7 @@ contract BVN {
     Staking public immutable staking;
     address[] public registeredValidators;
     mapping(address => BrevisValidator) public brevisValidators; // valAddr -> BvnValidator
+    mapping(address => address) public signerVals; // signerAddr -> valAddr
     mapping(uint64 => SlashRecord) public slashRecords; // nonce -> SlashRecord
 
     event BrevisValidatorRegistered(address indexed valAddr, address signer, bytes bvnAddr);
@@ -48,8 +49,11 @@ contract BVN {
      */
     function registerBrevisValidator(address _valAddr, address _signer, bytes calldata _bvnAddr) external {
         dt.ValidatorStatus status = staking.getValidatorStatus(_valAddr);
-        require(status == dt.ValidatorStatus.Bonded, "Not bonded validator");
+        require(status == dt.ValidatorStatus.Bonded, "not bonded validator");
         require(_valAddr == msg.sender || _valAddr == staking.signerVals(msg.sender), "unauthorized caller");
+
+        require(signerVals[_signer] == address(0), "signer already used");
+        signerVals[_signer] = _valAddr;
 
         BrevisValidator storage bv = brevisValidators[_valAddr];
         require(bv.deregisterTime != dt.MAX_INT, "already registered validator");
@@ -67,15 +71,15 @@ contract BVN {
      * @param _valAddr validator eth address
      */
     function deregisterBrevisValidator(address _valAddr) external {
-        if (_valAddr != msg.sender && _valAddr != staking.signerVals(msg.sender)) {
+        BrevisValidator storage bv = brevisValidators[_valAddr];
+        require(bv.deregisterTime == dt.MAX_INT, "not registered validator");
+        if (_valAddr != msg.sender && _valAddr != staking.signerVals(msg.sender) && bv.signer != msg.sender) {
             // if not called by validator itself, require unbonded status
             dt.ValidatorStatus status = staking.getValidatorStatus(_valAddr);
             require(status == dt.ValidatorStatus.Unbonded, "Not unbonded validator");
         }
-
-        BrevisValidator storage bv = brevisValidators[_valAddr];
-        require(bv.deregisterTime == dt.MAX_INT, "not registered validator");
         bv.deregisterTime = block.timestamp;
+        delete signerVals[bv.signer];
 
         staking.validatorNotice(_valAddr, "deregister", "");
         uint256 lastIndex = registeredValidators.length - 1;
@@ -122,7 +126,7 @@ contract BVN {
             require(signer > prev, "Signers not in ascending order");
             prev = signer;
 
-            address valAddr = staking.signerVals(signer);
+            address valAddr = signerVals[signer];
             BrevisValidator storage bv = brevisValidators[valAddr];
             require(bv.deregisterTime == dt.MAX_INT, "not registered validator");
 
