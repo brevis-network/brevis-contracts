@@ -11,7 +11,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
 
   const args:string[] = [];
-  const deployment = await deploy('BatchZkProofVerifier', {
+  const deployment = await deploy('AggregationVerifier', {
     from: deployer,
     log: true,
     args: args
@@ -19,6 +19,6 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   await verify(hre, deployment, args);
 };
 
-deployFunc.tags = ['BatchZkProofVerifier'];
+deployFunc.tags = ['AggregationVerifier'];
 deployFunc.dependencies = [];
 export default deployFunc;

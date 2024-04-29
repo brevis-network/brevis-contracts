@@ -42,6 +42,14 @@ const config: HardhatUserConfig = {
     base: {
       url: process.env.BASE_ENDPOINT,
       accounts: [`0x${privateKey}`]
+    },
+    avalancheTest: {
+      url: process.env.AVALANCHE_TEST_ENDPOINT,
+      accounts: [`0x${privateKey}`]
+    },
+    holesky: {
+      url: process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org',
+      accounts: [`0x${privateKey}`]
     }
   },
   namedAccounts: {
@@ -75,6 +83,7 @@ const config: HardhatUserConfig = {
       bscTestnet: process.env.BSCSCAN_API_KEY as string,
       avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string,
       linea: process.env.LINEASCAN_API_KEY as string,
+      holesky: process.env.ETHERSCAN_API_KEY as string,
       base: process.env.BASESCAN_API_KEY as string
     },
     customChains: [
@@ -84,6 +93,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api.lineascan.build/api',
           browserURL: 'https://lineascan.build/'
+        }
+      },
+      {
+        network: 'holesky',
+        chainId: 17000,
+        urls: {
+          apiURL: 'https://api-holesky.etherscan.io/api',
+          browserURL: 'https://holesky.etherscan.io/'
         }
       }
     ]

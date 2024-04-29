@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -8,7 +9,8 @@ pragma solidity ^0.8.0;
 /// (256 bytes) and compressed (128 bytes) format. A view function is provided
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
-contract AggregationVerifier {
+contract BrevisBn254Verifier {
+
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -79,14 +81,10 @@ contract AggregationVerifier {
     uint256 constant VK_PEDERSEN_G_Y_1 = 834977644800539851243602822366909668747653955574809155046777611984277771776;
 
     // VK CommitmentKey pedersen GRootSigmaNeg
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_0 =
-        2200585081879595640584858710253685932171753361453491594146898213239013911282;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1 =
-        18049108820983202804944453697657571551769488507736702873053007083714948165248;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0 =
-        133313209624682832535108325381034698477936306159075009510964451507662397140;
-    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1 =
-        7284716207005576333081510645859571066483492723588236030807110008433085609567;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_0 = 2200585081879595640584858710253685932171753361453491594146898213239013911282;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1 = 18049108820983202804944453697657571551769488507736702873053007083714948165248;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0 = 133313209624682832535108325381034698477936306159075009510964451507662397140;
+    uint256 constant VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1 = 7284716207005576333081510645859571066483492723588236030807110008433085609567;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 6007902370513106954063927857306896407269873771373783576471927701052459218140;
@@ -118,9 +116,9 @@ contract AggregationVerifier {
     /// @return x The X coordinate of the resulting G1 point.
     /// @return y The Y coordinate of the resulting G1 point.
     function publicInputMSM(
-        uint256[7] memory input,
+        uint256[7] calldata input,
         uint256 publicCommit,
-        uint256[2] memory commit
+        uint256[2] calldata commit
     ) internal view returns (uint256 x, uint256 y) {
         // Note: The ECMUL precompile does not reject unreduced values, so we check this.
         // Note: Unrolling this loop does not cost much extra in code-size, the bulk of the
@@ -138,49 +136,49 @@ contract AggregationVerifier {
             mstore(add(f, 0x20), CONSTANT_Y)
             mstore(g, PUB_0_X)
             mstore(add(g, 0x20), PUB_0_Y)
-            s := mload(input)
+            s :=  calldataload(input)
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_1_X)
             mstore(add(g, 0x20), PUB_1_Y)
-            s := mload(add(input, 32))
+            s :=  calldataload(add(input, 32))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_2_X)
             mstore(add(g, 0x20), PUB_2_Y)
-            s := mload(add(input, 64))
+            s :=  calldataload(add(input, 64))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_3_X)
             mstore(add(g, 0x20), PUB_3_Y)
-            s := mload(add(input, 96))
+            s :=  calldataload(add(input, 96))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_4_X)
             mstore(add(g, 0x20), PUB_4_Y)
-            s := mload(add(input, 128))
+            s :=  calldataload(add(input, 128))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_5_X)
             mstore(add(g, 0x20), PUB_5_Y)
-            s := mload(add(input, 160))
+            s :=  calldataload(add(input, 160))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_6_X)
             mstore(add(g, 0x20), PUB_6_Y)
-            s := mload(add(input, 192))
+            s :=  calldataload(add(input, 192))
             mstore(add(g, 0x40), s)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
@@ -188,15 +186,15 @@ contract AggregationVerifier {
             mstore(g, PUB_7_X)
             mstore(add(g, 0x20), PUB_7_Y)
 
-            s := mload(add(input, 224))
+            s :=  calldataload(add(input, 224))
             mstore(add(g, 0x40), publicCommit)
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
 
-            s := mload(commit)
+            s := calldataload(commit)
             mstore(g, s) // save commit[0]
-            s := mload(add(commit, 32))
+            s := calldataload(add(commit, 32))
             mstore(add(g, 0x20), s) // save commit[1]
 
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
@@ -221,46 +219,29 @@ contract AggregationVerifier {
     /// @param input the public input field elements in the scalar field Fr.
     /// Elements must be reduced.
     function verifyProof(
-        uint256[8] memory proof,
-        uint256[2] memory commitment,
-        uint256[2] memory commitmentPOK,
-        uint256[7] memory input
-    ) public view returns (bool) {
-        uint256 inputFr = uint256(keccak256(abi.encodePacked(commitment[0], commitment[1]))) % MOD_R;
-        (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commitment);
+        uint256[8] calldata proof,
+        uint256[2] calldata commit,
+        uint256[2] calldata knowledgeProof,
+        uint256[7] calldata input
+    ) public view {
+        uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
+        (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commit);
 
         // Note: The precompile expects the F2 coefficients in big-endian order.
         // Note: The pairing precompile rejects unreduced values, so we won't check that here.
 
         bool success;
-
-        uint256 a0 = proof[0];
-        uint256 a1 = proof[1];
-        uint256 b00 = proof[2];
-        uint256 b01 = proof[3];
-        uint256 b10 = proof[4];
-        uint256 b11 = proof[5];
-        uint256 c0 = proof[6];
-        uint256 c1 = proof[7];
-
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-            // Copy points (A, B, C) to memory. They are already in correct encoding.
-            // This is pairing e(A, B) and G1 of e(C, -δ).
-            mstore(f, a0)
-            mstore(add(f, 0x20), a1)
-            mstore(add(f, 0x40), b00)
-            mstore(add(f, 0x60), b01)
-            mstore(add(f, 0x80), b10)
-            mstore(add(f, 0xa0), b11)
-            mstore(add(f, 0xc0), c0)
-            mstore(add(f, 0xe0), c1)
+        // Copy points (A, B, C) to memory. They are already in correct encoding.
+        // This is pairing e(A, B) and G1 of e(C, -δ).
+            calldatacopy(f, proof, 0x100)
 
-            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-            // OPT: This could be better done using a single codecopy, but
-            //      Solidity (unlike standalone Yul) doesn't provide a way to
-            //      to do this.
+        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+        // OPT: This could be better done using a single codecopy, but
+        //      Solidity (unlike standalone Yul) doesn't provide a way to
+        //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -279,9 +260,9 @@ contract AggregationVerifier {
             mstore(add(f, 0x2e0), GAMMA_NEG_Y_0)
 
             let c
-            c := mload(commitment)
+            c := calldataload(commit)
             mstore(add(f, 0x300), c) // save commitment[0]
-            c := mload(add(commitment, 32))
+            c := calldataload(add(commit, 32))
             mstore(add(f, 0x320), c) // save commitment[1]
 
             mstore(add(f, 0x340), VK_PEDERSEN_G_X_1)
@@ -289,9 +270,9 @@ contract AggregationVerifier {
             mstore(add(f, 0x380), VK_PEDERSEN_G_Y_1)
             mstore(add(f, 0x3a0), VK_PEDERSEN_G_Y_0)
 
-            c := mload(commitmentPOK)
+            c := calldataload(knowledgeProof)
             mstore(add(f, 0x3c0), c) // save knowledgeProof[0]
-            c := mload(add(commitmentPOK, 32))
+            c := calldataload(add(knowledgeProof, 32))
             mstore(add(f, 0x3e0), c) // save knowledgeProof[1]
 
             mstore(add(f, 0x400), VK_PEDERSEN_G_ROOT_SIGMA_NEG_X_1)
@@ -299,9 +280,9 @@ contract AggregationVerifier {
             mstore(add(f, 0x440), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_1)
             mstore(add(f, 0x460), VK_PEDERSEN_G_ROOT_SIGMA_NEG_Y_0)
 
-            // Check pairing equation.
+        // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-            // Also check returned value (both are either 1 or 0).
+        // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {
@@ -309,37 +290,5 @@ contract AggregationVerifier {
             // We assume the contract is correctly generated, so the verification key is valid.
             revert ProofInvalid();
         }
-        return success;
-    }
-
-    function verifyRaw(bytes calldata proofData) external view returns (bool) {
-        uint256[8] memory proof;
-        proof[0] = uint256(bytes32(proofData[:32]));
-        proof[1] = uint256(bytes32(proofData[32:64]));
-        proof[2] = uint256(bytes32(proofData[64:96]));
-        proof[3] = uint256(bytes32(proofData[96:128]));
-        proof[4] = uint256(bytes32(proofData[128:160]));
-        proof[5] = uint256(bytes32(proofData[160:192]));
-        proof[6] = uint256(bytes32(proofData[192:224]));
-        proof[7] = uint256(bytes32(proofData[224:256]));
-
-        uint256[2] memory commitment;
-        commitment[0] = uint256(bytes32(proofData[256:288]));
-        commitment[1] = uint256(bytes32(proofData[288:320]));
-
-        uint256[2] memory commitmentPOK;
-        commitmentPOK[0] = uint256(bytes32(proofData[320:352]));
-        commitmentPOK[1] = uint256(bytes32(proofData[352:384]));
-
-        uint256[7] memory input;
-        input[0] = uint256(bytes32(proofData[384:416]));
-        input[1] = uint256(uint128(bytes16(proofData[416:432])));
-        input[2] = uint256(uint128(bytes16(proofData[432:448])));
-        input[3] = uint256(bytes32(proofData[448:480]));
-        input[4] = uint256(uint128(bytes16(proofData[480:496])));
-        input[5] = uint256(uint128(bytes16(proofData[496:512])));
-        input[6] = uint256(bytes32(proofData[512:544]));
-
-        return verifyProof(proof, commitment, commitmentPOK, input);
     }
 }
