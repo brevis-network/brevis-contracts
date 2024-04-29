@@ -1,5 +1,5 @@
-import '@nomiclabs/hardhat-ethers';
 import '@nomicfoundation/hardhat-verify';
+import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
 import 'hardhat-contract-sizer';
@@ -11,17 +11,8 @@ import { HardhatUserConfig } from 'hardhat/types';
 
 dotenv.config();
 
-const DEFAULT_ENDPOINT = 'http://localhost:8545';
-const DEFAULT_PRIVATE_KEY =
+const privateKey =
   process.env.DEFAULT_PRIVATE_KEY || 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-const goerliEndpoint = process.env.GOERLI_ENDPOINT || DEFAULT_ENDPOINT;
-const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-const sepoliaEndpoint = process.env.SEPOLIA_ENDPOINT || DEFAULT_ENDPOINT;
-const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || DEFAULT_ENDPOINT;
-const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || DEFAULT_ENDPOINT;
-const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -32,20 +23,25 @@ const config: HardhatUserConfig = {
     },
     localhost: { timeout: 600000 },
     goerli: {
-      url: goerliEndpoint,
-      accounts: [`0x${goerliPrivateKey}`]
+      url: process.env.GOERLI_ENDPOINT,
+      accounts: [`0x${privateKey}`]
     },
     sepolia: {
-      url: sepoliaEndpoint,
-      accounts: [`0x${sepoliaPrivateKey}`]
+      url: process.env.SEPOLIA_ENDPOINT,
+      accounts: [`0x${privateKey}`]
     },
     bscTest: {
-      url: bscTestEndpoint,
-      accounts: [`0x${bscTestPrivateKey}`]
+      url: process.env.BSC_TEST_ENDPOINT,
+      accounts: [`0x${privateKey}`]
     },
-    avalancheTest: {
-      url: avalancheTestEndpoint,
-      accounts: [`0x${avalancheTestPrivateKey}`]
+    // Mainnet
+    linea: {
+      url: process.env.LINEA_ENDPOINT,
+      accounts: [`0x${privateKey}`]
+    },
+    base: {
+      url: process.env.BASE_ENDPOINT,
+      accounts: [`0x${privateKey}`]
     }
   },
   namedAccounts: {
@@ -77,8 +73,20 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY as string,
       sepolia: process.env.ETHERSCAN_API_KEY as string,
       bscTestnet: process.env.BSCSCAN_API_KEY as string,
-      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string
-    }
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string,
+      linea: process.env.LINEASCAN_API_KEY as string,
+      base: process.env.BASESCAN_API_KEY as string
+    },
+    customChains: [
+      {
+        network: 'linea',
+        chainId: 59144,
+        urls: {
+          apiURL: 'https://api.lineascan.build/api',
+          browserURL: 'https://lineascan.build/'
+        }
+      }
+    ]
   }
 };
 
