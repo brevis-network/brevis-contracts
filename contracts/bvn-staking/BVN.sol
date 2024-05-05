@@ -32,6 +32,7 @@ contract BVN {
 
     event BrevisValidatorRegistered(address indexed valAddr, address signer, bytes bvnAddr);
     event BrevisValidatorDeregistered(address indexed valAddr);
+    event BrevisValidatorSignerUpdated(address indexed valAddr, address prevSigner, address newSigner);
     event Slash(address indexed valAddr, uint64 nonce, string reason);
 
     /**
@@ -53,6 +54,9 @@ contract BVN {
         require(_valAddr == msg.sender || _valAddr == staking.signerVals(msg.sender), "unauthorized caller");
 
         require(signerVals[_signer] == address(0), "signer already used");
+        if (_signer != _valAddr) {
+            require(brevisValidators[_signer].deregisterTime == 0, "Signer is other validator");
+        }
         signerVals[_signer] = _valAddr;
 
         BrevisValidator storage bv = brevisValidators[_valAddr];
@@ -64,6 +68,23 @@ contract BVN {
 
         staking.validatorNotice(_valAddr, "register", "");
         emit BrevisValidatorRegistered(_valAddr, _signer, _bvnAddr);
+    }
+
+    function updateValidatorSigner(address _signer) external {
+        address valAddr = msg.sender;
+        BrevisValidator storage bv = brevisValidators[valAddr];
+        require(bv.deregisterTime != 0, "unregistered validator");
+        require(signerVals[_signer] == address(0), "Signer already used");
+        if (_signer != valAddr) {
+            require(brevisValidators[_signer].deregisterTime == 0, "Signer is other validator");
+        }
+        address prevSigner = bv.signer;
+        delete signerVals[bv.signer];
+        bv.signer = _signer;
+        signerVals[_signer] = valAddr;
+
+        staking.validatorNotice(valAddr, "signer", abi.encodePacked(_signer));
+        emit BrevisValidatorSignerUpdated(valAddr, prevSigner, _signer);
     }
 
     /**
