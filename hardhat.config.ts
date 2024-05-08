@@ -23,32 +23,36 @@ const config: HardhatUserConfig = {
     },
     localhost: { timeout: 600000 },
     goerli: {
-      url: process.env.GOERLI_ENDPOINT,
+      url: process.env.GOERLI_ENDPOINT || '',
       accounts: [`0x${privateKey}`]
     },
     sepolia: {
-      url: process.env.SEPOLIA_ENDPOINT,
+      url: process.env.SEPOLIA_ENDPOINT || '',
       accounts: [`0x${privateKey}`]
     },
     bscTest: {
-      url: process.env.BSC_TEST_ENDPOINT,
+      url: process.env.BSC_TEST_ENDPOINT || '',
+      accounts: [`0x${privateKey}`]
+    },
+    avalancheTest: {
+      url: process.env.AVALANCHE_TEST_ENDPOINT || '',
       accounts: [`0x${privateKey}`]
     },
     // Mainnet
     linea: {
-      url: process.env.LINEA_ENDPOINT,
+      url: process.env.LINEA_ENDPOINT || '',
       accounts: [`0x${privateKey}`]
     },
     base: {
-      url: process.env.BASE_ENDPOINT,
-      accounts: [`0x${privateKey}`]
-    },
-    avalancheTest: {
-      url: process.env.AVALANCHE_TEST_ENDPOINT,
+      url: process.env.BASE_ENDPOINT || '',
       accounts: [`0x${privateKey}`]
     },
     holesky: {
       url: process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org',
+      accounts: [`0x${privateKey}`]
+    },
+    arbitrum: {
+      url: process.env.ARBITRUM_ENDPOINT || 'https://arbitrum.llamarpc.com',
       accounts: [`0x${privateKey}`]
     }
   },
@@ -84,7 +88,8 @@ const config: HardhatUserConfig = {
       avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY as string,
       linea: process.env.LINEASCAN_API_KEY as string,
       holesky: process.env.ETHERSCAN_API_KEY as string,
-      base: process.env.BASESCAN_API_KEY as string
+      base: process.env.BASESCAN_API_KEY as string,
+      arbitrumOne: process.env.ARBISCAN_API_KEY as string
     },
     customChains: [
       {

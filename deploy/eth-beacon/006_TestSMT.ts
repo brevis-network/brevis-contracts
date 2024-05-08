@@ -5,7 +5,7 @@ import { verify } from '../utils/utils';
 
 dotenv.config();
 
-const defaultSmtRoot = '0x0c0b00f48807b86c80e20ee0a30ff1fcb4e781ee774a46a5be122ba2669ed339';
+const defaultSmtRoot = '0x0b12da9a8bff6f32444fafe4f657d51d5cb72b0aa707f3aff1481ff64d6ed805';
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
@@ -15,11 +15,11 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   // const anchorProvider = await deployments.get('AnchorBlocks');
   const anchorProvider = await deployments.get('SameChainAnchorBlocks');
   const verifier = await deployments.get('SMTUpdateCircuitProofVerifier');
-  const args = [[1], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
-  const deployment = await deploy('SMT', { from: deployer, log: true, args: args });
+  const args = [[42161], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
+  const deployment = await deploy('TestSMT', { from: deployer, log: true, args: args });
   await verify(hre, deployment);
 };
 
-deployFunc.tags = ['SMT'];
-deployFunc.dependencies = [];
+deployFunc.tags = ['TestSMT'];
+deployFunc.dependencies = ['SameChainAnchorBlocks', 'SmtVerifier'];
 export default deployFunc;
