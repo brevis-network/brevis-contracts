@@ -13,6 +13,16 @@ dotenv.config();
 
 const privateKey =
   process.env.DEFAULT_PRIVATE_KEY || 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+const goerliEndpoint = process.env.GOERLI_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const sepoliaEndpoint = process.env.SEPOLIA_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
+const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -23,20 +33,24 @@ const config: HardhatUserConfig = {
     },
     localhost: { timeout: 600000 },
     goerli: {
-      url: process.env.GOERLI_ENDPOINT || '',
-      accounts: [`0x${privateKey}`]
+      url: goerliEndpoint || '',
+      accounts: [`0x${goerliPrivateKey}`]
     },
     sepolia: {
-      url: process.env.SEPOLIA_ENDPOINT || '',
-      accounts: [`0x${privateKey}`]
+      url: sepoliaEndpoint || '',
+      accounts: [`0x${sepoliaPrivateKey}`]
     },
     bscTest: {
-      url: process.env.BSC_TEST_ENDPOINT || '',
-      accounts: [`0x${privateKey}`]
+      url: bscTestEndpoint || '',
+      accounts: [`0x${bscTestPrivateKey}`]
     },
     avalancheTest: {
-      url: process.env.AVALANCHE_TEST_ENDPOINT || '',
-      accounts: [`0x${privateKey}`]
+      url: avalancheTestEndpoint || '',
+      accounts: [`0x${avalancheTestPrivateKey}`]
+    },
+    holesky: {
+      url: holeskyEndpoint,
+      accounts: [`0x${holeskyPrivateKey}`]
     },
     // Mainnet
     linea: {
@@ -45,10 +59,6 @@ const config: HardhatUserConfig = {
     },
     base: {
       url: process.env.BASE_ENDPOINT || '',
-      accounts: [`0x${privateKey}`]
-    },
-    holesky: {
-      url: process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org',
       accounts: [`0x${privateKey}`]
     },
     arbitrum: {
