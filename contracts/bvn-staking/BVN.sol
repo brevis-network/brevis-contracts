@@ -21,7 +21,7 @@ contract BVN {
     struct SlashRecord {
         address valAddr;
         string reason;
-        uint256 time;
+        uint64 timestamp;
     }
 
     Staking public immutable staking;
@@ -33,7 +33,7 @@ contract BVN {
     event BrevisValidatorRegistered(address indexed valAddr, address signer, bytes bvnAddr);
     event BrevisValidatorDeregistered(address indexed valAddr);
     event BrevisValidatorSignerUpdated(address indexed valAddr, address prevSigner, address newSigner);
-    event Slash(address indexed valAddr, uint64 nonce, string reason);
+    event Slash(address indexed valAddr, uint64 nonce, uint64 timestamp, string reason);
 
     /**
      * @param _staking address of Staking Contract
@@ -55,12 +55,12 @@ contract BVN {
 
         require(signerVals[_signer] == address(0), "signer already used");
         if (_signer != _valAddr) {
-            require(brevisValidators[_signer].deregisterTime == 0, "Signer is other validator");
+            require(brevisValidators[_signer].deregisterTime == 0, "signer is other validator");
         }
         signerVals[_signer] = _valAddr;
 
         BrevisValidator storage bv = brevisValidators[_valAddr];
-        require(bv.deregisterTime != dt.MAX_INT, "already registered validator");
+        require(bv.deregisterTime < block.timestamp, "already registered validator");
         bv.signer = _signer;
         bv.bvnAddr = _bvnAddr;
         bv.deregisterTime = dt.MAX_INT;
@@ -74,9 +74,9 @@ contract BVN {
         address valAddr = msg.sender;
         BrevisValidator storage bv = brevisValidators[valAddr];
         require(bv.deregisterTime != 0, "unregistered validator");
-        require(signerVals[_signer] == address(0), "Signer already used");
+        require(signerVals[_signer] == address(0), "signer already used");
         if (_signer != valAddr) {
-            require(brevisValidators[_signer].deregisterTime == 0, "Signer is other validator");
+            require(brevisValidators[_signer].deregisterTime == 0, "signer is other validator");
         }
         address prevSigner = bv.signer;
         delete signerVals[bv.signer];
@@ -93,11 +93,11 @@ contract BVN {
      */
     function deregisterBrevisValidator(address _valAddr) external {
         BrevisValidator storage bv = brevisValidators[_valAddr];
-        require(bv.deregisterTime == dt.MAX_INT, "not registered validator");
+        require(bv.deregisterTime > block.timestamp, "not registered validator");
         if (_valAddr != msg.sender && _valAddr != staking.signerVals(msg.sender) && bv.signer != msg.sender) {
             // if not called by validator itself, require unbonded status
             dt.ValidatorStatus status = staking.getValidatorStatus(_valAddr);
-            require(status == dt.ValidatorStatus.Unbonded, "Not unbonded validator");
+            require(status == dt.ValidatorStatus.Unbonded, "not unbonded validator");
         }
         bv.deregisterTime = block.timestamp;
         delete signerVals[bv.signer];
@@ -120,21 +120,29 @@ contract BVN {
      * @notice Slash a validator
      * @param _valAddr validator eth address
      * @param _nonce slash nonce
+     * @param _timestamp slash triggered time
      * @param _reason slash reason
      * @param _sigs bvn signatures
      */
-    function slash(address _valAddr, uint64 _nonce, string calldata _reason, bytes[] calldata _sigs) external {
-        require(brevisValidators[_valAddr].deregisterTime == dt.MAX_INT, "not registered validator");
+    function slash(
+        address _valAddr,
+        uint64 _nonce,
+        uint64 _timestamp,
+        string calldata _reason,
+        bytes[] calldata _sigs
+    ) external {
+        require(brevisValidators[_valAddr].deregisterTime > block.timestamp, "not registered validator");
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "Slash"));
-        verifySignatures(abi.encodePacked(domain, _valAddr, _nonce, _reason), _sigs);
+        bytes32 slashHash = keccak256(abi.encodePacked(_valAddr, _nonce, _timestamp, _reason));
+        verifySignatures(abi.encodePacked(domain, slashHash), _sigs);
 
         SlashRecord storage s = slashRecords[_nonce];
-        require(s.time == 0, "slash record exists");
+        require(s.valAddr == address(0), "used slash nonce");
         s.valAddr = _valAddr;
         s.reason = _reason;
-        s.time = block.timestamp;
+        s.timestamp = _timestamp;
         staking.validatorNotice(_valAddr, "slash", abi.encodePacked(_nonce));
-        emit Slash(_valAddr, _nonce, _reason);
+        emit Slash(_valAddr, _nonce, _timestamp, _reason);
     }
 
     function verifySignatures(bytes memory _msg, bytes[] calldata _sigs) public view returns (bool) {
@@ -144,14 +152,11 @@ contract BVN {
         uint256 quorum = (getBondedTokens() * 2) / 3 + 1;
         for (uint256 i = 0; i < _sigs.length; i++) {
             address signer = hash.recover(_sigs[i]);
-            require(signer > prev, "Signers not in ascending order");
+            require(signer > prev, "signers not in ascending order");
             prev = signer;
 
             address valAddr = signerVals[signer];
-            BrevisValidator storage bv = brevisValidators[valAddr];
-            require(bv.deregisterTime == dt.MAX_INT, "not registered validator");
-
-            require(staking.isBondedValidator(valAddr), "not bonded validator");
+            require(isBondedValidator(valAddr), "not bonded validator");
             // TODO: gas optmization, getValidatorTokens already called in getTotalTokens()
             signedTokens += staking.getValidatorTokens(valAddr);
             if (signedTokens >= quorum) {
@@ -173,7 +178,7 @@ contract BVN {
     }
 
     function isRegisteredValidator(address _valAddr) public view returns (bool) {
-        return (brevisValidators[_valAddr].deregisterTime == dt.MAX_INT);
+        return (brevisValidators[_valAddr].deregisterTime > block.timestamp);
     }
 
     function isBondedValidator(address _valAddr) public view returns (bool) {
