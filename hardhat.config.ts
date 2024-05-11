@@ -14,16 +14,17 @@ dotenv.config();
 
 const privateKey =
   process.env.DEFAULT_PRIVATE_KEY || 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+const DEFAULT_PRIVATE_KEY = privateKey;
 const goerliEndpoint = process.env.GOERLI_ENDPOINT || process.env.DEFAULT_ENDPOINT;
-const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const sepoliaEndpoint = process.env.SEPOLIA_ENDPOINT || process.env.DEFAULT_ENDPOINT;
-const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || process.env.DEFAULT_ENDPOINT;
-const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const bscTestPrivateKey = process.env.BSC_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || process.env.DEFAULT_ENDPOINT;
-const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
-const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || process.env.DEFAULT_PRIVATE_KEY;
+const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
