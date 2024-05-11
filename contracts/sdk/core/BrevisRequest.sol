@@ -5,6 +5,7 @@ import "./FeeVault.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
 import "../../interfaces/ISigsVerifier.sol";
+import "../lib/Lib.sol";
 
 contract BrevisRequest is FeeVault {
     uint256 public requestTimeout;
@@ -41,6 +42,7 @@ contract BrevisRequest is FeeVault {
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event RequestSent(bytes32 requestId, address sender, uint256 fee, IBrevisApp callback, Option option);
     event RequestFulfilled(bytes32 requestId);
+    event RequestsFulfilled(bytes32[] requestId);
     event RequestRefunded(bytes32 requestId);
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
@@ -69,9 +71,10 @@ contract BrevisRequest is FeeVault {
         bool _withAppProof,
         bytes calldata _appCircuitOutput
     ) external {
+        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
+
         bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // will be reverted when proof is not valid
         require(_requestId == reqIdFromProof, "requestId and proof not match");
-        chargeFee(_requestId); // will be reverted when failed to charge fee
         requests[_requestId].status = RequestStatus.ZkAttested;
 
         emit RequestFulfilled(_requestId);
@@ -85,16 +88,40 @@ contract BrevisRequest is FeeVault {
         }
     }
 
-    function chargeFee(bytes32 _requestId) public {
-        require(requests[_requestId].deadline != 0, "request not in queue");
-        require(IBrevisProof(brevisProof).hasProof(_requestId), "proof not generated");
-        requests[_requestId].deadline = 0; //simply set deadline to 0, then fee is not able be refunded
+    function fulfillAggRequests(
+        uint64 _chainId,
+        bytes32[] calldata _requestIds,
+        bytes calldata _proof,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs,
+        address _callback
+    ) external {
+        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+
+        for (uint8 i = 1; i < _requestIds.length; i++) {
+            bytes32 requestId = _requestIds[i];
+            requests[requestId].status = RequestStatus.ZkAttested;
+        }
+
+        emit RequestsFulfilled(_requestIds);
+
+        if (_callback != address(0)) {
+            _callback.call(
+                abi.encodeWithSelector(
+                    IBrevisApp.brevisBatchCallback.selector,
+                    _chainId,
+                    _proofDataArray,
+                    _appCircuitOutputs
+                )
+            );
+        }
     }
 
     function refund(bytes32 _requestId) public {
-        require(requests[_requestId].deadline != 0, "request not in queue");
         require(block.timestamp > requests[_requestId].deadline);
-        requests[_requestId].deadline = 0;
+        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
+        require(requests[_requestId].deadline != 0, "request not in queue");
+        requests[_requestId].deadline = 0; //reset deadline, then user is able to send request again
         (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
         require(sent, "send native failed");
         requests[_requestId].status = RequestStatus.Refunded;

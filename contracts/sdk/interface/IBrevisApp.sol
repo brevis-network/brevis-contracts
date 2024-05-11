@@ -5,4 +5,10 @@ import "../lib/Lib.sol";
 
 interface IBrevisApp {
     function brevisCallback(bytes32 _requestId, bytes calldata _appCircuitOutput) external;
+
+    function brevisBatchCallback(
+        uint64 _chainId,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs
+    ) external;
 }

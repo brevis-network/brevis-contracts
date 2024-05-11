@@ -2,13 +2,12 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./BrevisAggProof.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
-contract BrevisProof is Ownable {
-    uint32 constant PUBLIC_BYTES_START_IDX = 11 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment), the 11th 32bytes is cPub
-
+contract BrevisProof is BrevisAggProof {
     struct ChainZKVerifier {
         IZkpVerifier contractAppZkVerifier;
         IZkpVerifier circuitAppZkVerifier;
@@ -18,15 +17,10 @@ contract BrevisProof is Ownable {
     mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost
     mapping(bytes32 => uint256) public vkHashesToBatchSize; // batch tier vk hashes => tier batch size
 
-    ISMT public smtContract;
-
     event VerifierAddressesUpdated(uint64[] chainIds, ChainZKVerifier[] newAddresses);
-    event SmtContractUpdated(ISMT smtContract);
     event BatchTierVkHashesUpdated(bytes32[] vkHashes, uint256[] sizes);
 
-    constructor(ISMT _smtContract) {
-        smtContract = _smtContract;
-    }
+    constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
     function submitProof(
         uint64 _chainId,
@@ -39,12 +33,14 @@ contract BrevisProof is Ownable {
         uint256 batchSize = vkHashesToBatchSize[data.vkHash];
         require(batchSize > 0, "vkHash not valid");
 
+        _requestId = data.commitHash;
         if (_withAppProof) {
             require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
+            proofs[_requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas
+            proofs[_requestId].appVkHash = data.appVkHash;
+        } else {
+            proofs[_requestId].commitHash = data.commitHash;
         }
-
-        proofs[data.commitHash] = data;
-        _requestId = data.commitHash;
     }
 
     // used by contract app
@@ -131,7 +127,10 @@ contract BrevisProof is Ownable {
     }
 
     function hasProof(bytes32 _requestId) external view returns (bool) {
-        return proofs[_requestId].commitHash != bytes32(0);
+        return
+            proofs[_requestId].commitHash != bytes32(0) ||
+            proofs[_requestId].appCommitHash != bytes32(0) ||
+            inAgg(_requestId);
     }
 
     function getProofData(bytes32 _requestId) external view returns (Brevis.ProofData memory) {
@@ -173,9 +172,7 @@ contract BrevisProof is Ownable {
             );
         } else {
             data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
-            data.length = uint256(
-                bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32])
-            );
+            // data length field in between no need to be unpacked
             data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
         }
     }
@@ -189,11 +186,6 @@ contract BrevisProof is Ownable {
             verifierAddresses[_chainIds[i]] = _verifierAddresses[i];
         }
         emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);
-    }
-
-    function updateSmtContract(ISMT _smtContract) public onlyOwner {
-        smtContract = _smtContract;
-        emit SmtContractUpdated(smtContract);
     }
 
     function setBatchTierVkHashes(bytes32[] calldata _vkHashes, uint256[] calldata _sizes) public onlyOwner {
