@@ -1,0 +1,623 @@
+{
+  "address": "0x52A9A7F9b22C31218d26a4e91e2Ba01eD04520EE",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "_chainIds",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_anchorProviders",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_verifiers",
+          "type": "address[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "_initRoots",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "anchorProvider",
+          "type": "address"
+        }
+      ],
+      "name": "AnchorProviderUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "smtRoot",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "endBlockNum",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "bufferIndex",
+          "type": "uint8"
+        }
+      ],
+      "name": "SmtRootUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        }
+      ],
+      "name": "VerifierUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "BUFFER_SIZE",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "newRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "endBlockNum",
+          "type": "uint64"
+        }
+      ],
+      "name": "addRootForTesting",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "anchorProviders",
+      "outputs": [
+        {
+          "internalType": "contract IAnchorBlocks",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "curBufferIndices",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        }
+      ],
+      "name": "getLatestRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "bufferIndex",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint8",
+          "name": "bufferIndex",
+          "type": "uint8"
+        }
+      ],
+      "name": "getRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "smtRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isSmtRootValid",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "anchorProvider",
+          "type": "address"
+        }
+      ],
+      "name": "setAnchorProvider",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        }
+      ],
+      "name": "setVerifier",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "smtRoots",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "newSmtRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "endBlockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "endBlockHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "nextChunkMerkleRoot",
+              "type": "bytes32"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "commitment",
+                  "type": "uint256[2]"
+                }
+              ],
+              "internalType": "struct IVerifier.Proof",
+              "name": "proof",
+              "type": "tuple"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "commitPub",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct ISMT.SmtUpdate",
+          "name": "u",
+          "type": "tuple"
+        }
+      ],
+      "name": "updateRoot",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "verifiers",
+      "outputs": [
+        {
+          "internalType": "contract IVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xf76bd34b56a296b8a0e4bf213025c3a5787ca9101ae29bc20eb544f0cbfbcf8a",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0x52A9A7F9b22C31218d26a4e91e2Ba01eD04520EE",
+    "transactionIndex": 33,
+    "gasUsed": "1027671",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000802000020000000000000000000820000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000010000000000000000000020000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x32cd52134fec9f870c4c70d7a58aabb3d96b0ee2719ef22311278743565735bf",
+    "transactionHash": "0xf76bd34b56a296b8a0e4bf213025c3a5787ca9101ae29bc20eb544f0cbfbcf8a",
+    "logs": [
+      {
+        "transactionIndex": 33,
+        "blockNumber": 14303458,
+        "transactionHash": "0xf76bd34b56a296b8a0e4bf213025c3a5787ca9101ae29bc20eb544f0cbfbcf8a",
+        "address": "0x52A9A7F9b22C31218d26a4e91e2Ba01eD04520EE",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x00000000000000000000000058b529f9084d7eaa598eb3477fe36064c5b7bbc1"
+        ],
+        "data": "0x",
+        "logIndex": 108,
+        "blockHash": "0x32cd52134fec9f870c4c70d7a58aabb3d96b0ee2719ef22311278743565735bf"
+      }
+    ],
+    "blockNumber": 14303458,
+    "cumulativeGasUsed": "5103254",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    [
+      8453
+    ],
+    [
+      "0x891E32541bF1Dd8b8d06f2f78b63B04D1124619E"
+    ],
+    [
+      "0xD8375553d78788884db4A2C7640FaC5b3C74EF93"
+    ],
+    [
+      "0x106e045eb67ba32796174de4fe2848fb89127ba16c398b7d536284ba1ea2b5a9"
+    ]
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "60821e989e7e52e4f9dc226e18a15d44",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint64[]\",\"name\":\"_chainIds\",\"type\":\"uint64[]\"},{\"internalType\":\"address[]\",\"name\":\"_anchorProviders\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"_verifiers\",\"type\":\"address[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"_initRoots\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"anchorProvider\",\"type\":\"address\"}],\"name\":\"AnchorProviderUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"endBlockNum\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"bufferIndex\",\"type\":\"uint8\"}],\"name\":\"SmtRootUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"}],\"name\":\"VerifierUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BUFFER_SIZE\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"newRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"endBlockNum\",\"type\":\"uint64\"}],\"name\":\"addRootForTesting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"anchorProviders\",\"outputs\":[{\"internalType\":\"contract IAnchorBlocks\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"curBufferIndices\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"name\":\"getLatestRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"},{\"internalType\":\"uint8\",\"name\":\"bufferIndex\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"bufferIndex\",\"type\":\"uint8\"}],\"name\":\"getRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"}],\"name\":\"isSmtRootValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"anchorProvider\",\"type\":\"address\"}],\"name\":\"setAnchorProvider\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"}],\"name\":\"setVerifier\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"smtRoots\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"newSmtRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"endBlockNum\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"endBlockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"nextChunkMerkleRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"a\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"b\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"c\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitment\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct IVerifier.Proof\",\"name\":\"proof\",\"type\":\"tuple\"},{\"internalType\":\"bytes32\",\"name\":\"commitPub\",\"type\":\"bytes32\"}],\"internalType\":\"struct ISMT.SmtUpdate\",\"name\":\"u\",\"type\":\"tuple\"}],\"name\":\"updateRoot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"verifiers\",\"outputs\":[{\"internalType\":\"contract IVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/smt/TestSMT.sol\":\"TestSMT\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/interfaces/ISMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../verifiers/zk-verifiers/common/IVerifier.sol\\\";\\n\\ninterface ISMT {\\n    struct SmtUpdate {\\n        bytes32 newSmtRoot;\\n        uint64 endBlockNum;\\n        bytes32 endBlockHash;\\n        bytes32 nextChunkMerkleRoot;\\n        IVerifier.Proof proof;\\n        bytes32 commitPub;\\n    }\\n\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external;\\n\\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xbe5081a475cc6225739e919eeb8d7daec930ac0dba3081970892a5d068498434\",\"license\":\"MIT\"},\"contracts/light-client-eth/interfaces/IAnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IAnchorBlocks {\\n    function blocks(uint256 blockNum) external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x317ca2285ce87fc2e74f748b71eeca387687a5d8f1c6cb46dd7b609ef7623ec8\",\"license\":\"MIT\"},\"contracts/smt/SMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"../light-client-eth/interfaces/IAnchorBlocks.sol\\\";\\nimport \\\"../interfaces/ISMT.sol\\\";\\n\\ncontract SMT is ISMT, Ownable {\\n    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint8 bufferIndex);\\n    event AnchorProviderUpdated(uint64 chainId, address anchorProvider);\\n    event VerifierUpdated(uint64 chainId, address verifier);\\n\\n    uint8 public constant BUFFER_SIZE = 16;\\n\\n    mapping(uint64 => IAnchorBlocks) public anchorProviders;\\n    mapping(uint64 => IVerifier) public verifiers;\\n\\n    mapping(uint64 => bytes32[BUFFER_SIZE]) public smtRoots;\\n    mapping(uint64 => uint8) public curBufferIndices;\\n\\n    constructor(\\n        uint64[] memory _chainIds,\\n        address[] memory _anchorProviders,\\n        address[] memory _verifiers,\\n        bytes32[] memory _initRoots\\n    ) {\\n        require(_chainIds.length == _anchorProviders.length, \\\"len mismatch\\\");\\n        require(_chainIds.length == _verifiers.length, \\\"len mismatch\\\");\\n        require(_chainIds.length == _initRoots.length, \\\"len mismatch\\\");\\n        for (uint256 i = 0; i < _chainIds.length; i++) {\\n            uint64 chid = _chainIds[i];\\n            anchorProviders[chid] = IAnchorBlocks(_anchorProviders[i]);\\n            verifiers[chid] = IVerifier(_verifiers[i]);\\n            smtRoots[chid][0] = _initRoots[i];\\n        }\\n    }\\n\\n    function getLatestRoot(uint64 chainId) public view returns (bytes32 root, uint8 bufferIndex) {\\n        bytes32[BUFFER_SIZE] memory roots = smtRoots[chainId];\\n        uint8 index = curBufferIndices[chainId];\\n        return (roots[index], index);\\n    }\\n\\n    function getRoot(uint64 chainId, uint8 bufferIndex) public view returns (bytes32 root) {\\n        return smtRoots[chainId][bufferIndex];\\n    }\\n\\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) public view returns (bool) {\\n        bytes32[BUFFER_SIZE] memory roots = smtRoots[chainId];\\n        for (uint256 i = 0; i < roots.length; i++) {\\n            if (roots[i] == smtRoot) {\\n                return true;\\n            }\\n        }\\n        return false;\\n    }\\n\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external {\\n        // If nextChunkMerkleRoot is empty, it means the zk proof bypasses checking if the updated chunk anchors to a known chunk.\\n        // Instead, the responsibility of checking the validity of endBlockHash is deferred to this contract.\\n        if (u.nextChunkMerkleRoot == 0) {\\n            IAnchorBlocks anchorProvider = anchorProviders[chainId];\\n            require(address(anchorProvider) != address(0), \\\"unknown anchor provider\\\");\\n            bytes32 anchorHash = anchorProvider.blocks(u.endBlockNum);\\n            require(anchorHash == u.endBlockHash, \\\"anchor check failed\\\");\\n        }\\n        uint8 curIndex = curBufferIndices[chainId];\\n        bytes32 root = smtRoots[chainId][curIndex];\\n        bool success = verifyProof(chainId, root, u);\\n        require(success, \\\"invalid zk proof\\\");\\n\\n        curIndex = (curIndex + 1) % BUFFER_SIZE;\\n        smtRoots[chainId][curIndex] = u.newSmtRoot;\\n        curBufferIndices[chainId] = curIndex;\\n        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, curIndex);\\n    }\\n\\n    function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {\\n        IVerifier verifier = verifiers[chainId];\\n        require(address(verifier) != address(0), \\\"no verifier for chainId\\\");\\n\\n        uint256[10] memory input;\\n        uint256 m = 1 << 128;\\n        input[0] = uint256(oldSmtRoot) >> 128;\\n        input[1] = uint256(oldSmtRoot) % m;\\n        input[2] = uint256(u.newSmtRoot) >> 128;\\n        input[3] = uint256(u.newSmtRoot) % m;\\n        input[4] = uint256(u.endBlockHash) >> 128;\\n        input[5] = uint256(u.endBlockHash) % m;\\n        input[6] = u.endBlockNum;\\n        input[7] = uint256(u.nextChunkMerkleRoot) >> 128;\\n        input[8] = uint256(u.nextChunkMerkleRoot) % m;\\n        input[9] = uint256(u.commitPub);\\n\\n        return verifier.verifyProof(u.proof.a, u.proof.b, u.proof.c, u.proof.commitment, input);\\n    }\\n\\n    function setAnchorProvider(uint64 chainId, address anchorProvider) external onlyOwner {\\n        anchorProviders[chainId] = IAnchorBlocks(anchorProvider);\\n        emit AnchorProviderUpdated(chainId, anchorProvider);\\n    }\\n\\n    function setVerifier(uint64 chainId, address verifier) external onlyOwner {\\n        verifiers[chainId] = IVerifier(verifier);\\n        emit VerifierUpdated(chainId, verifier);\\n    }\\n}\\n\",\"keccak256\":\"0x55defe989f3ef79f2484261a9fac93f9a93b9a41bb5b0a07e745724b00fdce0f\",\"license\":\"MIT\"},\"contracts/smt/TestSMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"../light-client-eth/interfaces/IAnchorBlocks.sol\\\";\\nimport \\\"../interfaces/ISMT.sol\\\";\\nimport \\\"./SMT.sol\\\";\\n\\ncontract TestSMT is SMT {\\n    constructor(\\n        uint64[] memory _chainIds,\\n        address[] memory _anchorProviders,\\n        address[] memory _verifiers,\\n        bytes32[] memory _initRoots\\n    ) SMT(_chainIds, _anchorProviders, _verifiers, _initRoots) {}\\n\\n    // function for testing convenience\\n    function addRootForTesting(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyOwner {\\n        uint8 curIndex = curBufferIndices[chainId];\\n        curIndex = (curIndex + 1) % BUFFER_SIZE;\\n        smtRoots[chainId][curIndex] = newRoot;\\n        curBufferIndices[chainId] = curIndex;\\n        emit SmtRootUpdated(newRoot, endBlockNum, curIndex);\\n    }\\n}\\n\",\"keccak256\":\"0xdefe4fbab4618de558a203733416f1b8a9d7f4a173262573b54cd832a9fd7db5\",\"license\":\"MIT\"},\"contracts/verifiers/zk-verifiers/common/IVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IVerifier {\\n    struct Proof {\\n        uint256[2] a;\\n        uint256[2][2] b;\\n        uint256[2] c;\\n        uint256[2] commitment;\\n    }\\n\\n    function verifyProof(\\n        uint256[2] memory a,\\n        uint256[2][2] memory b,\\n        uint256[2] memory c,\\n        uint256[2] memory commit,\\n        uint256[10] calldata input\\n    ) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0x9aabe521d13ef8b8e149c1ac4d5676692560b312e0a18fb4034ef97c5b737e58\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60406080815234620002565762001347803803806200001e8162000275565b928339810190608081830312620002565780516001600160401b0393908481116200025657820183601f820112156200025657805193620000696200006386620002b1565b62000275565b9182958084526020808095019160051b8301019183831162000256578401905b8282106200025b5750505081840151868111620002565781620000ae918601620002c9565b9583850151818111620002565782620000c9918701620002c9565b946060810151908282116200025657019180601f8401121562000256578251620000f76200006382620002b1565b93858086848152019260051b820101928311620002565785809101915b8383106200024557505060008054336001600160a01b0319808316821784556001600160a01b039c939a9096909550929350908b167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08a80a36200017c895183511462000337565b6200018b895184511462000337565b6200019a895186511462000337565b875b8951811015620002365781620001b3828c62000373565b51168b620001c2838662000373565b5116818b5260018952898b2090878254161790558b620001e3838762000373565b5116818b5260028952898b20908782541617905562000203828862000373565b51908a5260038852888a2055600019811462000222576001016200019c565b634e487b7160e01b89526011600452602489fd5b8751610fa890816200039f8239f35b825181529181019186910162000114565b600080fd5b815189811681036200025657815290840190840162000089565b6040519190601f01601f191682016001600160401b038111838210176200029b57604052565b634e487b7160e01b600052604160045260246000fd5b6001600160401b0381116200029b5760051b60200190565b9080601f830112156200025657815190620002e86200006383620002b1565b9182938184526020808095019260051b82010192831162000256578301905b82821062000316575050505090565b81516001600160a01b03811681036200025657815290830190830162000307565b156200033f57565b60405162461bcd60e51b815260206004820152600c60248201526b0d8cadc40dad2e6dac2e8c6d60a31b6044820152606490fd5b8051821015620003885760209160051b010190565b634e487b7160e01b600052603260045260246000fdfe608080604052600436101561001357600080fd5b60003560e01c9081624e394e14610d4a575080631019b61614610d19578063318a492d14610689578063479aa6da146105fc5780635ca32bd814610549578063679594fd1461050b578063715018a6146104ae5780637930508b146104655780638195408d146104215780638da5cb5b146103fa5780639c8413c514610347578063afe8154b14610303578063e31476da14610200578063f2fde38b146101205763f9a885f3146100c357600080fd5b3461011b57604036600319011261011b576100dc610d64565b67ffffffffffffffff602435911660005260036020526040600020601082101561011b5760209161010c91610e03565b90549060031b1c604051908152f35b600080fd5b3461011b57602036600319011261011b576004356001600160a01b0380821680920361011b5760005490811690610158338314610e29565b8215610195576001600160a01b0319839116176000557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b3461011b57606036600319011261011b577f6a70343b232c18280821471baf247ce69fbf740893ec9fb80a47bda7f4ea4a2f61023a610d64565b6024356102fe67ffffffffffffffff610251610d7b565b936102686001600160a01b03600054163314610e29565b16806000526004602052600f61028560ff60406000205416610f22565b16908060005260036020526102bb846102a2846040600020610e03565b90919082549060031b91821b91600019901b1916179055565b600052600460205260406000208160ff198254161790556040519384938491604091949367ffffffffffffffff60ff926060860197865216602085015216910152565b0390a1005b3461011b57602036600319011261011b5767ffffffffffffffff610325610d64565b16600052600160205260206001600160a01b0360406000205416604051908152f35b3461011b57604036600319011261011b577fb78ea0eaf11776732556ef6189312ceb60eab6b3177526b3a12d966e37be8162610381610d64565b610389610ded565b906001600160a01b036103a181600054163314610e29565b67ffffffffffffffff8216600052600260205260406000209083166001600160a01b03198254161790556102fe604051928392839092916001600160a01b0360209167ffffffffffffffff604085019616845216910152565b3461011b57600036600319011261011b5760206001600160a01b0360005416604051908152f35b3461011b57602036600319011261011b5767ffffffffffffffff610443610d64565b16600052600260205260206001600160a01b0360406000205416604051908152f35b3461011b57604036600319011261011b5761047e610d64565b6024359060ff8216820361011b5760209167ffffffffffffffff61010c9216600052600383526040600020610e03565b3461011b57600036600319011261011b57600080546001600160a01b03196001600160a01b038216916104e2338414610e29565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461011b57602036600319011261011b5767ffffffffffffffff61052d610d64565b166000526004602052602060ff60406000205416604051908152f35b3461011b57604036600319011261011b577fd621c244f07f12e1f37bb9c40d61e278041fc4f2859a6736794b26f4297c8090610583610d64565b61058b610ded565b906001600160a01b036105a381600054163314610e29565b67ffffffffffffffff8216600052600160205260406000209083166001600160a01b03198254161790556102fe604051928392839092916001600160a01b0360209167ffffffffffffffff604085019616845216910152565b3461011b5760208060031936011261011b5767ffffffffffffffff61061f610d64565b1690816000526003815260406000209160405190816000905b601082106106745750506040935061064f82610dae565b6000526004825261066860ff8460002054168092610e74565b51918351928352820152f35b60018581928854815201960191019094610638565b3461011b5761020036600319011261011b576106a3610d64565b6101e036602319011261011b576040519060c0820182811067ffffffffffffffff821117610b145760405260243582526106db610d7b565b6020830152606435604083015260843560608301526101403660a319011261011b576040516080810181811067ffffffffffffffff821117610b1457806040523660c3121561011b5761072d81610d92565b803660e41161011b5760a4905b60e48210610d09575050815236610103121561011b5760405161075c81610d92565b80366101641161011b5760e4905b6101648210610cb7575050602082015236610183121561011b5760405161079081610d92565b80366101a41161011b57610164905b6101a48210610ca75750506040820152366101c3121561011b576040516107c581610d92565b80366101e41161011b576101a4905b6101e48210610c97575050606082015260808301526101e43560a0830152606082015115610b6f575b67ffffffffffffffff8116600052600460205260ff6040600020541691600360205261082d836040600020610e03565b90549060031b1c67ffffffffffffffff831660005260026020526001600160a01b03604060002054168015610b2a57604051918261014081011067ffffffffffffffff61014085011117610b1457916109459261014082016040526101403683378060801c82526fffffffffffffffffffffffffffffffff8091166020830152845160801c6040830152808551166060830152604085015160801c60808301528060408601511660a083015267ffffffffffffffff60208601511660c0830152606085015160801c60e083015260608501511661010082015260a084015161012082015260808401519081519160208101519060606040820151910151916040519687956313a4214360e31b87526004870190610f4a565b6000604486015b60028210610aec57505050906109696109749260c4860190610f4a565b610104840190610f4a565b600061014483015b600a8210610ad257505050610284816020935afa908115610ac657600091610a8b575b5015610a465767ffffffffffffffff600f6109da7f6a70343b232c18280821471baf247ce69fbf740893ec9fb80a47bda7f4ea4a2f95610f22565b16926109fa835183831660005260036020526102a2866040600020610e03565b16600090815260046020908152604091829020805460ff191685179055825192810151825193845267ffffffffffffffff169083015260ff9092169181019190915280606081016102fe565b60405162461bcd60e51b815260206004820152601060248201527f696e76616c6964207a6b2070726f6f66000000000000000000000000000000006044820152606490fd5b90506020813d602011610abe575b81610aa660209383610dcb565b8101031261011b5751801515810361011b578461099f565b3d9150610a99565b6040513d6000823e3d90fd5b82935060208091600193945181520193019101849261097c565b829394959650604081610b056020936001959651610f4a565b0193019101879594939261094c565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152601760248201527f6e6f20766572696669657220666f7220636861696e49640000000000000000006044820152606490fd5b67ffffffffffffffff811660005260016020526001600160a01b03604060002054168015610c5257602067ffffffffffffffff818501511660246040518094819363f25b3f9960e01b835260048301525afa908115610ac657600091610c20575b506040830151146107fd5760405162461bcd60e51b815260206004820152601360248201527f616e63686f7220636865636b206661696c6564000000000000000000000000006044820152606490fd5b90506020813d602011610c4a575b81610c3b60209383610dcb565b8101031261011b575183610bd0565b3d9150610c2e565b60405162461bcd60e51b815260206004820152601760248201527f756e6b6e6f776e20616e63686f722070726f76696465720000000000000000006044820152606490fd5b81358152602091820191016107d4565b813581526020918201910161079f565b36601f8301121561011b57604051610cce81610d92565b8036604085011161011b5783905b604085018210610cf957505081602091604093520191019061076a565b8135815260209182019101610cdc565b813581526020918201910161073a565b3461011b57604036600319011261011b576020610d40610d37610d64565b60243590610e85565b6040519015158152f35b3461011b57600036600319011261011b5780601060209252f35b6004359067ffffffffffffffff8216820361011b57565b6044359067ffffffffffffffff8216820361011b57565b6040810190811067ffffffffffffffff821117610b1457604052565b610200810190811067ffffffffffffffff821117610b1457604052565b90601f8019910116810190811067ffffffffffffffff821117610b1457604052565b602435906001600160a01b038216820361011b57565b6010821015610e13570190600090565b634e487b7160e01b600052603260045260246000fd5b15610e3057565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b906010811015610e135760051b0190565b67ffffffffffffffff16600090815260036020908152604080832090519293918490845b60108310610f0d5750505050610ebe82610dae565b825b60108110610ece5750505090565b81610ed98285610e74565b5114610f04576000198114610ef057600101610ec0565b634e487b7160e01b84526011600452602484fd5b50505050600190565b60018281928654815201940192019192610ea9565b60ff60019116019060ff8211610f3457565b634e487b7160e01b600052601160045260246000fd5b6000915b60028310610f5b57505050565b600190825181526020809101920192019190610f4e56fea26469706673582212206981a24bb00950f420a08dad40d24328e1a6a3e6477f1a3bb8877e36446866fb64736f6c63430008140033",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b60003560e01c9081624e394e14610d4a575080631019b61614610d19578063318a492d14610689578063479aa6da146105fc5780635ca32bd814610549578063679594fd1461050b578063715018a6146104ae5780637930508b146104655780638195408d146104215780638da5cb5b146103fa5780639c8413c514610347578063afe8154b14610303578063e31476da14610200578063f2fde38b146101205763f9a885f3146100c357600080fd5b3461011b57604036600319011261011b576100dc610d64565b67ffffffffffffffff602435911660005260036020526040600020601082101561011b5760209161010c91610e03565b90549060031b1c604051908152f35b600080fd5b3461011b57602036600319011261011b576004356001600160a01b0380821680920361011b5760005490811690610158338314610e29565b8215610195576001600160a01b0319839116176000557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b3461011b57606036600319011261011b577f6a70343b232c18280821471baf247ce69fbf740893ec9fb80a47bda7f4ea4a2f61023a610d64565b6024356102fe67ffffffffffffffff610251610d7b565b936102686001600160a01b03600054163314610e29565b16806000526004602052600f61028560ff60406000205416610f22565b16908060005260036020526102bb846102a2846040600020610e03565b90919082549060031b91821b91600019901b1916179055565b600052600460205260406000208160ff198254161790556040519384938491604091949367ffffffffffffffff60ff926060860197865216602085015216910152565b0390a1005b3461011b57602036600319011261011b5767ffffffffffffffff610325610d64565b16600052600160205260206001600160a01b0360406000205416604051908152f35b3461011b57604036600319011261011b577fb78ea0eaf11776732556ef6189312ceb60eab6b3177526b3a12d966e37be8162610381610d64565b610389610ded565b906001600160a01b036103a181600054163314610e29565b67ffffffffffffffff8216600052600260205260406000209083166001600160a01b03198254161790556102fe604051928392839092916001600160a01b0360209167ffffffffffffffff604085019616845216910152565b3461011b57600036600319011261011b5760206001600160a01b0360005416604051908152f35b3461011b57602036600319011261011b5767ffffffffffffffff610443610d64565b16600052600260205260206001600160a01b0360406000205416604051908152f35b3461011b57604036600319011261011b5761047e610d64565b6024359060ff8216820361011b5760209167ffffffffffffffff61010c9216600052600383526040600020610e03565b3461011b57600036600319011261011b57600080546001600160a01b03196001600160a01b038216916104e2338414610e29565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461011b57602036600319011261011b5767ffffffffffffffff61052d610d64565b166000526004602052602060ff60406000205416604051908152f35b3461011b57604036600319011261011b577fd621c244f07f12e1f37bb9c40d61e278041fc4f2859a6736794b26f4297c8090610583610d64565b61058b610ded565b906001600160a01b036105a381600054163314610e29565b67ffffffffffffffff8216600052600160205260406000209083166001600160a01b03198254161790556102fe604051928392839092916001600160a01b0360209167ffffffffffffffff604085019616845216910152565b3461011b5760208060031936011261011b5767ffffffffffffffff61061f610d64565b1690816000526003815260406000209160405190816000905b601082106106745750506040935061064f82610dae565b6000526004825261066860ff8460002054168092610e74565b51918351928352820152f35b60018581928854815201960191019094610638565b3461011b5761020036600319011261011b576106a3610d64565b6101e036602319011261011b576040519060c0820182811067ffffffffffffffff821117610b145760405260243582526106db610d7b565b6020830152606435604083015260843560608301526101403660a319011261011b576040516080810181811067ffffffffffffffff821117610b1457806040523660c3121561011b5761072d81610d92565b803660e41161011b5760a4905b60e48210610d09575050815236610103121561011b5760405161075c81610d92565b80366101641161011b5760e4905b6101648210610cb7575050602082015236610183121561011b5760405161079081610d92565b80366101a41161011b57610164905b6101a48210610ca75750506040820152366101c3121561011b576040516107c581610d92565b80366101e41161011b576101a4905b6101e48210610c97575050606082015260808301526101e43560a0830152606082015115610b6f575b67ffffffffffffffff8116600052600460205260ff6040600020541691600360205261082d836040600020610e03565b90549060031b1c67ffffffffffffffff831660005260026020526001600160a01b03604060002054168015610b2a57604051918261014081011067ffffffffffffffff61014085011117610b1457916109459261014082016040526101403683378060801c82526fffffffffffffffffffffffffffffffff8091166020830152845160801c6040830152808551166060830152604085015160801c60808301528060408601511660a083015267ffffffffffffffff60208601511660c0830152606085015160801c60e083015260608501511661010082015260a084015161012082015260808401519081519160208101519060606040820151910151916040519687956313a4214360e31b87526004870190610f4a565b6000604486015b60028210610aec57505050906109696109749260c4860190610f4a565b610104840190610f4a565b600061014483015b600a8210610ad257505050610284816020935afa908115610ac657600091610a8b575b5015610a465767ffffffffffffffff600f6109da7f6a70343b232c18280821471baf247ce69fbf740893ec9fb80a47bda7f4ea4a2f95610f22565b16926109fa835183831660005260036020526102a2866040600020610e03565b16600090815260046020908152604091829020805460ff191685179055825192810151825193845267ffffffffffffffff169083015260ff9092169181019190915280606081016102fe565b60405162461bcd60e51b815260206004820152601060248201527f696e76616c6964207a6b2070726f6f66000000000000000000000000000000006044820152606490fd5b90506020813d602011610abe575b81610aa660209383610dcb565b8101031261011b5751801515810361011b578461099f565b3d9150610a99565b6040513d6000823e3d90fd5b82935060208091600193945181520193019101849261097c565b829394959650604081610b056020936001959651610f4a565b0193019101879594939261094c565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152601760248201527f6e6f20766572696669657220666f7220636861696e49640000000000000000006044820152606490fd5b67ffffffffffffffff811660005260016020526001600160a01b03604060002054168015610c5257602067ffffffffffffffff818501511660246040518094819363f25b3f9960e01b835260048301525afa908115610ac657600091610c20575b506040830151146107fd5760405162461bcd60e51b815260206004820152601360248201527f616e63686f7220636865636b206661696c6564000000000000000000000000006044820152606490fd5b90506020813d602011610c4a575b81610c3b60209383610dcb565b8101031261011b575183610bd0565b3d9150610c2e565b60405162461bcd60e51b815260206004820152601760248201527f756e6b6e6f776e20616e63686f722070726f76696465720000000000000000006044820152606490fd5b81358152602091820191016107d4565b813581526020918201910161079f565b36601f8301121561011b57604051610cce81610d92565b8036604085011161011b5783905b604085018210610cf957505081602091604093520191019061076a565b8135815260209182019101610cdc565b813581526020918201910161073a565b3461011b57604036600319011261011b576020610d40610d37610d64565b60243590610e85565b6040519015158152f35b3461011b57600036600319011261011b5780601060209252f35b6004359067ffffffffffffffff8216820361011b57565b6044359067ffffffffffffffff8216820361011b57565b6040810190811067ffffffffffffffff821117610b1457604052565b610200810190811067ffffffffffffffff821117610b1457604052565b90601f8019910116810190811067ffffffffffffffff821117610b1457604052565b602435906001600160a01b038216820361011b57565b6010821015610e13570190600090565b634e487b7160e01b600052603260045260246000fd5b15610e3057565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b906010811015610e135760051b0190565b67ffffffffffffffff16600090815260036020908152604080832090519293918490845b60108310610f0d5750505050610ebe82610dae565b825b60108110610ece5750505090565b81610ed98285610e74565b5114610f04576000198114610ef057600101610ec0565b634e487b7160e01b84526011600452602484fd5b50505050600190565b60018281928654815201940192019192610ea9565b60ff60019116019060ff8211610f3457565b634e487b7160e01b600052601160045260246000fd5b6000915b60028310610f5b57505050565b600190825181526020809101920192019190610f4e56fea26469706673582212206981a24bb00950f420a08dad40d24328e1a6a3e6477f1a3bb8877e36446866fb64736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/smt/TestSMT.sol:TestSMT",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 994,
+        "contract": "contracts/smt/TestSMT.sol:TestSMT",
+        "label": "anchorProviders",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_uint64,t_contract(IAnchorBlocks)171)"
+      },
+      {
+        "astId": 999,
+        "contract": "contracts/smt/TestSMT.sol:TestSMT",
+        "label": "verifiers",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint64,t_contract(IVerifier)1651)"
+      },
+      {
+        "astId": 1005,
+        "contract": "contracts/smt/TestSMT.sol:TestSMT",
+        "label": "smtRoots",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint64,t_array(t_bytes32)16_storage)"
+      },
+      {
+        "astId": 1009,
+        "contract": "contracts/smt/TestSMT.sol:TestSMT",
+        "label": "curBufferIndices",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint64,t_uint8)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_bytes32)16_storage": {
+        "base": "t_bytes32",
+        "encoding": "inplace",
+        "label": "bytes32[16]",
+        "numberOfBytes": "512"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IAnchorBlocks)171": {
+        "encoding": "inplace",
+        "label": "contract IAnchorBlocks",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IVerifier)1651": {
+        "encoding": "inplace",
+        "label": "contract IVerifier",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint64,t_array(t_bytes32)16_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => bytes32[16])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_bytes32)16_storage"
+      },
+      "t_mapping(t_uint64,t_contract(IAnchorBlocks)171)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => contract IAnchorBlocks)",
+        "numberOfBytes": "32",
+        "value": "t_contract(IAnchorBlocks)171"
+      },
+      "t_mapping(t_uint64,t_contract(IVerifier)1651)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => contract IVerifier)",
+        "numberOfBytes": "32",
+        "value": "t_contract(IVerifier)1651"
+      },
+      "t_mapping(t_uint64,t_uint8)": {
+        "encoding": "mapping",
+        "key": "t_uint64",
+        "label": "mapping(uint64 => uint8)",
+        "numberOfBytes": "32",
+        "value": "t_uint8"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}
