@@ -42,8 +42,10 @@ contract BrevisRequest is FeeVault {
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event RequestSent(bytes32 requestId, address sender, uint256 fee, IBrevisApp callback, Option option);
     event RequestFulfilled(bytes32 requestId);
-    event RequestsFulfilled(bytes32[] requestId);
+    event RequestsFulfilled(bytes32[] requestIds);
     event RequestRefunded(bytes32 requestId);
+    event RequestCallbackFailed(bytes32 requestId);
+    event RequestsCallbackFailed(bytes32[] requestIds);
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
@@ -52,7 +54,9 @@ contract BrevisRequest is FeeVault {
 
     function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable {
         require(requests[_requestId].deadline == 0, "request already in queue");
-        require(_refundee != address(0), "refundee not provided");
+        if (_refundee == address(0)) {
+            _refundee = msg.sender;
+        }
         requests[_requestId] = Request(
             block.timestamp + requestTimeout,
             msg.value,
@@ -73,7 +77,7 @@ contract BrevisRequest is FeeVault {
     ) external {
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
 
-        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // will be reverted when proof is not valid
+        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // revert if proof is not valid
         require(_requestId == reqIdFromProof, "requestId and proof not match");
         requests[_requestId].status = RequestStatus.ZkAttested;
 
@@ -81,10 +85,13 @@ contract BrevisRequest is FeeVault {
 
         address app = address(requests[_requestId].callback);
         if (app != address(0)) {
-            // No matter if the call is success or not. The relayer should set correct gas limit.
-            // If the call exceeds the gasleft(), as the proof data is saved ahead,
-            // anyone can still call the app.callback directly to proceed
-            app.call(abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput));
+            // fulfillRequest tx will succeed no matter if the callback is success or not.
+            // The relayer should set correct gas limit. If the call exceeds the gasleft(),
+            // anyone can still call the app.brevisCallback directly to proceed
+            (bool success, ) = app.call(abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput));
+            if (!success) {
+                emit RequestCallbackFailed(_requestId);
+            }
         }
     }
 
@@ -106,7 +113,7 @@ contract BrevisRequest is FeeVault {
         emit RequestsFulfilled(_requestIds);
 
         if (_callback != address(0)) {
-            _callback.call(
+            (bool success, )  = _callback.call(
                 abi.encodeWithSelector(
                     IBrevisApp.brevisBatchCallback.selector,
                     _chainId,
@@ -114,6 +121,9 @@ contract BrevisRequest is FeeVault {
                     _appCircuitOutputs
                 )
             );
+            if (!success) {
+                emit RequestsCallbackFailed(_requestIds);
+            }
         }
     }
 
