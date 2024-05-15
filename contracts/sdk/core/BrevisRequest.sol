@@ -11,12 +11,13 @@ contract BrevisRequest is FeeVault {
     enum RequestStatus {
         Pending,
         ZkAttested,
+        Refunded,
         OpSubmitted,
-        OpQueryDataSubmitted,
-        OpDisputing,
-        OpDisputed,
         OpAttested,
-        Refunded
+        OpDisputed,
+        OpChallenge_WaitingForQueryData,
+        OpChallenge_WaitingForZkProof,
+        OpChallenge_QueryDataPosted
     }
 
     enum Option {
@@ -26,13 +27,13 @@ contract BrevisRequest is FeeVault {
     }
 
     enum AskForType {
-        NULL,
+        Null,
         QueryData,
         Proof
     }
 
     struct Request {
-        uint256 deadline;
+        uint256 timestamp;
         uint256 fee;
         address refundee;
         IBrevisApp callback;
@@ -41,9 +42,14 @@ contract BrevisRequest is FeeVault {
     }
 
     struct RequestExt {
-        uint256 canChallengeBefore;
+        uint256 challengeDeadline;
         AskForType askFor;
-        uint256 shouldRespondBefore;
+        uint256 responseDeadline;
+    }
+
+    struct OpRequest {
+        uint256 challengeDeadline;
+        uint256 responseDeadline;
     }
 
     uint256 public requestTimeout;
@@ -52,8 +58,8 @@ contract BrevisRequest is FeeVault {
     IBrevisProof public brevisProof;
     ISigsVerifier public immutable sigsVerifier;
 
-    mapping(bytes32 => Request) public requests; // TODO: store hash of request data to save gas cost
-    mapping(bytes32 => RequestExt) public requestExts;
+    mapping(bytes32 => Request) public requests; // TODO: store data hash to save gas cost
+    mapping(bytes32 => RequestExt) public requestExts; // TODO: store data hash to save gas cost
     mapping(bytes32 => bytes32) public keccakToMimc;
 
     /* Events */
@@ -82,13 +88,14 @@ contract BrevisRequest is FeeVault {
      * External and Public Functions *
      *********************************/
 
+    // TODO: anti-spam
     function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable {
-        require(requests[_requestId].deadline == 0, "request already in queue");
+        require(requests[_requestId].timestamp == 0, "request already in queue");
         if (_refundee == address(0)) {
             _refundee = msg.sender;
         }
         requests[_requestId] = Request(
-            block.timestamp + requestTimeout,
+            block.timestamp,
             msg.value,
             _refundee,
             _callback,
@@ -159,10 +166,8 @@ contract BrevisRequest is FeeVault {
     }
 
     function refund(bytes32 _requestId) external {
-        require(block.timestamp > requests[_requestId].deadline);
+        require(block.timestamp > requests[_requestId].timestamp + requestTimeout);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-        require(requests[_requestId].deadline != 0, "request not in queue");
-        requests[_requestId].deadline = 0; //reset deadline, then user is able to send request again
         (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
         require(sent, "send native failed");
         requests[_requestId].status = RequestStatus.Refunded;
@@ -191,7 +196,7 @@ contract BrevisRequest is FeeVault {
         for (uint i = 0; i < _requestIds.length; i++) {
             brevisProof.submitOpResult(_requestIds[i]);
             requests[_requestIds[i]].status = RequestStatus.OpSubmitted;
-            requestExts[_requestIds[i]].canChallengeBefore = block.timestamp + challengeWindow;
+            requestExts[_requestIds[i]].challengeDeadline = block.timestamp + challengeWindow;
         }
 
         emit OpRequestsFulfilled(_requestIds, _queryURLs);
@@ -203,8 +208,8 @@ contract BrevisRequest is FeeVault {
         require(requests[_requestId].status == RequestStatus.OpSubmitted, "not in a disputable status");
 
         requestExts[_requestId].askFor = AskForType.QueryData;
-        requestExts[_requestId].shouldRespondBefore = block.timestamp + responseTimeout;
-        requests[_requestId].status = RequestStatus.OpDisputing;
+        requestExts[_requestId].responseDeadline = block.timestamp + responseTimeout;
+        requests[_requestId].status = RequestStatus.OpChallenge_WaitingForQueryData;
 
         emit AskFor(_requestId, AskForType.QueryData, msg.sender);
     }
@@ -212,20 +217,15 @@ contract BrevisRequest is FeeVault {
     function postQueryData(bytes32 _requestId, bytes calldata _queryData) external {
         if (requests[_requestId].option == Option.OpMode_KECCAK) {
             require(keccak256(_queryData) == _requestId, "not valid queryData");
-
-            requests[_requestId].status = RequestStatus.OpQueryDataSubmitted;
-            requestExts[_requestId].canChallengeBefore = block.timestamp + challengeWindow; // extend the window for proof challenge
-            emit QueryDataPost(_requestId);
         } else if (requests[_requestId].option == Option.OpMode_MIMC) {
             bytes32 dataHash = keccak256(_queryData);
             keccakToMimc[dataHash] = _requestId;
-
-            requests[_requestId].status = RequestStatus.OpQueryDataSubmitted;
-            requestExts[_requestId].canChallengeBefore = block.timestamp + challengeWindow; // extend the window for proof challenge
-            emit QueryDataPost(_requestId);
         } else {
             revert("not a valid op request");
         }
+        requests[_requestId].status = RequestStatus.OpChallenge_QueryDataPosted;
+        requestExts[_requestId].challengeDeadline = block.timestamp + challengeWindow; // extend the window for proof challenge
+        emit QueryDataPost(_requestId);
     }
 
     // after postQueryData with OpMode_MIMC
@@ -244,13 +244,13 @@ contract BrevisRequest is FeeVault {
         // TODO: msg.value should be larger than a configurable value
         require(
             requests[_requestId].status == RequestStatus.OpSubmitted ||
-                requests[_requestId].status == RequestStatus.OpQueryDataSubmitted,
+                requests[_requestId].status == RequestStatus.OpChallenge_QueryDataPosted,
             "not in a disputable status"
         );
 
         requestExts[_requestId].askFor = AskForType.Proof;
-        requestExts[_requestId].shouldRespondBefore = block.timestamp + responseTimeout;
-        requests[_requestId].status = RequestStatus.OpDisputing;
+        requestExts[_requestId].responseDeadline = block.timestamp + responseTimeout;
+        requests[_requestId].status = RequestStatus.OpChallenge_WaitingForZkProof;
 
         emit AskFor(_requestId, AskForType.Proof, msg.sender);
     }
@@ -291,15 +291,15 @@ contract BrevisRequest is FeeVault {
     function queryRequestStatus(bytes32 _requestId) external view returns (RequestStatus) {
         if (
             (requests[_requestId].status == RequestStatus.OpSubmitted ||
-                requests[_requestId].status == RequestStatus.OpQueryDataSubmitted) &&
-            requestExts[_requestId].canChallengeBefore <= block.timestamp
+                requests[_requestId].status == RequestStatus.OpChallenge_QueryDataPosted) &&
+            requestExts[_requestId].challengeDeadline <= block.timestamp
         ) {
             return RequestStatus.OpAttested;
         }
 
         if (
-            requests[_requestId].status == RequestStatus.OpDisputing &&
-            requestExts[_requestId].shouldRespondBefore <= block.timestamp
+            requests[_requestId].status == RequestStatus.OpChallenge_WaitingForZkProof &&
+            requestExts[_requestId].responseDeadline <= block.timestamp
         ) {
             return RequestStatus.OpDisputed;
         }
