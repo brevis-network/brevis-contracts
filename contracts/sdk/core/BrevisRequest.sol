@@ -2,76 +2,22 @@
 pragma solidity ^0.8.18;
 
 import "./FeeVault.sol";
+import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
 import "../../interfaces/ISigsVerifier.sol";
 import "../lib/Lib.sol";
 
-contract BrevisRequest is FeeVault {
-    enum RequestStatus {
-        Null,
-        Pending,
-        ZkAttested,
-        Refunded,
-        OpSubmitted,
-        OpDisputing,
-        OpDisputed,
-        OpAttested
-    }
-
-    enum Option {
-        ZkMode,
-        OpMode_MIMC,
-        OpMode_KECCAK
-    }
-
-    struct Request {
-        uint256 timestamp;
-        uint256 fee;
-        address refundee;
-        IBrevisApp callback;
-        RequestStatus status;
-        Option option; // TODO: remove this
-    }
-
-    enum DisputeStatus {
-        Null,
-        WaitingForQueryData,
-        QueryDataPosted,
-        WaitingForZkProof
-    }
-
-    struct Dispute {
-        DisputeStatus status;
-        uint256 responseDeadline;
-    }
-
+contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public requestTimeout;
     uint256 public challengeWindow;
-    uint256 public responseTimeout; // BVN responses an ask-for-data request
+    uint256 public responseTimeout; // BVN responses time window a challenge
     IBrevisProof public brevisProof;
     ISigsVerifier public immutable sigsVerifier;
 
     mapping(bytes32 => Request) public requests; // TODO: store data hash to save gas cost
     mapping(bytes32 => Dispute) public disputes;
     mapping(bytes32 => bytes32) public keccakToMimc;
-
-    /* Events */
-    event RequestSent(bytes32 requestId, address sender, uint256 fee, IBrevisApp callback, Option option);
-    event RequestFulfilled(bytes32 requestId);
-    event RequestsFulfilled(bytes32[] requestIds);
-    event RequestRefunded(bytes32 requestId);
-    event RequestCallbackFailed(bytes32 requestId);
-    event RequestsCallbackFailed(bytes32[] requestIds);
-
-    event OpRequestsFulfilled(bytes32[] requestIds, bytes[] queryURLs);
-    event Challenge(bytes32 indexed requestId, DisputeStatus status, address from);
-    event QueryDataPost(bytes32 indexed requestId);
-    event ProofPost(bytes32 indexed requestId);
-
-    event RequestTimeoutUpdated(uint256 from, uint256 to);
-    event ChallengeWindowUpdated(uint256 from, uint256 to);
-    event ResponseTimeoutUpdated(uint256 from, uint256 to);
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;

@@ -5,7 +5,7 @@ import { verify } from '../utils/utils';
 
 dotenv.config();
 
-const defaultSmtRoot = '0x0b12da9a8bff6f32444fafe4f657d51d5cb72b0aa707f3aff1481ff64d6ed805';
+const defaultSmtRoot = '0x106e045eb67ba32796174de4fe2848fb89127ba16c398b7d536284ba1ea2b5a9';
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
@@ -15,7 +15,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   // const anchorProvider = await deployments.get('AnchorBlocks');
   const anchorProvider = await deployments.get('SameChainAnchorBlocks');
   const verifier = await deployments.get('SMTUpdateCircuitProofVerifier');
-  const args = [[42161], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
+  const args = [[8453], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
   const deployment = await deploy('TestSMT', { from: deployer, log: true, args: args });
   await verify(hre, deployment);
 };
