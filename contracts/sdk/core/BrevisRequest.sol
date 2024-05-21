@@ -2,33 +2,16 @@
 pragma solidity ^0.8.18;
 
 import "./FeeVault.sol";
+import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
 import "../lib/Lib.sol";
 
-contract BrevisRequest is FeeVault {
+contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public requestTimeout;
     IBrevisProof public brevisProof;
 
-    enum RequestStatus {
-        Pending,
-        ZkAttested,
-        Refunded
-    }
-
-    struct Request {
-        uint256 deadline;
-        uint256 fee;
-        address refundee;
-        address callback;
-        RequestStatus status;
-    }
     mapping(bytes32 => Request) public requests; // TODO: store hash of request data to save gas cost
-
-    event RequestTimeoutUpdated(uint256 from, uint256 to);
-    event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback);
-    event RequestFulfilled(bytes32 requestId);
-    event RequestsFulfilled(bytes32[] requestId);
 
     constructor(address _feeCollector, IBrevisProof _brevisProof) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
@@ -67,7 +50,12 @@ contract BrevisRequest is FeeVault {
             // No matter if the call is success or not. The relayer should set correct gas limit.
             // If the call exceeds the gasleft(), as the proof data is saved ahead,
             // anyone can still call the app.callback directly to proceed
-            app.call(abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput));
+            (bool success, ) = app.call(
+                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput)
+            );
+            if (!success) {
+                emit RequestCallbackFailed(_requestId);
+            }
         }
     }
 
@@ -89,7 +77,7 @@ contract BrevisRequest is FeeVault {
         emit RequestsFulfilled(_requestIds);
 
         if (_callback != address(0)) {
-            _callback.call(
+            (bool success, ) = _callback.call(
                 abi.encodeWithSelector(
                     IBrevisApp.brevisBatchCallback.selector,
                     _chainId,
@@ -97,10 +85,13 @@ contract BrevisRequest is FeeVault {
                     _appCircuitOutputs
                 )
             );
+            if (!success) {
+                emit RequestsCallbackFailed(_requestIds);
+            }
         }
     }
 
-    function refund(bytes32 _requestId) public {
+    function refund(bytes32 _requestId) external {
         require(block.timestamp > requests[_requestId].deadline);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
         require(requests[_requestId].deadline != 0, "request not in queue");
@@ -108,6 +99,7 @@ contract BrevisRequest is FeeVault {
         (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
         require(sent, "send native failed");
         requests[_requestId].status = RequestStatus.Refunded;
+        emit RequestRefunded(_requestId);
     }
 
     function setRequestTimeout(uint256 _timeout) external onlyOwner {
