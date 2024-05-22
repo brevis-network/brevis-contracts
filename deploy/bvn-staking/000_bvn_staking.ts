@@ -26,7 +26,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     ]
   });
   const staking = await deployments.get('Staking');
-  await deploy('BvnAddrs', {
+  await deploy('BVN', {
     from: deployer,
     log: true,
     args: [staking.address]
