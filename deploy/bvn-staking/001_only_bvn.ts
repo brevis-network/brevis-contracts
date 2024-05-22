@@ -9,10 +9,11 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  const staking = await deployments.get('Staking');
   await deploy('BVN', {
     from: deployer,
     log: true,
-    args: ['0xC17f92d12ae0De25C9F89a5c7bcD6aC63AfeF782']
+    args: [staking.address]
   });
 };
 
