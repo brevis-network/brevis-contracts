@@ -1,5 +1,12 @@
 {
-  "name": "ethereum-light-client",
+  "name": "brevis-contracts",
+  "description": "Brevis contracts",
+  "version": "1.0.2",
+  "license": "MIT",
+  "author":"",
+  "files": [
+    "/contracts"
+  ],
   "scripts": {
     "clean": "hardhat clean",
     "compile": "hardhat compile",
