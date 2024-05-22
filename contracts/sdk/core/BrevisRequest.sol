@@ -10,7 +10,7 @@ import "../lib/Lib.sol";
 
 contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public requestTimeout;
-    uint256 public challengeWindow;
+    uint256 public challengeTimeout;
     uint256 public responseTimeout; // BVN responses time window a challenge
     IBrevisProof public brevisProof;
     ISigsVerifier public immutable sigsVerifier;
@@ -29,7 +29,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      *********************************/
 
     // TODO: anti-spam
-    function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable {
+    function sendRequest(bytes32 _requestId, address _refundee, address _callback, Option _option) external payable {
         require(requests[_requestId].timestamp == 0, "request already in queue");
         if (_refundee == address(0)) {
             _refundee = msg.sender;
@@ -60,11 +60,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
         emit RequestFulfilled(_requestId);
 
-        address app = address(requests[_requestId].callback);
-        if (app != address(0)) {
+        if (requests[_requestId].callback != address(0)) {
             // The relayer should set correct gas limit. If the call failed due to insufficient gasleft(),
             // anyone can still call the app.brevisCallback directly to proceed
-            (bool success, ) = app.call(
+            (bool success, ) = requests[_requestId].callback.call(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput)
             );
             if (!success) {
@@ -146,7 +145,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         Request storage request = requests[_requestId];
         Dispute storage dispute = disputes[_requestId];
         require(request.status == RequestStatus.OpSubmitted, "not in a disputable status");
-        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
+        require(request.timestamp + challengeTimeout > block.timestamp, "pass challenge window");
 
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForQueryData;
@@ -189,7 +188,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                 (request.status == RequestStatus.OpDisputing && dispute.status != DisputeStatus.WaitingForZkProof),
             "not in a disputable status"
         );
-        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
+        require(request.timestamp + challengeTimeout > block.timestamp, "pass challenge window");
 
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForZkProof;
@@ -215,10 +214,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestTimeoutUpdated(oldTimeout, _timeout);
     }
 
-    function setChallengeWindow(uint256 _challengeWindow) external onlyOwner {
-        uint256 oldChallengeWindow = challengeWindow;
-        challengeWindow = _challengeWindow;
-        emit ChallengeWindowUpdated(oldChallengeWindow, _challengeWindow);
+    function setChallengeTimeout(uint256 _challengeTimeout) external onlyOwner {
+        uint256 oldChallengeTimeout = challengeTimeout;
+        challengeTimeout = _challengeTimeout;
+        emit ChallengeTimeoutUpdated(oldChallengeTimeout, _challengeTimeout);
     }
 
     function setResponseTimeout(uint256 _responseTimeout) external onlyOwner {
@@ -234,13 +233,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     function queryRequestStatus(bytes32 _requestId) external view returns (RequestStatus) {
         Request storage request = requests[_requestId];
         if (request.status == RequestStatus.OpSubmitted) {
-            if (request.timestamp + challengeWindow < block.timestamp) {
+            if (request.timestamp + challengeTimeout < block.timestamp) {
                 return RequestStatus.OpAttested;
             }
         } else if (request.status == RequestStatus.OpDisputing) {
             Dispute storage dispute = disputes[_requestId];
             if (dispute.status == DisputeStatus.QueryDataPosted) {
-                if (request.timestamp + challengeWindow < block.timestamp) {
+                if (request.timestamp + challengeTimeout < block.timestamp) {
                     return RequestStatus.OpAttested;
                 }
             } else if (dispute.responseDeadline < block.timestamp) {

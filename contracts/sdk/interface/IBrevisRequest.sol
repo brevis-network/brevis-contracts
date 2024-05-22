@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 import "../lib/Lib.sol";
-import "./IBrevisApp.sol";
 
 interface IBrevisRequest {
     enum RequestStatus {
@@ -26,7 +25,7 @@ interface IBrevisRequest {
         uint256 timestamp;
         uint256 fee;
         address refundee;
-        IBrevisApp callback;
+        address callback;
         RequestStatus status;
         Option option; // TODO: remove this
     }
@@ -43,7 +42,7 @@ interface IBrevisRequest {
         uint256 responseDeadline;
     }
 
-    event RequestSent(bytes32 requestId, address sender, uint256 fee, IBrevisApp callback, Option option);
+    event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback, Option option);
     event RequestFulfilled(bytes32 requestId);
     event RequestsFulfilled(bytes32[] requestIds);
     event RequestRefunded(bytes32 requestId);
@@ -56,10 +55,10 @@ interface IBrevisRequest {
     event ProofPost(bytes32 indexed requestId);
 
     event RequestTimeoutUpdated(uint256 from, uint256 to);
-    event ChallengeWindowUpdated(uint256 from, uint256 to);
+    event ChallengeTimeoutUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
 
-    function sendRequest(bytes32 _requestId, address _refundee, IBrevisApp _callback, Option _option) external payable;
+    function sendRequest(bytes32 _requestId, address _refundee, address _callback, Option _option) external payable;
 
     function fulfillRequest(
         bytes32 _requestId,
