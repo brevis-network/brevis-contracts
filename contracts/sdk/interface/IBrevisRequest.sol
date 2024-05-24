@@ -55,7 +55,7 @@ interface IBrevisRequest {
     event ProofPost(bytes32 indexed requestId, uint256 nonce);
 
     event RequestTimeoutUpdated(uint256 from, uint256 to);
-    event ChallengeTimeoutUpdated(uint256 from, uint256 to);
+    event ChallengeWindowUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
 
     function sendRequest(

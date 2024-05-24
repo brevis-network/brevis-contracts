@@ -9,11 +9,12 @@ import "../../interfaces/ISigsVerifier.sol";
 import "../lib/Lib.sol";
 
 contract BrevisRequest is IBrevisRequest, FeeVault {
-    uint256 public requestTimeout;
-    uint256 public challengeTimeout;
-    uint256 public responseTimeout; // BVN responses time window a challenge
     IBrevisProof public brevisProof;
     ISigsVerifier public immutable sigsVerifier;
+
+    uint256 public requestTimeout;
+    uint256 public challengeWindow;
+    uint256 public responseTimeout; // BVN responses time window a challenge
 
     mapping(bytes32 => Request) public requests; // TODO: store data hash to save gas cost
     mapping(bytes32 => Dispute) public disputes;
@@ -163,7 +164,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
         require(request.status == RequestStatus.OpSubmitted, "not in a disputable status");
-        require(request.timestamp + challengeTimeout > block.timestamp, "pass challenge window");
+        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
 
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForQueryData;
@@ -209,7 +210,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                 (request.status == RequestStatus.OpDisputing && dispute.status != DisputeStatus.WaitingForZkProof),
             "not in a disputable status"
         );
-        require(request.timestamp + challengeTimeout > block.timestamp, "pass challenge window");
+        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
 
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForZkProof;
@@ -236,10 +237,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestTimeoutUpdated(oldTimeout, _timeout);
     }
 
-    function setChallengeTimeout(uint256 _challengeTimeout) external onlyOwner {
-        uint256 oldChallengeTimeout = challengeTimeout;
-        challengeTimeout = _challengeTimeout;
-        emit ChallengeTimeoutUpdated(oldChallengeTimeout, _challengeTimeout);
+    function setChallengeWindow(uint256 _challengeWindow) external onlyOwner {
+        uint256 oldChallengeWindow = challengeWindow;
+        challengeWindow = _challengeWindow;
+        emit ChallengeWindowUpdated(oldChallengeWindow, _challengeWindow);
     }
 
     function setResponseTimeout(uint256 _responseTimeout) external onlyOwner {
@@ -256,13 +257,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
         if (request.status == RequestStatus.OpSubmitted) {
-            if (request.timestamp + challengeTimeout < block.timestamp) {
+            if (request.timestamp + challengeWindow < block.timestamp) {
                 return RequestStatus.OpAttested;
             }
         } else if (request.status == RequestStatus.OpDisputing) {
             Dispute storage dispute = disputes[requestKey];
             if (dispute.status == DisputeStatus.QueryDataPosted) {
-                if (request.timestamp + challengeTimeout < block.timestamp) {
+                if (request.timestamp + challengeWindow < block.timestamp) {
                     return RequestStatus.OpAttested;
                 }
             } else if (dispute.responseDeadline < block.timestamp) {
