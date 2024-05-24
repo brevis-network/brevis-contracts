@@ -1,13 +1,8 @@
-import { expect } from 'chai';
 import { Fixture } from 'ethereum-waffle';
-import { BigNumber, BigNumberish, Wallet } from 'ethers';
+import { BigNumber, Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
-import {
-  Bn254Agg16Bn254Verifier,
-  Bn254Agg16Bn254Verifier__factory
-} from '../../typechain';
+import { Bn254Agg16Bn254Verifier } from '../../typechain';
 import assert from 'assert';
-import { hexToBytes } from '../util';
 
 async function deployContract(admin: Wallet) {
   const _factory = await ethers.getContractFactory('Bn254Agg16Bn254Verifier');
@@ -46,21 +41,21 @@ describe('Aggregation 16 bn254 verifier', async () => {
         BigNumber.from('17013017322422535754621388735464417826469970866779433642599626359462923223805'), // b11
 
         BigNumber.from('199341362335784188358407382230085009749434421050018979444983503522532056789'), // c0
-        BigNumber.from('10462291537232667351245904513168077236341112261785544481009194723134034279261'), // c1
+        BigNumber.from('10462291537232667351245904513168077236341112261785544481009194723134034279261') // c1
       ],
       [
         BigNumber.from('8281029652804115540779242248394256858262374845244472384326955447842738625749'), // Commitment 0
-        BigNumber.from('16291454333950787529071139148857612321350070812453737627848777377269130231635'), // Commitment 1
+        BigNumber.from('16291454333950787529071139148857612321350070812453737627848777377269130231635') // Commitment 1
       ],
       [
         BigNumber.from('9119409738732686618655070762577648050360522084447116602775900759116236399278'), // Commitment POK0
-        BigNumber.from('20096295095246371279378278495715130754889878869658331075511746223579898895990'), // Commitment POK1
+        BigNumber.from('20096295095246371279378278495715130754889878869658331075511746223579898895990') // Commitment POK1
       ],
       [
         BigNumber.from('114336509697133943113087290526769312348'),
         BigNumber.from('154082401081700815200070389198426915731'),
         BigNumber.from('134926299864838284709497123807691682185'),
-        BigNumber.from('146665854302452622094621623662217484466'),
+        BigNumber.from('146665854302452622094621623662217484466')
       ]
     );
     assert.equal(result, true);
