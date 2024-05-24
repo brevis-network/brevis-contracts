@@ -59,6 +59,42 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         }
     }
 
+    function fulfillRequests(
+        uint64 _chainId,
+        bytes32[] calldata _requestIds,
+        bytes calldata _proof,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs
+    ) external {
+        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+        IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+
+        emit RequestsFulfilled(_requestIds);
+        for (uint8 i = 0; i < _requestIds.length; i++) {
+            require(
+                _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
+                "failed to open output commitment"
+            );
+
+            bytes32 requestId = _requestIds[i];
+            Request storage request = requests[requestId];
+            request.status = RequestStatus.ZkAttested;
+            if (request.callback != address(0)) {
+                (bool success, ) = request.callback.call(
+                    abi.encodeWithSelector(
+                        bytes4(keccak256(bytes("brevisCallback(bytes32,bytes32,bytes)"))),
+                        requestId,
+                        _proofDataArray[i].appVkHash,
+                        _appCircuitOutputs[i]
+                    )
+                );
+                if (!success) {
+                    emit RequestCallbackFailed(requestId);
+                }
+            }
+        }
+    }
+
     function fulfillAggRequests(
         uint64 _chainId,
         bytes32[] calldata _requestIds,

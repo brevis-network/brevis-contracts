@@ -2,10 +2,18 @@
 pragma solidity ^0.8.18;
 
 import "../../interface/IBrevisProof.sol";
+import "../../interface/IBrevisRequest.sol";
+
 import "../../lib/Lib.sol";
 
 abstract contract BrevisApp {
-    IBrevisProof public immutable brevisProof;
+    IBrevisProof public brevisProof;
+    IBrevisRequest public brevisRequest;
+
+    modifier onlyBrevisRequest() {
+        require(msg.sender == address(brevisRequest), "caller is not message bus");
+        _;
+    }
 
     constructor(IBrevisProof _brevisProof) {
         brevisProof = _brevisProof;
@@ -24,6 +32,14 @@ abstract contract BrevisApp {
         (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
         require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_requestId, appVkHash, _appCircuitOutput);
+    }
+
+    function brevisCallback(
+        bytes32 _requestId,
+        bytes32 _appVkHash,
+        bytes calldata _appCircuitOutput
+    ) external onlyBrevisRequest {
+        handleProofResult(_requestId, _appVkHash, _appCircuitOutput);
     }
 
     function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
