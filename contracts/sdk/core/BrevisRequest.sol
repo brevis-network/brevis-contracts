@@ -57,7 +57,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 _nonce,
         uint64 _chainId,
         bytes calldata _proof,
-        bool _withAppProof,
         bytes calldata _appCircuitOutput
     ) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
@@ -67,7 +66,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             "invalid request status"
         );
 
-        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // revert for invalid proof
+        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof); // revert for invalid proof
         require(_requestId == reqIdFromProof, "requestId and proof not match");
         request.status = RequestStatus.ZkAttested;
 
@@ -175,19 +174,17 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
     function postQueryData(bytes32 _requestId, uint256 _nonce, bytes calldata _queryData) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
-        if (requests[requestKey].option == Option.OpMode_KECCAK) {
-            require(keccak256(_queryData) == _requestId, "not valid queryData");
-        } else if (requests[requestKey].option == Option.OpMode_MIMC) {
+        if (requests[requestKey].option == Option.OpMode) {
             bytes32 dataHash = keccak256(_queryData);
             keccakToMimc[dataHash] = _requestId;
+            disputes[requestKey].status = DisputeStatus.QueryDataPosted;
+            emit QueryDataPost(_requestId, _nonce);
         } else {
             revert("not a valid op request");
         }
-        disputes[requestKey].status = DisputeStatus.QueryDataPosted;
-        emit QueryDataPost(_requestId, _nonce);
     }
 
-    // after postQueryData with OpMode_MIMC
+    // after postQueryData with OpMode
     function challengeQueryData(bytes calldata _proof, uint256 _nonce) external {
         (bytes32 myRequestId, bytes32 dataHash) = verifyQueryDataProofAndRetrieveKeys(_proof);
         bytes32 opRequestId = keccakToMimc[dataHash];
@@ -220,7 +217,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function postProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external {
-        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, true);
+        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof);
         require(_requestId == reqIdFromProof, "requestId and proof not match");
 
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));

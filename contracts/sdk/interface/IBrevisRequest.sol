@@ -17,8 +17,7 @@ interface IBrevisRequest {
 
     enum Option {
         ZkMode,
-        OpMode_MIMC,
-        OpMode_KECCAK
+        OpMode
     }
 
     struct Request {
@@ -71,7 +70,6 @@ interface IBrevisRequest {
         uint256 _nonce,
         uint64 _chainId,
         bytes calldata _proof,
-        bool _withAppProof,
         bytes calldata _appCircuitOutput
     ) external;
 
