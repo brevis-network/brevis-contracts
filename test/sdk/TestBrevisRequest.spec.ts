@@ -4,10 +4,6 @@ import { Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
 import { BrevisProof, BrevisRequest } from '../../typechain';
 
-import { Brevis } from '../../typechain/TestBrevisApp';
-
-import { keccak256 } from 'ethers/lib/utils';
-
 async function deployTestBrevisAppContract(admin: Wallet) {
   const smtFactory = await ethers.getContractFactory('MockSMT');
   const smt = await smtFactory.connect(admin).deploy();
