@@ -6,18 +6,14 @@ import "../lib/Lib.sol";
 interface IBrevisRequest {
     enum RequestStatus {
         Null,
-        Pending,
+        ZkPending,
         ZkAttested,
-        Refunded,
+        OpPending,
         OpSubmitted,
         OpDisputing,
         OpDisputed,
-        OpAttested
-    }
-
-    enum Option {
-        ZkMode,
-        OpMode
+        OpAttested,
+        Refunded
     }
 
     struct Request {
@@ -26,7 +22,6 @@ interface IBrevisRequest {
         address refundee;
         address callback;
         RequestStatus status;
-        Option option; // TODO: remove this
     }
 
     enum DisputeStatus {
@@ -41,7 +36,7 @@ interface IBrevisRequest {
         uint256 responseDeadline;
     }
 
-    event RequestSent(bytes32 requestId, uint256 _nonce, address sender, uint256 fee, address callback, Option option);
+    event RequestSent(bytes32 requestId, uint256 _nonce, address sender, uint256 fee, address callback, bool zk);
     event RequestFulfilled(bytes32 requestId, uint256 nonce);
     event RequestsFulfilled(bytes32[] requestIds, uint256[] nonces);
     event RequestRefunded(bytes32 requestId, uint256 nonce);
@@ -62,7 +57,7 @@ interface IBrevisRequest {
         uint256 _nonce,
         address _refundee,
         address _callback,
-        Option _option
+        bool _zk
     ) external payable;
 
     function fulfillRequest(

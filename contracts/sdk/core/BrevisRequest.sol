@@ -34,22 +34,19 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 _nonce,
         address _refundee,
         address _callback,
-        Option _option
+        bool _zk
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
         require(requests[requestKey].status == RequestStatus.Null, "invalid request status");
         if (_refundee == address(0)) {
             _refundee = msg.sender;
         }
-        requests[requestKey] = Request(
-            block.timestamp,
-            msg.value,
-            _refundee,
-            _callback,
-            RequestStatus.Pending,
-            _option
-        );
-        emit RequestSent(_requestId, _nonce, msg.sender, msg.value, _callback, _option);
+        RequestStatus status = RequestStatus.OpPending;
+        if (_zk) {
+            status = RequestStatus.ZkPending;
+        }
+        requests[requestKey] = Request(block.timestamp, msg.value, _refundee, _callback, status);
+        emit RequestSent(_requestId, _nonce, msg.sender, msg.value, _callback, _zk);
     }
 
     function fulfillRequest(
@@ -121,7 +118,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         // TODO: refund for op request
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
-        require(request.status == RequestStatus.Pending, "invalid request status");
+        require(
+            request.status == RequestStatus.ZkPending || request.status == RequestStatus.OpPending,
+            "invalid request status"
+        );
         require(block.timestamp > request.timestamp + requestTimeout);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
         (bool sent, ) = request.refundee.call{value: request.fee, gas: 50000}("");
@@ -150,7 +150,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             brevisProof.submitOpResult(_requestIds[i]);
             bytes32 requestKey = keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
-            require(request.status == RequestStatus.Pending, "invalid request status");
+            require(request.status == RequestStatus.OpPending, "invalid request status");
             request.status = RequestStatus.OpSubmitted;
         }
 
@@ -174,14 +174,14 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
     function postQueryData(bytes32 _requestId, uint256 _nonce, bytes calldata _queryData) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
-        if (requests[requestKey].option == Option.OpMode) {
-            bytes32 dataHash = keccak256(_queryData);
-            keccakToMimc[dataHash] = _requestId;
-            disputes[requestKey].status = DisputeStatus.QueryDataPosted;
-            emit QueryDataPost(_requestId, _nonce);
-        } else {
-            revert("not a valid op request");
-        }
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(request.status == RequestStatus.OpDisputing, "invalid request status");
+        require(dispute.status == DisputeStatus.WaitingForQueryData, "invalid dispute status");
+        bytes32 dataHash = keccak256(_queryData);
+        keccakToMimc[dataHash] = _requestId;
+        disputes[requestKey].status = DisputeStatus.QueryDataPosted;
+        emit QueryDataPost(_requestId, _nonce);
     }
 
     // after postQueryData with OpMode
