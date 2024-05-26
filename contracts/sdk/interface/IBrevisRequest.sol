@@ -28,11 +28,15 @@ interface IBrevisRequest {
         Null,
         WaitingForQueryData,
         QueryDataPosted,
-        WaitingForZkProof
+        WaitingForQueryDataProof,
+        QueryDataProofPosted,
+        WaitingForValidityProof,
+        ValidityProofPosted
     }
 
     struct Dispute {
         DisputeStatus status;
+        bytes32 queryDataHash;
         uint256 responseDeadline;
     }
 
@@ -44,9 +48,10 @@ interface IBrevisRequest {
     event RequestsCallbackFailed(bytes32[] requestIds, uint256[] nonces);
 
     event OpRequestsFulfilled(bytes32[] requestIds, uint256[] nonces, bytes[] queryURLs);
-    event Challenge(bytes32 indexed requestId, uint256 nonce, DisputeStatus status, address from);
-    event QueryDataPost(bytes32 indexed requestId, uint256 nonce);
-    event ProofPost(bytes32 indexed requestId, uint256 nonce);
+    event AskFor(bytes32 indexed requestId, uint256 nonce, DisputeStatus status, address from);
+    event QueryDataPosted(bytes32 indexed requestId, uint256 nonce);
+    event QueryDataProofPosted(bytes32 indexed requestId, uint256 nonce);
+    event ValidityProofProofPosted(bytes32 indexed requestId, uint256 nonce);
 
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event ChallengeWindowUpdated(uint256 from, uint256 to);
@@ -93,11 +98,13 @@ interface IBrevisRequest {
 
     function postQueryData(bytes32 _requestId, uint256 _nonce, bytes calldata _queryData) external;
 
-    function challengeQueryData(bytes calldata _proof, uint256 _nonce) external;
+    function askForQueryDataProof(bytes32 _requestId, uint256 _nonce) external payable;
 
-    function askForProof(bytes32 _requestId, uint256 _nonce) external payable;
+    function postQueryDataProof(bytes32 _requestId, uint256 _nonce, bytes calldata _proof) external;
 
-    function postProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external;
+    function askForValidityProof(bytes32 _requestId, uint256 _nonce) external payable;
+
+    function postValidityProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external;
 
     function queryRequestStatus(bytes32 _requestId, uint256 _nonce) external view returns (RequestStatus);
 }
