@@ -24,6 +24,8 @@ const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || process.env
 const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
 const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const optimismEndpoint = process.env.OPTIMISM_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
+const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY ||  process.env.DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -65,6 +67,10 @@ const config: HardhatUserConfig = {
     arbitrum: {
       url: process.env.ARBITRUM_ENDPOINT || 'https://arbitrum.llamarpc.com',
       accounts: [`0x${privateKey}`]
+    },
+    optimism: {
+      url: optimismEndpoint,
+      accounts: [`0x${optimismPrivateKey}`]
     }
   },
   namedAccounts: {
@@ -100,7 +106,8 @@ const config: HardhatUserConfig = {
       linea: process.env.LINEASCAN_API_KEY as string,
       holesky: process.env.ETHERSCAN_API_KEY as string,
       base: process.env.BASESCAN_API_KEY as string,
-      arbitrumOne: process.env.ARBISCAN_API_KEY as string
+      arbitrumOne: process.env.ARBISCAN_API_KEY as string,
+      optimisticEthereum: process.env.OPSCAN_API_KEY as string
     },
     customChains: [
       {
