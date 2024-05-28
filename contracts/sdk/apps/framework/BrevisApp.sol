@@ -5,7 +5,7 @@ import "../../interface/IBrevisProof.sol";
 import "../../lib/Lib.sol";
 
 abstract contract BrevisApp {
-    IBrevisProof public immutable brevisProof;
+    IBrevisProof public brevisProof;
 
     constructor(IBrevisProof _brevisProof) {
         brevisProof = _brevisProof;
