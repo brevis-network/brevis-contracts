@@ -33,19 +33,23 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 _nonce,
         address _refundee,
         address _callback,
-        bool _zk
+        RequestOption _option
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
         require(requests[requestKey].status == RequestStatus.Null, "invalid request status");
         if (_refundee == address(0)) {
             _refundee = msg.sender;
         }
-        RequestStatus status = RequestStatus.OpPending;
-        if (_zk) {
-            status = RequestStatus.ZkPending;
+        RequestStatus status;
+        if (_option == RequestOption.Zk) {
+            status == RequestStatus.ZkPending;
+        } else if (_option == RequestOption.Zk) {
+            status = RequestStatus.OpPending;
+        } else {
+            revert("invalid request option");
         }
         requests[requestKey] = Request(block.timestamp, msg.value, _refundee, _callback, status);
-        emit RequestSent(_requestId, _nonce, msg.sender, msg.value, _callback, _zk);
+        emit RequestSent(_requestId, _nonce, msg.sender, msg.value, _callback, _option);
     }
 
     function fulfillRequest(

@@ -16,6 +16,11 @@ interface IBrevisRequest {
         Refunded
     }
 
+    enum RequestOption {
+        Zk,
+        Op
+    }
+
     struct Request {
         uint256 timestamp;
         uint256 fee;
@@ -40,7 +45,14 @@ interface IBrevisRequest {
         uint256 responseDeadline;
     }
 
-    event RequestSent(bytes32 requestId, uint256 _nonce, address sender, uint256 fee, address callback, bool zk);
+    event RequestSent(
+        bytes32 requestId,
+        uint256 _nonce,
+        address sender,
+        uint256 fee,
+        address callback,
+        RequestOption option
+    );
     event RequestFulfilled(bytes32 requestId, uint256 nonce);
     event RequestsFulfilled(bytes32[] requestIds, uint256[] nonces);
     event RequestRefunded(bytes32 requestId, uint256 nonce);
@@ -62,7 +74,7 @@ interface IBrevisRequest {
         uint256 _nonce,
         address _refundee,
         address _callback,
-        bool _zk
+        RequestOption option
     ) external payable;
 
     function fulfillRequest(
