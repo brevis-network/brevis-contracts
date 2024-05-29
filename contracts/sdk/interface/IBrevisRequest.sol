@@ -31,17 +31,17 @@ interface IBrevisRequest {
 
     enum DisputeStatus {
         Null,
-        WaitingForQueryData,
-        QueryDataPosted,
-        WaitingForQueryDataProof,
-        QueryDataProofPosted,
-        WaitingForValidityProof,
-        ValidityProofPosted
+        WaitingForRequestData,
+        RequestDataPosted,
+        WaitingForDataAvailabilityProof,
+        DataAvailabilityProofPosted,
+        WaitingForDataValidityProof,
+        DataValidityProofPosted
     }
 
     struct Dispute {
         DisputeStatus status;
-        bytes32 queryDataHash;
+        bytes32 requestDataHash;
         uint256 responseDeadline;
     }
 
@@ -58,11 +58,11 @@ interface IBrevisRequest {
     event RequestRefunded(bytes32 requestId, uint256 nonce);
     event RequestCallbackFailed(bytes32 requestId, uint256 nonce);
 
-    event OpRequestsFulfilled(bytes32[] requestIds, uint256[] nonces, bytes[] queryURLs);
+    event OpRequestsFulfilled(bytes32[] requestIds, uint256[] nonces, bytes[] URLs);
     event AskFor(bytes32 indexed requestId, uint256 nonce, DisputeStatus status, address from);
-    event QueryDataPosted(bytes32 indexed requestId, uint256 nonce);
-    event QueryDataProofPosted(bytes32 indexed requestId, uint256 nonce);
-    event ValidityProofProofPosted(bytes32 indexed requestId, uint256 nonce);
+    event RequestDataPosted(bytes32 indexed requestId, uint256 nonce);
+    event DataAvailabilityProofPosted(bytes32 indexed requestId, uint256 nonce);
+    event DataValidityProofProofPosted(bytes32 indexed requestId, uint256 nonce);
 
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event ChallengeWindowUpdated(uint256 from, uint256 to);
@@ -103,7 +103,7 @@ interface IBrevisRequest {
     function fulfillOpRequests(
         bytes32[] calldata _requestIds,
         uint256[] calldata _nonces,
-        bytes[] calldata _queryURLs,
+        bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
@@ -111,17 +111,17 @@ interface IBrevisRequest {
 
     function refund(bytes32 _requestId, uint256 _nonce) external;
 
-    function askForQueryData(bytes32 _requestId, uint256 _nonce) external payable;
+    function askForRequestData(bytes32 _requestId, uint256 _nonce) external payable;
 
-    function postQueryData(bytes32 _requestId, uint256 _nonce, bytes calldata _queryData) external;
+    function postRequestData(bytes32 _requestId, uint256 _nonce, bytes calldata _requestData) external;
 
-    function askForQueryDataProof(bytes32 _requestId, uint256 _nonce) external payable;
+    function askForDataAvailabilityProof(bytes32 _requestId, uint256 _nonce) external payable;
 
-    function postQueryDataProof(bytes32 _requestId, uint256 _nonce, bytes calldata _proof) external;
+    function postDataAvailabilityProof(bytes32 _requestId, uint256 _nonce, bytes calldata _proof) external;
 
-    function askForValidityProof(bytes32 _requestId, uint256 _nonce) external payable;
+    function askForDataValidityProof(bytes32 _requestId, uint256 _nonce) external payable;
 
-    function postValidityProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external;
+    function postDataValidityProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external;
 
     function queryRequestStatus(bytes32 _requestId, uint256 _nonce) external view returns (RequestStatus);
 
