@@ -10,8 +10,10 @@ import "../../verifiers/interfaces/IZkpVerifier.sol";
 contract BrevisProof is BrevisAggProof {
     mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address
     mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost
+    address public brevisRequest;
 
     event VerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
+    event BrevisRequestContractUpdated(address brevisRequest);
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
@@ -63,19 +65,12 @@ contract BrevisProof is BrevisAggProof {
         emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);
     }
 
-    address public brevisRequest;
-    event BrevisRequestUpdated(address brevisRequest);
-    modifier onlyBrevisRequest() {
-        require(brevisRequest == msg.sender, "not brevisRequest");
-        _;
+    function getRequestContract() external view returns (address) {
+        return brevisRequest;
     }
 
-    function updateBrevisRequest(address _brevisRequest) public onlyOwner {
+    function updateBrevisRequestContract(address _brevisRequest) public onlyOwner {
         brevisRequest = _brevisRequest;
-        emit BrevisRequestUpdated(_brevisRequest);
-    }
-
-    function submitOpResult(bytes32 _requestId) external onlyBrevisRequest {
-        proofs[_requestId].commitHash = _requestId;
+        emit BrevisRequestContractUpdated(_brevisRequest);
     }
 }

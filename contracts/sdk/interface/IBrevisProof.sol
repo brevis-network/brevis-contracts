@@ -28,4 +28,6 @@ interface IBrevisProof {
         bytes32[] calldata _requestIds,
         bytes calldata _proofWithPubInputs
     ) external;
+
+    function getRequestContract() external view returns (address);
 }

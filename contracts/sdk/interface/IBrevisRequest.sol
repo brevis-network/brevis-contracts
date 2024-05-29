@@ -57,7 +57,6 @@ interface IBrevisRequest {
     event RequestsFulfilled(bytes32[] requestIds, uint256[] nonces);
     event RequestRefunded(bytes32 requestId, uint256 nonce);
     event RequestCallbackFailed(bytes32 requestId, uint256 nonce);
-    event RequestsCallbackFailed(bytes32[] requestIds, uint256[] nonces);
 
     event OpRequestsFulfilled(bytes32[] requestIds, uint256[] nonces, bytes[] queryURLs);
     event AskFor(bytes32 indexed requestId, uint256 nonce, DisputeStatus status, address from);
@@ -89,10 +88,16 @@ interface IBrevisRequest {
         bytes32[] calldata _requestIds,
         uint256[] calldata _nonces,
         uint64 _chainId,
+        bytes calldata _proof
+    ) external;
+
+    function fulfillRequests(
+        bytes32[] calldata _requestIds,
+        uint256[] calldata _nonces,
+        uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address _callback
+        bytes[] calldata _appCircuitOutputs
     ) external;
 
     function fulfillOpRequests(
@@ -119,4 +124,10 @@ interface IBrevisRequest {
     function postValidityProof(bytes32 _requestId, uint256 _nonce, uint64 _chainId, bytes calldata _proof) external;
 
     function queryRequestStatus(bytes32 _requestId, uint256 _nonce) external view returns (RequestStatus);
+
+    function queryRequestStatus(
+        bytes32 _requestId,
+        uint256 _nonce,
+        uint256 _appChallengeWindow
+    ) external view returns (RequestStatus);
 }

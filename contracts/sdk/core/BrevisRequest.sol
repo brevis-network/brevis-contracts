@@ -88,31 +88,43 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32[] calldata _requestIds,
         uint256[] calldata _nonces,
         uint64 _chainId,
+        bytes calldata _proof
+    ) external {
+        _fulfillRequests(_requestIds, _nonces, _chainId, _proof);
+    }
+
+    function fulfillRequests(
+        bytes32[] calldata _requestIds,
+        uint256[] calldata _nonces,
+        uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address _callback
+        bytes[] calldata _appCircuitOutputs
     ) external {
-        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+        _fulfillRequests(_requestIds, _nonces, _chainId, _proof);
 
-        for (uint8 i = 1; i < _requestIds.length; i++) {
-            bytes32 requestKey = keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
-            requests[requestKey].status = RequestStatus.ZkAttested;
-        }
-
-        emit RequestsFulfilled(_requestIds, _nonces);
-
-        if (_callback != address(0)) {
-            (bool success, ) = _callback.call(
-                abi.encodeWithSelector(
-                    IBrevisApp.brevisBatchCallback.selector,
-                    _chainId,
-                    _proofDataArray,
-                    _appCircuitOutputs
-                )
+        // callback
+        IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+        for (uint8 i = 0; i < _requestIds.length; i++) {
+            require(
+                _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
+                "failed to open output commitment"
             );
-            if (!success) {
-                emit RequestsCallbackFailed(_requestIds, _nonces);
+
+            bytes32 requestKey = keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
+            Request storage request = requests[requestKey];
+            if (request.callback != address(0)) {
+                (bool success, ) = request.callback.call(
+                    abi.encodeWithSelector(
+                        bytes4(keccak256(bytes("brevisCallback(bytes32,bytes32,bytes)"))),
+                        _requestIds[i],
+                        _proofDataArray[i].appVkHash,
+                        _appCircuitOutputs[i]
+                    )
+                );
+                if (!success) {
+                    emit RequestCallbackFailed(_requestIds[i], _nonces[i]);
+                }
             }
         }
     }
@@ -149,12 +161,14 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         sigsVerifier.verifySigs(abi.encodePacked(domain, _requestIds, _nonces), _sigs, _signers, _powers);
 
+        uint256 timestamp = block.timestamp;
         for (uint i = 0; i < _requestIds.length; i++) {
             brevisProof.submitOpResult(_requestIds[i]);
             bytes32 requestKey = keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
             require(request.status == RequestStatus.OpPending, "invalid request status");
             request.status = RequestStatus.OpSubmitted;
+            request.timestamp = timestamp;
         }
 
         emit OpRequestsFulfilled(_requestIds, _nonces, _queryURLs);
@@ -275,33 +289,71 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      **************************/
 
     function queryRequestStatus(bytes32 _requestId, uint256 _nonce) external view returns (RequestStatus) {
+        return _queryRequestStatus(_requestId, _nonce, challengeWindow);
+    }
+
+    function queryRequestStatus(
+        bytes32 _requestId,
+        uint256 _nonce,
+        uint256 _appChallengeWindow
+    ) external view returns (RequestStatus) {
+        return _queryRequestStatus(_requestId, _nonce, _appChallengeWindow);
+    }
+
+    function queryRequestTimestamp(bytes32 _requestId, uint256 _nonce) external view returns (uint256) {
         bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
-        Request storage request = requests[requestKey];
-        if (request.status == RequestStatus.OpSubmitted) {
-            if (request.timestamp + challengeWindow < block.timestamp) {
-                return RequestStatus.OpAttested;
-            }
-        } else if (request.status == RequestStatus.OpDisputing) {
-            Dispute storage dispute = disputes[requestKey];
-            if (dispute.status == DisputeStatus.QueryDataPosted) {
-                if (request.timestamp + challengeWindow < block.timestamp) {
-                    return RequestStatus.OpAttested;
-                }
-            } else if (dispute.responseDeadline < block.timestamp) {
-                // WaitingForQueryData || WaitingForZkProof
-                return RequestStatus.OpDisputed;
-            }
-        }
-        return requests[requestKey].status;
+        return requests[requestKey].timestamp;
     }
 
     /*********************
      * Private Functions *
      *********************/
 
-    function verifyQueryDataProofAndRetrieveKeys(
+    // fullfill multiple requests with aggregate proof
+    function _fulfillRequests(
+        bytes32[] calldata _requestIds,
+        uint256[] calldata _nonces,
+        uint64 _chainId,
         bytes calldata _proof
-    ) private returns (bytes32 _myRequestId, bytes32 _dataHash) {
-        // TODO
+    ) private {
+        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+
+        for (uint8 i = 1; i < _requestIds.length; i++) {
+            bytes32 requestKey = keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
+            Request storage request = requests[requestKey];
+            require(
+                request.status != RequestStatus.Null && request.status != RequestStatus.ZkAttested,
+                "invalid request status"
+            );
+            request.status = RequestStatus.ZkAttested;
+        }
+        emit RequestsFulfilled(_requestIds, _nonces);
+    }
+
+    function _queryRequestStatus(
+        bytes32 _requestId,
+        uint256 _nonce,
+        uint256 _challengeWindow
+    ) private view returns (RequestStatus) {
+        bytes32 requestKey = keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        if (request.status == RequestStatus.OpSubmitted) {
+            if (request.timestamp + _challengeWindow < block.timestamp) {
+                return RequestStatus.OpAttested;
+            }
+        } else if (request.status == RequestStatus.OpDisputing) {
+            Dispute storage dispute = disputes[requestKey];
+            if (
+                dispute.status == DisputeStatus.QueryDataPosted || dispute.status == DisputeStatus.QueryDataProofPosted
+            ) {
+                if (request.timestamp + _challengeWindow < block.timestamp) {
+                    return RequestStatus.OpAttested;
+                }
+            } else if (dispute.responseDeadline < block.timestamp) {
+                // WaitingForQueryData || WaitingForValidityProof || ValidityProofPosted
+                return RequestStatus.OpDisputed;
+            }
+        }
+        return requests[requestKey].status;
     }
 }
