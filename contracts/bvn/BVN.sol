@@ -181,6 +181,18 @@ contract BVN {
         return (brevisValidators[_valAddr].deregisterTime > block.timestamp);
     }
 
+    function getRegisteredValidatorNum() public view returns (uint256) {
+        return registeredValidators.length;
+    }
+
+    function getRegisteredValidators() public view returns (address[] memory) {
+        address[] memory valaddrs = new address[](registeredValidators.length);
+        for (uint32 i = 0; i < registeredValidators.length; i++) {
+            valaddrs[i] = registeredValidators[i];
+        }
+        return valaddrs;
+    }
+
     function isBondedValidator(address _valAddr) public view returns (bool) {
         return (staking.isBondedValidator(_valAddr) && isRegisteredValidator(_valAddr));
     }
@@ -193,5 +205,18 @@ contract BVN {
             }
         }
         return num;
+    }
+
+    function getBondedValidators() public view returns (address[] memory) {
+        uint256 valNum = getBondedValidatorNum();
+        address[] memory valaddrs = new address[](valNum);
+        uint256 j;
+        for (uint32 i = 0; i < registeredValidators.length; i++) {
+            if (staking.isBondedValidator(registeredValidators[i])) {
+                valaddrs[j] = registeredValidators[i];
+                j++;
+            }
+        }
+        return valaddrs;
     }
 }
