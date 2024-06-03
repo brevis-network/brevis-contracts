@@ -25,7 +25,7 @@ const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAUL
 const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
 const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const optimismEndpoint = process.env.OPTIMISM_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
-const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY ||  process.env.DEFAULT_PRIVATE_KEY;
+const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -69,7 +69,7 @@ const config: HardhatUserConfig = {
       accounts: [`0x${privateKey}`]
     },
     optimism: {
-      url: optimismEndpoint,
+      url: optimismEndpoint || '',
       accounts: [`0x${optimismPrivateKey}`]
     }
   },
