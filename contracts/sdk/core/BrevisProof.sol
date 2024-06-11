@@ -9,9 +9,11 @@ import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisProof is BrevisAggProof {
     mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address
-    mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost
+    mapping(bytes32 => Brevis.ProofAppData) public proofs;
+    address public brevisRequest;
 
     event VerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
+    event BrevisRequestContractUpdated(address brevisRequest);
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
@@ -26,10 +28,7 @@ contract BrevisProof is BrevisAggProof {
     }
 
     function hasProof(bytes32 _requestId) external view returns (bool) {
-        return
-            proofs[_requestId].commitHash != bytes32(0) ||
-            proofs[_requestId].appCommitHash != bytes32(0) ||
-            inAgg(_requestId);
+        return proofs[_requestId].appCommitHash != bytes32(0) || inAgg(_requestId);
     }
 
     function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32) {
@@ -45,7 +44,7 @@ contract BrevisProof is BrevisAggProof {
     function unpackProofData(bytes calldata _proofWithPubInputs) internal pure returns (Brevis.ProofData memory data) {
         data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
         data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
-        data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
+        //data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
         data.appCommitHash = bytes32(
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]
         );
@@ -63,19 +62,12 @@ contract BrevisProof is BrevisAggProof {
         emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);
     }
 
-    address public brevisRequest;
-    event BrevisRequestUpdated(address brevisRequest);
-    modifier onlyBrevisRequest() {
-        require(brevisRequest == msg.sender, "not brevisRequest");
-        _;
+    function getRequestContract() external view returns (address) {
+        return brevisRequest;
     }
 
-    function updateBrevisRequest(address _brevisRequest) public onlyOwner {
+    function updateBrevisRequestContract(address _brevisRequest) public onlyOwner {
         brevisRequest = _brevisRequest;
-        emit BrevisRequestUpdated(_brevisRequest);
-    }
-
-    function submitOpResult(bytes32 _requestId) external onlyBrevisRequest {
-        proofs[_requestId].commitHash = _requestId;
+        emit BrevisRequestContractUpdated(_brevisRequest);
     }
 }

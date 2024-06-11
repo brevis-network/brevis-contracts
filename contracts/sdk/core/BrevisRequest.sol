@@ -13,12 +13,11 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     ISigsVerifier public immutable sigsVerifier;
 
     uint256 public requestTimeout;
-    uint256 public challengeWindow; // in seconds
-    uint256 public responseTimeout; // BVN responses an ask-for-data request
+    uint256 public challengeWindow;
+    uint256 public responseTimeout;
 
-    mapping(bytes32 => Request) public requests; // TODO: store hash of request data to save gas cost
-    mapping(bytes32 => RequestExt) public requestExts;
-    mapping(bytes32 => bytes32) public keccakToMimc;
+    mapping(bytes32 => Request) public requests; // TODO: store data hash to save gas cost
+    mapping(bytes32 => Dispute) public disputes;
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
@@ -29,17 +28,26 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      * External and Public Functions *
      *********************************/
 
-    function sendRequest(bytes32 _requestId, address _refundee, address _callback, Option _option) external payable {
-        require(requests[_requestId].deadline == 0, "request already in queue");
-        require(_refundee != address(0), "refundee not provided");
-        requests[_requestId] = Request(
-            block.timestamp + requestTimeout,
-            msg.value,
-            _refundee,
-            _callback,
-            RequestStatus.Pending,
-            _option
-        );
+    function sendRequest(
+        bytes32 _requestId,
+        address _refundee,
+        address _callback,
+        RequestOption _option
+    ) external payable {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        require(requests[requestKey].status == RequestStatus.Null, "invalid request status");
+        if (_refundee == address(0)) {
+            _refundee = msg.sender;
+        }
+        RequestStatus status;
+        if (_option == RequestOption.Zk) {
+            status == RequestStatus.ZkPending;
+        } else if (_option == RequestOption.Zk) {
+            status = RequestStatus.OpPending;
+        } else {
+            revert("invalid request option");
+        }
+        requests[requestKey] = Request(block.timestamp, msg.value, _refundee, _callback, status);
         emit RequestSent(_requestId, msg.sender, msg.value, _callback, _option);
     }
 
@@ -49,19 +57,20 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes calldata _proof,
         bytes calldata _appCircuitOutput
     ) external {
-        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-
         bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof); // revert for invalid proof
         require(_requestId == reqIdFromProof, "requestId and proof not match");
-        requests[_requestId].status = RequestStatus.ZkAttested;
+
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        require(request.status == RequestStatus.ZkPending, "invalid request status");
+        request.status = RequestStatus.ZkAttested;
 
         emit RequestFulfilled(_requestId);
 
-        address app = address(requests[_requestId].callback);
-        if (app != address(0)) {
+        if (request.callback != address(0)) {
             // The relayer should set correct gas limit. If the call failed due to insufficient gasleft(),
             // anyone can still call the app.brevisCallback directly to proceed
-            (bool success, ) = app.call(
+            (bool success, ) = request.callback.call(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput)
             );
             if (!success) {
@@ -70,137 +79,187 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         }
     }
 
-    function fulfillAggRequests(
-        uint64 _chainId,
+    function fulfillRequests(
         bytes32[] calldata _requestIds,
+        uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address _callback
+        bytes[] calldata _appCircuitOutputs
     ) external {
         IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
-
-        for (uint8 i = 1; i < _requestIds.length; i++) {
-            bytes32 requestId = _requestIds[i];
-            requests[requestId].status = RequestStatus.ZkAttested;
+        bool withAppData;
+        if (_proofDataArray.length > 0) {
+            withAppData = true;
+            IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+            require(_proofDataArray.length == _appCircuitOutputs.length, "length mismatch");
         }
 
-        emit RequestsFulfilled(_requestIds);
+        uint256 numFulfilled;
+        for (uint8 i = 1; i < _requestIds.length; i++) {
+            bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
+            Request storage request = requests[requestKey];
+            if (request.status == RequestStatus.ZkPending) {
+                request.status = RequestStatus.ZkAttested;
+                numFulfilled++;
 
-        if (_callback != address(0)) {
-            (bool success, ) = _callback.call(
-                abi.encodeWithSelector(
-                    IBrevisApp.brevisBatchCallback.selector,
-                    _chainId,
-                    _proofDataArray,
-                    _appCircuitOutputs
-                )
-            );
-            if (!success) {
-                emit RequestsCallbackFailed(_requestIds);
+                if (withAppData) {
+                    // callback
+                    require(
+                        _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
+                        "failed to open output commitment"
+                    );
+                    if (request.callback != address(0)) {
+                        (bool success, ) = request.callback.call(
+                            abi.encodeWithSelector(
+                                bytes4(keccak256(bytes("brevisCallback(bytes32,bytes32,bytes)"))),
+                                _requestIds[i],
+                                _proofDataArray[i].appVkHash,
+                                _appCircuitOutputs[i]
+                            )
+                        );
+                        if (!success) {
+                            emit RequestCallbackFailed(_requestIds[i]);
+                        }
+                    }
+                }
             }
         }
+        require(numFulfilled > 0, "no fulfilled requests");
+        emit RequestsFulfilled(_requestIds);
     }
 
     function refund(bytes32 _requestId) external {
-        require(block.timestamp > requests[_requestId].deadline);
+        // TODO: refund for op request
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        require(
+            request.status == RequestStatus.ZkPending || request.status == RequestStatus.OpPending,
+            "invalid request status"
+        );
+        require(block.timestamp > request.timestamp + requestTimeout);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-        require(requests[_requestId].deadline != 0, "request not in queue");
-        requests[_requestId].deadline = 0; //reset deadline, then user is able to send request again
-        (bool sent, ) = requests[_requestId].refundee.call{value: requests[_requestId].fee, gas: 50000}("");
+        (bool sent, ) = request.refundee.call{value: request.fee, gas: 50000}("");
         require(sent, "send native failed");
-        requests[_requestId].status = RequestStatus.Refunded;
+        request.status = RequestStatus.Refunded;
         emit RequestRefunded(_requestId);
     }
 
     // --------------------- optimistic workflow functions ---------------------
 
-    // Op functions
     function fulfillOpRequests(
         bytes32[] calldata _requestIds,
-        bytes[] calldata _queryURLs,
+        bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
     ) external {
         require(_requestIds.length > 0, "invalid requestIds");
-        require(_requestIds.length == _queryURLs.length);
+        require(_requestIds.length == _dataURLs.length);
 
-        bytes memory signBytes = abi.encodePacked(block.chainid);
-        for (uint256 i = 0; i < _requestIds.length; i++) {
-            signBytes = abi.encodePacked(signBytes, _requestIds[i]);
-        }
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
-        sigsVerifier.verifySigs(abi.encodePacked(domain, signBytes), _sigs, _signers, _powers);
+        sigsVerifier.verifySigs(abi.encodePacked(domain, _requestIds), _sigs, _signers, _powers); // todo: nonces
 
+        uint256 timestamp = block.timestamp;
         for (uint i = 0; i < _requestIds.length; i++) {
-            brevisProof.submitOpResult(_requestIds[i]);
-            requests[_requestIds[i]].status = RequestStatus.OpSubmitted;
-            requestExts[_requestIds[i]].canChallengeBefore = block.timestamp + challengeWindow;
+            bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
+            Request storage request = requests[requestKey];
+            require(request.status == RequestStatus.OpPending, "invalid request status");
+            request.status = RequestStatus.OpSubmitted;
+            request.timestamp = timestamp;
         }
 
-        emit OpRequestsFulfilled(_requestIds, _queryURLs);
+        emit OpRequestsFulfilled(_requestIds, _dataURLs);
     }
 
-    function askForQueryData(bytes32 _requestId) external payable {
+    function askForRequestData(bytes32 _requestId) external payable {
         // TODO: msg.value should be larger than a configurable value
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(request.status == RequestStatus.OpSubmitted, "not in a disputable status");
+        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
 
-        require(requests[_requestId].status == RequestStatus.OpSubmitted, "not in a disputable status");
+        request.status = RequestStatus.OpDisputing;
+        dispute.status = DisputeStatus.WaitingForRequestData;
+        dispute.responseDeadline = block.timestamp + responseTimeout;
 
-        requestExts[_requestId].askFor = AskForType.QueryData;
-        requestExts[_requestId].shouldRespondBefore = block.timestamp + responseTimeout;
-        requests[_requestId].status = RequestStatus.OpDisputing;
-
-        emit AskFor(_requestId, AskForType.QueryData, msg.sender);
+        emit AskFor(_requestId, DisputeStatus.WaitingForRequestData, msg.sender);
     }
 
-    function postQueryData(bytes32 _requestId, bytes calldata _queryData) external {
-        if (requests[_requestId].option == Option.OpMode) {
-            bytes32 dataHash = keccak256(_queryData);
-            keccakToMimc[dataHash] = _requestId;
+    function postRequestData(bytes32 _requestId, bytes calldata _requestData) external {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(request.status == RequestStatus.OpDisputing, "invalid request status");
+        require(dispute.status == DisputeStatus.WaitingForRequestData, "invalid dispute status");
 
-            requests[_requestId].status = RequestStatus.OpQueryDataSubmitted;
-            requestExts[_requestId].canChallengeBefore = block.timestamp + challengeWindow; // extend the window for proof challenge
-            emit QueryDataPost(_requestId);
-        } else {
-            revert("not a valid op request");
-        }
+        disputes[requestKey].requestDataHash = keccak256(_requestData); // TODO: use claimed mimc?
+        disputes[requestKey].status = DisputeStatus.RequestDataPosted;
+        emit RequestDataPosted(_requestId);
     }
 
-    // after postQueryData with OpMode
-    function challengeQueryData(bytes calldata _proof) external {
-        (bytes32 myRequestId, bytes32 dataHash) = verifyQueryDataProofAndRetrieveKeys(_proof);
-        bytes32 opRequestId = keccakToMimc[dataHash];
-        require(opRequestId != bytes32(0), "query data not posted");
-
-        if (myRequestId != opRequestId) {
-            requests[opRequestId].status = RequestStatus.OpDisputed;
-            // TODO slash flow
-        }
-    }
-
-    function askForProof(bytes32 _requestId) external payable {
+    function askForDataAvailabilityProof(bytes32 _requestId) external payable {
         // TODO: msg.value should be larger than a configurable value
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
         require(
-            requests[_requestId].status == RequestStatus.OpSubmitted ||
-                requests[_requestId].status == RequestStatus.OpQueryDataSubmitted,
-            "not in a disputable status"
+            request.status == RequestStatus.OpDisputing && dispute.status == DisputeStatus.RequestDataPosted,
+            "invalid states"
         );
+        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
 
-        requestExts[_requestId].askFor = AskForType.Proof;
-        requestExts[_requestId].shouldRespondBefore = block.timestamp + responseTimeout;
-        requests[_requestId].status = RequestStatus.OpDisputing;
+        request.status = RequestStatus.OpDisputing;
+        dispute.status = DisputeStatus.WaitingForDataAvailabilityProof;
+        dispute.responseDeadline = block.timestamp + responseTimeout;
 
-        emit AskFor(_requestId, AskForType.Proof, msg.sender);
+        emit AskFor(_requestId, DisputeStatus.WaitingForDataAvailabilityProof, msg.sender);
     }
 
-    function postProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external {
+    function postDataAvailabilityProof(bytes32 _requestId, bytes calldata _proof) external {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(
+            request.status == RequestStatus.OpDisputing &&
+                dispute.status == DisputeStatus.WaitingForDataAvailabilityProof,
+            "invalid states"
+        );
+        disputes[requestKey].status = DisputeStatus.DataAvailabilityProofPosted;
+        // TODO: check proof
+
+        emit DataAvailabilityProofPosted(_requestId);
+    }
+
+    function askForDataValidityProof(bytes32 _requestId) external payable {
+        // TODO: msg.value should be larger than a configurable value
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(
+            request.status == RequestStatus.OpSubmitted ||
+                (request.status == RequestStatus.OpDisputing &&
+                    dispute.status != DisputeStatus.WaitingForDataValidityProof),
+            "invalid states"
+        );
+        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
+
+        request.status = RequestStatus.OpDisputing;
+        dispute.status = DisputeStatus.WaitingForDataValidityProof;
+        dispute.responseDeadline = block.timestamp + responseTimeout;
+
+        emit AskFor(_requestId, DisputeStatus.WaitingForDataValidityProof, msg.sender);
+    }
+
+    function postDataValidityProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external {
         bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof);
         require(_requestId == reqIdFromProof, "requestId and proof not match");
 
-        requests[_requestId].status = RequestStatus.ZkAttested;
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        requests[requestKey].status = RequestStatus.ZkAttested;
+        disputes[requestKey].status = DisputeStatus.DataValidityProofPosted;
 
-        emit ProofPost(_requestId);
+        emit DataValidityProofProofPosted(_requestId);
     }
 
     // --------------------- owner functions ---------------------
@@ -228,31 +287,43 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      **************************/
 
     function queryRequestStatus(bytes32 _requestId) external view returns (RequestStatus) {
-        if (
-            (requests[_requestId].status == RequestStatus.OpSubmitted ||
-                requests[_requestId].status == RequestStatus.OpQueryDataSubmitted) &&
-            requestExts[_requestId].canChallengeBefore <= block.timestamp
-        ) {
-            return RequestStatus.OpAttested;
-        }
+        return _queryRequestStatus(_requestId, challengeWindow);
+    }
 
-        if (
-            requests[_requestId].status == RequestStatus.OpDisputing &&
-            requestExts[_requestId].shouldRespondBefore <= block.timestamp
-        ) {
-            return RequestStatus.OpDisputed;
-        }
+    function queryRequestStatus(bytes32 _requestId, uint256 _appChallengeWindow) external view returns (RequestStatus) {
+        return _queryRequestStatus(_requestId, _appChallengeWindow);
+    }
 
-        return requests[_requestId].status;
+    function queryRequestTimestamp(bytes32 _requestId) external view returns (uint256) {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        return requests[requestKey].timestamp;
     }
 
     /*********************
      * Private Functions *
      *********************/
 
-    function verifyQueryDataProofAndRetrieveKeys(
-        bytes calldata _proof
-    ) private returns (bytes32 _myRequestId, bytes32 _dataHash) {
-        // TODO
+    function _queryRequestStatus(bytes32 _requestId, uint256 _challengeWindow) private view returns (RequestStatus) {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        if (request.status == RequestStatus.OpSubmitted) {
+            if (request.timestamp + _challengeWindow < block.timestamp) {
+                return RequestStatus.OpAttested;
+            }
+        } else if (request.status == RequestStatus.OpDisputing) {
+            Dispute storage dispute = disputes[requestKey];
+            if (
+                dispute.status == DisputeStatus.RequestDataPosted ||
+                dispute.status == DisputeStatus.DataAvailabilityProofPosted
+            ) {
+                if (request.timestamp + _challengeWindow < block.timestamp) {
+                    return RequestStatus.OpAttested;
+                }
+            } else if (dispute.responseDeadline < block.timestamp) {
+                // WaitingForRequestData || WaitingForDataValidityProof || DataValidityProofPosted
+                return RequestStatus.OpDisputed;
+            }
+        }
+        return requests[requestKey].status;
     }
 }

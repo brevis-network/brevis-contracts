@@ -5,59 +5,68 @@ import "../lib/Lib.sol";
 
 interface IBrevisRequest {
     enum RequestStatus {
-        Pending,
+        Null,
+        ZkPending,
         ZkAttested,
+        OpPending,
         OpSubmitted,
-        OpQueryDataSubmitted,
         OpDisputing,
         OpDisputed,
         OpAttested,
         Refunded
     }
 
-    enum Option {
-        ZkMode,
-        OpMode
-    }
-
-    enum AskForType {
-        NULL,
-        QueryData,
-        Proof
+    enum RequestOption {
+        Zk,
+        Op
     }
 
     struct Request {
-        uint256 deadline;
+        uint256 timestamp;
         uint256 fee;
         address refundee;
-        address callback;
+        address callback; // todo: add gas limit
         RequestStatus status;
-        Option option;
     }
 
-    struct RequestExt {
-        uint256 canChallengeBefore;
-        AskForType askFor;
-        uint256 shouldRespondBefore;
+    enum DisputeStatus {
+        Null,
+        WaitingForRequestData,
+        RequestDataPosted,
+        WaitingForDataAvailabilityProof,
+        DataAvailabilityProofPosted,
+        WaitingForDataValidityProof,
+        DataValidityProofPosted
     }
 
-    event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback, Option option);
+    struct Dispute {
+        DisputeStatus status;
+        bytes32 requestDataHash;
+        uint256 responseDeadline;
+    }
+
+    event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback, RequestOption option);
     event RequestFulfilled(bytes32 requestId);
-    event RequestsFulfilled(bytes32[] requestId);
+    event RequestsFulfilled(bytes32[] requestIds);
     event RequestRefunded(bytes32 requestId);
     event RequestCallbackFailed(bytes32 requestId);
-    event RequestsCallbackFailed(bytes32[] requestIds);
 
-    event OpRequestsFulfilled(bytes32[] requestIds, bytes[] queryURLs);
-    event AskFor(bytes32 indexed requestId, AskForType askFor, address from);
-    event QueryDataPost(bytes32 indexed requestId);
-    event ProofPost(bytes32 indexed requestId);
+    event OpRequestsFulfilled(bytes32[] requestIds, bytes[] URLs);
+    event AskFor(bytes32 indexed requestId, DisputeStatus status, address from);
+    event RequestDataPosted(bytes32 indexed requestId);
+    event DataAvailabilityProofPosted(bytes32 indexed requestId);
+    event DataValidityProofProofPosted(bytes32 indexed requestId);
 
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event ChallengeWindowUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
 
-    function sendRequest(bytes32 _requestId, address _refundee, address _callback, Option _option) external payable;
+    function sendRequest(
+        bytes32 _requestId,
+        address _refundee,
+        address _callback,
+        RequestOption option
+    ) external payable;
 
     function fulfillRequest(
         bytes32 _requestId,
@@ -66,26 +75,37 @@ interface IBrevisRequest {
         bytes calldata _appCircuitOutput
     ) external;
 
-    function fulfillAggRequests(
-        uint64 _chainId,
+    function fulfillRequests(
         bytes32[] calldata _requestIds,
+        uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address _callback
+        bytes[] calldata _appCircuitOutputs
+    ) external;
+
+    function fulfillOpRequests(
+        bytes32[] calldata _requestIds,
+        bytes[] calldata _dataURLs,
+        bytes[] calldata _sigs,
+        address[] calldata _signers,
+        uint256[] calldata _powers
     ) external;
 
     function refund(bytes32 _requestId) external;
 
-    function askForQueryData(bytes32 _requestId) external payable;
+    function askForRequestData(bytes32 _requestId) external payable;
 
-    function postQueryData(bytes32 _requestId, bytes calldata _queryData) external;
+    function postRequestData(bytes32 _requestId, bytes calldata _requestData) external;
 
-    function challengeQueryData(bytes calldata _proof) external;
+    function askForDataAvailabilityProof(bytes32 _requestId) external payable;
 
-    function askForProof(bytes32 _requestId) external payable;
+    function postDataAvailabilityProof(bytes32 _requestId, bytes calldata _proof) external;
 
-    function postProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external;
+    function askForDataValidityProof(bytes32 _requestId) external payable;
+
+    function postDataValidityProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external;
 
     function queryRequestStatus(bytes32 _requestId) external view returns (RequestStatus);
+
+    function queryRequestStatus(bytes32 _requestId, uint256 _appChallengeWindow) external view returns (RequestStatus);
 }
