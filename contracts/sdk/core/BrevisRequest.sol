@@ -335,7 +335,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         }
 
         uint256 numFulfilled;
-        for (uint256 i = 1; i < _requestIds.length; i++) {
+        for (uint256 i = 0; i < _requestIds.length; i++) {
             bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
             RequestStatus status = request.status;
