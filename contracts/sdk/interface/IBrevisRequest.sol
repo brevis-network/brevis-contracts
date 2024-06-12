@@ -60,6 +60,7 @@ interface IBrevisRequest {
     event RequestsFulfilled(bytes32[] requestIds);
     event RequestRefunded(bytes32 requestId);
     event RequestCallbackFailed(bytes32 requestId);
+    event RequestsCallbackFailed(bytes32[] requestIds);
 
     event OpRequestsFulfilled(bytes32[] requestIds, bytes[] URLs);
     event AskFor(bytes32 indexed requestId, DisputeStatus status, address from);
@@ -90,7 +91,17 @@ interface IBrevisRequest {
         uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs
+        bytes[] calldata _appCircuitOutputs,
+        address[] calldata callbacks
+    ) external;
+
+    function fulfillRequests(
+        bytes32[] calldata _requestIds,
+        uint64 _chainId,
+        bytes calldata _proof,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs,
+        address batchCallback
     ) external;
 
     function fulfillOpRequests(
