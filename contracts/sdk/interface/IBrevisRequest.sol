@@ -55,7 +55,14 @@ interface IBrevisRequest {
         uint256 responseDeadline;
     }
 
-    event RequestSent(bytes32 requestId, address sender, uint256 fee, address callback, RequestOption option);
+    event RequestSent(
+        bytes32 requestId,
+        address sender,
+        uint256 fee,
+        address callback,
+        uint64 gas,
+        RequestOption option
+    );
     event RequestFulfilled(bytes32 requestId);
     event RequestsFulfilled(bytes32[] requestIds);
     event RequestRefunded(bytes32 requestId);
@@ -76,6 +83,7 @@ interface IBrevisRequest {
         bytes32 _requestId,
         address _refundee,
         address _callback,
+        uint64 _gas,
         RequestOption option
     ) external payable;
 
@@ -84,6 +92,14 @@ interface IBrevisRequest {
         uint64 _chainId,
         bytes calldata _proof,
         bytes calldata _appCircuitOutput
+    ) external;
+
+    function fulfillRequest(
+        bytes32 _requestId,
+        uint64 _chainId,
+        bytes calldata _proof,
+        bytes calldata _appCircuitOutput,
+        address callback
     ) external;
 
     function fulfillRequests(

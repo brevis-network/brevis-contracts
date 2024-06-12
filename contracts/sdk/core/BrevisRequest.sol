@@ -32,6 +32,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 _requestId,
         address _refundee,
         address _callback,
+        uint64 _gas,
         RequestOption _option
     ) external payable {
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
@@ -48,9 +49,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             revert("invalid request option");
         }
         Fee memory fee = Fee(msg.value, _refundee);
-        Callback memory callback = Callback(_callback, 0); // todo: support gas limit
+        Callback memory callback = Callback(_callback, _gas);
         requests[requestKey] = Request(uint64(block.timestamp), status, fee, callback);
-        emit RequestSent(_requestId, msg.sender, msg.value, _callback, _option);
+        emit RequestSent(_requestId, msg.sender, msg.value, _callback, _gas, _option);
     }
 
     // fulfill onchain request
