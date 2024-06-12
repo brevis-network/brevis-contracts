@@ -19,22 +19,12 @@ abstract contract BrevisApp {
         brevisRequest = IBrevisRequest(brevisProof.getRequestContract());
     }
 
-    function brevisCallback(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
-        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
-        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
-    }
-
     function brevisCallback(
         bytes32 _requestId,
         bytes32 _appVkHash,
         bytes calldata _appCircuitOutput
     ) external onlyBrevisRequest {
         handleProofResult(_requestId, _appVkHash, _appCircuitOutput);
-    }
-
-    function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
-        // to be overrided by custom app
     }
 
     function brevisBatchCallback(
@@ -53,8 +43,15 @@ abstract contract BrevisApp {
         }
     }
 
-    // handle request in AggProof case, called by biz side
-    function singleRun(
+    // apply proved request
+    function applyBrevisProof(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
+        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
+        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
+    }
+
+    // apply single request submitted through AggProof
+    function applyBrevisProof(
         uint64 _chainId,
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
@@ -65,5 +62,9 @@ abstract contract BrevisApp {
         IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
         require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
+    }
+
+    function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+        // to be overrided by custom app
     }
 }

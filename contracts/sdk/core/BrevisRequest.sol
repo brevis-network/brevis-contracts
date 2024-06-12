@@ -59,8 +59,11 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes calldata _proof,
         bytes calldata _appCircuitOutput
     ) external {
-        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof); // revert for invalid proof
-        require(_requestId == reqIdFromProof, "requestId and proof not match");
+        (bytes32 requestId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
+            _chainId,
+            _proof
+        ); // revert for invalid proof
+        require(_requestId == requestId, "requestId and proof not match");
 
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
@@ -70,13 +73,14 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestFulfilled(_requestId);
 
         if (request.callback.target != address(0)) {
+            require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
             uint256 gas = request.callback.gas;
             if (gas == 0) {
                 gas = gasleft();
             }
             // If the call failed due to insufficient gas, anyone can still call the app.brevisCallback directly to proceed
             (bool success, ) = request.callback.target.call{gas: gas}(
-                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput)
+                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, appVkHash, _appCircuitOutput)
             );
             if (!success) {
                 emit RequestCallbackFailed(_requestId);
@@ -120,7 +124,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                         }
                         (bool success, ) = request.callback.target.call{gas: gas}(
                             abi.encodeWithSelector(
-                                bytes4(keccak256(bytes("brevisCallback(bytes32,bytes32,bytes)"))),
+                                IBrevisApp.brevisCallback.selector,
                                 _requestIds[i],
                                 _proofDataArray[i].appVkHash,
                                 _appCircuitOutputs[i]
@@ -261,8 +265,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function postDataValidityProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external {
-        bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof);
-        require(_requestId == reqIdFromProof, "requestId and proof not match");
+        (bytes32 requestId, , ) = IBrevisProof(brevisProof).submitProof(_chainId, _proof);
+        require(_requestId == requestId, "requestId and proof not match");
 
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         requests[requestKey].status = RequestStatus.ZkAttested;

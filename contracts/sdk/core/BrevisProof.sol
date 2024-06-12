@@ -17,14 +17,19 @@ contract BrevisProof is BrevisAggProof {
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
-    function submitProof(uint64 _chainId, bytes calldata _proofWithPubInputs) external returns (bytes32 _requestId) {
+    function submitProof(
+        uint64 _chainId,
+        bytes calldata _proofWithPubInputs
+    ) external returns (bytes32 requestId, bytes32 appCommitHash, bytes32 appVkHash) {
         require(verifyRaw(_chainId, _proofWithPubInputs), "proof not valid");
         Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs);
 
-        _requestId = data.commitHash;
+        requestId = data.commitHash;
+        appCommitHash = data.appCommitHash;
+        appVkHash = data.appVkHash;
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
-        proofs[_requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas
-        proofs[_requestId].appVkHash = data.appVkHash;
+        proofs[requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas
+        proofs[requestId].appVkHash = data.appVkHash;
     }
 
     function hasProof(bytes32 _requestId) external view returns (bool) {
