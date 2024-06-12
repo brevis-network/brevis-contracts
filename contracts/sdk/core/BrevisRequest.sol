@@ -16,7 +16,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public challengeWindow;
     uint256 public responseTimeout;
 
-    mapping(bytes32 => Request) public requests; // TODO: store data hash to save gas cost
+    mapping(bytes32 => Request) public requests;
     mapping(bytes32 => Dispute) public disputes;
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
@@ -47,7 +47,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         } else {
             revert("invalid request option");
         }
-        requests[requestKey] = Request(block.timestamp, msg.value, _refundee, _callback, status);
+        Fee memory fee = Fee(msg.value, _refundee);
+        Callback memory callback = Callback(_callback, 0); // todo: support gas limit
+        requests[requestKey] = Request(uint64(block.timestamp), status, fee, callback);
         emit RequestSent(_requestId, msg.sender, msg.value, _callback, _option);
     }
 
@@ -67,10 +69,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
         emit RequestFulfilled(_requestId);
 
-        if (request.callback != address(0)) {
-            // The relayer should set correct gas limit. If the call failed due to insufficient gasleft(),
-            // anyone can still call the app.brevisCallback directly to proceed
-            (bool success, ) = request.callback.call(
+        if (request.callback.target != address(0)) {
+            uint256 gas = request.callback.gas;
+            if (gas == 0) {
+                gas = gasleft();
+            }
+            // If the call failed due to insufficient gas, anyone can still call the app.brevisCallback directly to proceed
+            (bool success, ) = request.callback.target.call{gas: gas}(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appCircuitOutput)
             );
             if (!success) {
@@ -108,8 +113,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                         _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
                         "failed to open output commitment"
                     );
-                    if (request.callback != address(0)) {
-                        (bool success, ) = request.callback.call(
+                    if (request.callback.target != address(0)) {
+                        uint256 gas = request.callback.gas;
+                        if (gas == 0) {
+                            gas = gasleft();
+                        }
+                        (bool success, ) = request.callback.target.call{gas: gas}(
                             abi.encodeWithSelector(
                                 bytes4(keccak256(bytes("brevisCallback(bytes32,bytes32,bytes)"))),
                                 _requestIds[i],
@@ -138,7 +147,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         );
         require(block.timestamp > request.timestamp + requestTimeout);
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-        (bool sent, ) = request.refundee.call{value: request.fee, gas: 50000}("");
+        (bool sent, ) = request.fee.refundee.call{value: request.fee.amount, gas: 50000}("");
         require(sent, "send native failed");
         request.status = RequestStatus.Refunded;
         emit RequestRefunded(_requestId);
@@ -165,7 +174,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             Request storage request = requests[requestKey];
             require(request.status == RequestStatus.OpPending, "invalid request status");
             request.status = RequestStatus.OpSubmitted;
-            request.timestamp = timestamp;
+            request.timestamp = uint64(timestamp);
         }
 
         emit OpRequestsFulfilled(_requestIds, _dataURLs);

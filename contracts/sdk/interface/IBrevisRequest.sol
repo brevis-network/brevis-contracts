@@ -21,12 +21,22 @@ interface IBrevisRequest {
         Op
     }
 
+    // TODO: save gas
     struct Request {
-        uint256 timestamp;
-        uint256 fee;
-        address refundee;
-        address callback; // todo: add gas limit
+        uint64 timestamp;
         RequestStatus status;
+        Fee fee;
+        Callback callback;
+    }
+
+    struct Fee {
+        uint256 amount;
+        address refundee;
+    }
+
+    struct Callback {
+        address target;
+        uint64 gas;
     }
 
     enum DisputeStatus {
