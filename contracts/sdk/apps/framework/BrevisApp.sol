@@ -28,6 +28,24 @@ abstract contract BrevisApp {
     }
 
     function brevisBatchCallback(
+        bytes32[] calldata _requestIds,
+        bytes32[] calldata _appVkHashs,
+        bytes[] calldata _appCircuitOutputs
+    ) external onlyBrevisRequest {
+        for (uint i = 0; i < _requestIds.length; i++) {
+            handleProofResult(_requestIds[i], _appVkHashs[i], _appCircuitOutputs[i]);
+        }
+    }
+
+    // apply proved request
+    function applyBrevisProof(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
+        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
+        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
+    }
+
+    // apply multiple requests fulfilled through AggProof
+    function applyBrevisAggProof(
         uint64 _chainId,
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs
@@ -43,15 +61,8 @@ abstract contract BrevisApp {
         }
     }
 
-    // apply proved request
-    function applyBrevisProof(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
-        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
-        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
-    }
-
-    // apply single request submitted through AggProof
-    function applyBrevisProof(
+    // apply single request fulfilled through AggProof
+    function applyBrevisAggProof(
         uint64 _chainId,
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,

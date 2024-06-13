@@ -91,15 +91,8 @@ interface IBrevisRequest {
         bytes32 _requestId,
         uint64 _chainId,
         bytes calldata _proof,
-        bytes calldata _appCircuitOutput
-    ) external;
-
-    function fulfillRequest(
-        bytes32 _requestId,
-        uint64 _chainId,
-        bytes calldata _proof,
         bytes calldata _appCircuitOutput,
-        address callback
+        address _callback
     ) external;
 
     function fulfillRequests(
@@ -109,15 +102,6 @@ interface IBrevisRequest {
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
         address[] calldata callbacks
-    ) external;
-
-    function fulfillRequests(
-        bytes32[] calldata _requestIds,
-        uint64 _chainId,
-        bytes calldata _proof,
-        Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address batchCallback
     ) external;
 
     function fulfillOpRequests(

@@ -55,50 +55,99 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestSent(_requestId, msg.sender, msg.value, _callback, _gas, _option);
     }
 
-    // fulfill onchain request
-    function fulfillRequest(
-        bytes32 _requestId,
-        uint64 _chainId,
-        bytes calldata _proof,
-        bytes calldata _appCircuitOutput
-    ) external {
-        _fulfillRequest(_requestId, _chainId, _proof, _appCircuitOutput, address(0), RequestStatus.ZkPending);
-    }
-
-    // fulfill offchain request
     function fulfillRequest(
         bytes32 _requestId,
         uint64 _chainId,
         bytes calldata _proof,
         bytes calldata _appCircuitOutput,
-        address callback
+        address _callback
     ) external {
-        _fulfillRequest(_requestId, _chainId, _proof, _appCircuitOutput, callback, RequestStatus.Null);
+        (bytes32 requestId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
+            _chainId,
+            _proof
+        ); // revert for invalid proof
+        require(_requestId == requestId, "requestId and proof not match");
+
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        Request storage request = requests[requestKey];
+        RequestStatus status = request.status;
+        require(status == RequestStatus.ZkPending || status == RequestStatus.Null, "invalid request status");
+        request.status = RequestStatus.ZkAttested;
+
+        if (_appCircuitOutput.length > 0) {
+            require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        }
+        _brevisCallback(_callback, _requestId, appVkHash, _appCircuitOutput, request, status);
+
+        emit RequestFulfilled(_requestId);
     }
 
-    // fulfill aggregated requests
+    // fulfill batch requests with aggProof
     function fulfillRequests(
         bytes32[] calldata _requestIds,
         uint64 _chainId,
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
-        address[] calldata callbacks
+        address[] calldata _callbacks
     ) external {
-        _fulfillRequests(_requestIds, _chainId, _proof, _proofDataArray, _appCircuitOutputs, callbacks, address(0));
-    }
+        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+        if (_callbacks.length > 0) {
+            IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+            require(_requestIds.length == _proofDataArray.length, "length mismatch");
+            require(_requestIds.length == _appCircuitOutputs.length, "length mismatch");
+            require(_callbacks.length == 1 || _callbacks.length == _requestIds.length, "length mismtach");
+        }
 
-    // fulfill aggregated requests with batchCallback
-    function fulfillRequests(
-        bytes32[] calldata _requestIds,
-        uint64 _chainId,
-        bytes calldata _proof,
-        Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address batchCallback
-    ) external {
-        address[] memory empty;
-        _fulfillRequests(_requestIds, _chainId, _proof, _proofDataArray, _appCircuitOutputs, empty, batchCallback);
+        uint256 numFulfilled;
+        for (uint256 i = 0; i < _requestIds.length; i++) {
+            bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
+            Request storage request = requests[requestKey];
+            RequestStatus status = request.status;
+            if (status == RequestStatus.ZkPending || status == RequestStatus.Null) {
+                request.status = RequestStatus.ZkAttested;
+                numFulfilled++;
+
+                if (_callbacks.length > 0) {
+                    require(
+                        _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
+                        "failed to open output commitment"
+                    );
+                    if (_callbacks.length > 1) {
+                        _brevisCallback(
+                            _callbacks[i],
+                            _requestIds[i],
+                            _proofDataArray[i].appVkHash,
+                            _appCircuitOutputs[i],
+                            request,
+                            status
+                        );
+                    } else if (status == RequestStatus.ZkPending) {
+                        require(request.callback.target == _callbacks[0], "mismatch callback");
+                        require(request.callback.gas == 0, "nozero callback gas");
+                    }
+                }
+            }
+        }
+        if (_callbacks.length == 1) {
+            bytes32[] memory appVkHashes = new bytes32[](_proofDataArray.length);
+            for (uint256 i = 0; i < appVkHashes.length; i++) {
+                appVkHashes[i] = _proofDataArray[i].appVkHash;
+            }
+            (bool success, ) = _callbacks[0].call(
+                abi.encodeWithSelector(
+                    IBrevisApp.brevisBatchCallback.selector,
+                    _requestIds,
+                    appVkHashes,
+                    _appCircuitOutputs
+                )
+            );
+            if (!success) {
+                emit RequestsCallbackFailed(_requestIds);
+            }
+        }
+        require(numFulfilled > 0, "no fulfilled requests");
+        emit RequestsFulfilled(_requestIds);
     }
 
     function refund(bytes32 _requestId) external {
@@ -287,126 +336,33 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      * Private Functions *
      *********************/
 
-    function _fulfillRequest(
-        bytes32 _requestId,
-        uint64 _chainId,
-        bytes calldata _proof,
-        bytes calldata _appCircuitOutput,
+    function _brevisCallback(
         address _callback,
-        RequestStatus _expStatus
+        bytes32 _requestId,
+        bytes32 _appVkHash,
+        bytes calldata _appCircuitOutput,
+        Request storage _request,
+        RequestStatus _status
     ) private {
-        (bytes32 requestId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
-            _chainId,
-            _proof
-        ); // revert for invalid proof
-        require(_requestId == requestId, "requestId and proof not match");
-
-        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
-        Request storage request = requests[requestKey];
-        require(request.status == _expStatus, "invalid request status");
-        request.status = RequestStatus.ZkAttested;
-
-        emit RequestFulfilled(_requestId);
-
-        if (_expStatus == RequestStatus.ZkPending) {
-            _callback = request.callback.target;
+        if (_status == RequestStatus.ZkPending) {
+            require(_request.callback.target == _callback, "mismatch callback");
         }
         if (_callback != address(0)) {
-            require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
             uint256 gas;
-            if (_expStatus == RequestStatus.ZkPending) {
-                gas = request.callback.gas;
+            if (_status == RequestStatus.ZkPending) {
+                gas = _request.callback.gas;
             }
             if (gas == 0) {
                 gas = gasleft();
             }
             // If the call failed due to insufficient gas, anyone can still call the app.applyBrevisProof directly to proceed
             (bool success, ) = _callback.call{gas: gas}(
-                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, appVkHash, _appCircuitOutput)
+                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appVkHash, _appCircuitOutput)
             );
             if (!success) {
                 emit RequestCallbackFailed(_requestId);
             }
         }
-    }
-
-    function _fulfillRequests(
-        bytes32[] calldata _requestIds,
-        uint64 _chainId,
-        bytes calldata _proof,
-        Brevis.ProofData[] calldata _proofDataArray,
-        bytes[] calldata _appCircuitOutputs,
-        address[] memory _callbacks,
-        address _batchCallback
-    ) private {
-        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
-        bool checkAppData;
-        if (_proofDataArray.length > 0 && _batchCallback != address(0)) {
-            checkAppData = true;
-            IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
-            require(_proofDataArray.length == _appCircuitOutputs.length, "length mismatch");
-        }
-
-        uint256 numFulfilled;
-        for (uint256 i = 0; i < _requestIds.length; i++) {
-            bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
-            Request storage request = requests[requestKey];
-            RequestStatus status = request.status;
-            if (status == RequestStatus.ZkPending || status == RequestStatus.Null) {
-                request.status = RequestStatus.ZkAttested;
-                numFulfilled++;
-
-                if (checkAppData) {
-                    require(
-                        _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
-                        "failed to open output commitment"
-                    );
-                    address callback = _callbacks[i];
-                    if (status == RequestStatus.ZkPending) {
-                        require(request.callback.target == callback, "mismatch callback");
-                    }
-
-                    if (callback != address(0)) {
-                        uint256 gas;
-                        if (status == RequestStatus.ZkPending) {
-                            gas = request.callback.gas;
-                        }
-                        if (gas == 0) {
-                            gas = gasleft();
-                        }
-                        (bool success, ) = request.callback.target.call{gas: gas}(
-                            abi.encodeWithSelector(
-                                IBrevisApp.brevisCallback.selector,
-                                _requestIds[i],
-                                _proofDataArray[i].appVkHash,
-                                _appCircuitOutputs[i]
-                            )
-                        );
-                        if (!success) {
-                            emit RequestCallbackFailed(_requestIds[i]);
-                        }
-                    }
-                } else if (_batchCallback != address(0) && status == RequestStatus.ZkPending) {
-                    require(request.callback.target == _batchCallback, "mismatch callback");
-                    require(request.callback.gas == 0, "nozero callback gas");
-                }
-            }
-        }
-        if (_batchCallback != address(0)) {
-            (bool success, ) = _callbacks[0].call(
-                abi.encodeWithSelector(
-                    IBrevisApp.brevisBatchCallback.selector,
-                    _chainId,
-                    _proofDataArray,
-                    _appCircuitOutputs
-                )
-            );
-            if (!success) {
-                emit RequestsCallbackFailed(_requestIds);
-            }
-        }
-        require(numFulfilled > 0, "no fulfilled requests");
-        emit RequestsFulfilled(_requestIds);
     }
 
     function _queryRequestStatus(bytes32 _requestId, uint256 _challengeWindow) private view returns (RequestStatus) {
