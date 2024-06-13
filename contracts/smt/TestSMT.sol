@@ -16,10 +16,8 @@ contract TestSMT is SMT {
 
     // function for testing convenience
     function addRootForTesting(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyOwner {
-        uint8 curIndex = curBufferIndices[chainId];
-        curIndex = (curIndex + 1) % BUFFER_SIZE;
-        smtRoots[chainId][curIndex] = newRoot;
-        curBufferIndices[chainId] = curIndex;
-        emit SmtRootUpdated(newRoot, endBlockNum, curIndex);
+        smtRoots[chainId][newRoot] = true;
+        latestRoots[chainId] = newRoot;
+        emit SmtRootUpdated(newRoot, endBlockNum);
     }
 }

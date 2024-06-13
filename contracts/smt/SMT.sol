@@ -6,17 +6,15 @@ import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 import "../interfaces/ISMT.sol";
 
 contract SMT is ISMT, Ownable {
-    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint8 bufferIndex);
+    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
-
-    uint8 public constant BUFFER_SIZE = 16;
 
     mapping(uint64 => IAnchorBlocks) public anchorProviders;
     mapping(uint64 => IVerifier) public verifiers;
 
-    mapping(uint64 => bytes32[BUFFER_SIZE]) public smtRoots;
-    mapping(uint64 => uint8) public curBufferIndices;
+    mapping(uint64 => mapping(bytes32 => bool)) public smtRoots;
+    mapping(uint64 => bytes32) public latestRoots;
 
     constructor(
         uint64[] memory _chainIds,
@@ -31,28 +29,17 @@ contract SMT is ISMT, Ownable {
             uint64 chid = _chainIds[i];
             anchorProviders[chid] = IAnchorBlocks(_anchorProviders[i]);
             verifiers[chid] = IVerifier(_verifiers[i]);
-            smtRoots[chid][0] = _initRoots[i];
+            smtRoots[chid][_initRoots[i]] = true;
+            latestRoots[chid] = _initRoots[i];
         }
     }
 
-    function getLatestRoot(uint64 chainId) public view returns (bytes32 root, uint8 bufferIndex) {
-        bytes32[BUFFER_SIZE] memory roots = smtRoots[chainId];
-        uint8 index = curBufferIndices[chainId];
-        return (roots[index], index);
-    }
-
-    function getRoot(uint64 chainId, uint8 bufferIndex) public view returns (bytes32 root) {
-        return smtRoots[chainId][bufferIndex];
+    function getLatestRoot(uint64 chainId) public view returns (bytes32) {
+        return latestRoots[chainId];
     }
 
     function isSmtRootValid(uint64 chainId, bytes32 smtRoot) public view returns (bool) {
-        bytes32[BUFFER_SIZE] memory roots = smtRoots[chainId];
-        for (uint256 i = 0; i < roots.length; i++) {
-            if (roots[i] == smtRoot) {
-                return true;
-            }
-        }
-        return false;
+        return smtRoots[chainId][smtRoot];
     }
 
     function updateRoot(uint64 chainId, SmtUpdate memory u) external {
@@ -64,15 +51,13 @@ contract SMT is ISMT, Ownable {
             bytes32 anchorHash = anchorProvider.blocks(u.endBlockNum);
             require(anchorHash == u.endBlockHash, "anchor check failed");
         }
-        uint8 curIndex = curBufferIndices[chainId];
-        bytes32 root = smtRoots[chainId][curIndex];
+        bytes32 root = latestRoots[chainId];
         bool success = verifyProof(chainId, root, u);
         require(success, "invalid zk proof");
 
-        curIndex = (curIndex + 1) % BUFFER_SIZE;
-        smtRoots[chainId][curIndex] = u.newSmtRoot;
-        curBufferIndices[chainId] = curIndex;
-        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, curIndex);
+        smtRoots[chainId][u.newSmtRoot] = true;
+        latestRoots[chainId] = u.newSmtRoot;
+        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum);
     }
 
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
