@@ -17,6 +17,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public responseTimeout;
 
     mapping(bytes32 => Request) public requests;
+    mapping(bytes32 => bytes32) public opdata; // keccak256(abi.encodePacked(appCommitHash, appVkHash));
     mapping(bytes32 => Dispute) public disputes;
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
@@ -120,16 +121,26 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
     function fulfillOpRequests(
         bytes32[] calldata _requestIds,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
         bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
     ) external {
-        require(_requestIds.length > 0, "invalid requestIds");
-        require(_requestIds.length == _dataURLs.length);
+        uint256 dataNum = _requestIds.length;
+        require(
+            dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length && dataNum == _dataURLs.length,
+            "mismatch length"
+        );
 
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
-        sigsVerifier.verifySigs(abi.encodePacked(domain, _requestIds), _sigs, _signers, _powers); // todo: nonces
+        sigsVerifier.verifySigs(
+            abi.encodePacked(domain, _requestIds, _appCommitHashes, _appVkHashes), // todo: nonces, urls
+            _sigs,
+            _signers,
+            _powers
+        );
 
         uint256 timestamp = block.timestamp;
         for (uint i = 0; i < _requestIds.length; i++) {
@@ -138,9 +149,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             require(request.status == RequestStatus.OpPending, "invalid request status");
             request.status = RequestStatus.OpSubmitted;
             request.timestamp = uint64(timestamp);
+            opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
         }
 
-        emit OpRequestsFulfilled(_requestIds, _dataURLs);
+        emit OpRequestsFulfilled(_requestIds, _appCommitHashes, _appVkHashes, _dataURLs);
     }
 
     function askForRequestData(bytes32 _requestId) external payable {

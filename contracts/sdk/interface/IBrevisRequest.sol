@@ -69,7 +69,7 @@ interface IBrevisRequest {
     event RequestCallbackFailed(bytes32 requestId);
     event RequestsCallbackFailed(bytes32[] requestIds);
 
-    event OpRequestsFulfilled(bytes32[] requestIds, bytes[] URLs);
+    event OpRequestsFulfilled(bytes32[] requestIds, bytes32[] appCommitHashes, bytes32[] appVkHashes, bytes[] urls);
     event AskFor(bytes32 indexed requestId, DisputeStatus status, address from);
     event RequestDataPosted(bytes32 indexed requestId);
     event DataAvailabilityProofPosted(bytes32 indexed requestId);
@@ -122,6 +122,8 @@ interface IBrevisRequest {
 
     function fulfillOpRequests(
         bytes32[] calldata _requestIds,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
         bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
