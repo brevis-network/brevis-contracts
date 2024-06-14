@@ -9,7 +9,7 @@ import "../../lib/Lib.sol";
 abstract contract BrevisApp is Ownable {
     IBrevisProof public brevisProof;
     IBrevisRequest public brevisRequest;
-    uint256 public OpChallengeWindow;
+    uint256 public opChallengeWindow;
 
     modifier onlyBrevisRequest() {
         require(msg.sender == address(brevisRequest), "invalid caller");
@@ -26,11 +26,11 @@ abstract contract BrevisApp is Ownable {
     }
 
     function brevisBatchCallback(
-        bytes32[] calldata _appVkHashs,
+        bytes32[] calldata _appVkHashes,
         bytes[] calldata _appCircuitOutputs
     ) external onlyBrevisRequest {
-        for (uint i = 0; i < _appVkHashs.length; i++) {
-            handleProofResult(_appVkHashs[i], _appCircuitOutputs[i]);
+        for (uint i = 0; i < _appVkHashes.length; i++) {
+            handleProofResult(_appVkHashes[i], _appCircuitOutputs[i]);
         }
     }
 
@@ -78,7 +78,7 @@ abstract contract BrevisApp is Ownable {
         bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
     ) public {
-        IBrevisRequest.RequestStatus status = brevisRequest.queryRequestStatus(_requestId, OpChallengeWindow);
+        IBrevisRequest.RequestStatus status = brevisRequest.queryRequestStatus(_requestId, opChallengeWindow);
         require(
             status == IBrevisRequest.RequestStatus.OpAttested || status == IBrevisRequest.RequestStatus.ZkAttested,
             "invalid status"
@@ -105,8 +105,8 @@ abstract contract BrevisApp is Ownable {
         }
     }
 
-    function setOpChallengeWindow(uint256 _challangeWindow) external onlyOwner {
-        OpChallengeWindow = _challangeWindow;
+    function setopChallengeWindow(uint256 _challangeWindow) external onlyOwner {
+        opChallengeWindow = _challangeWindow;
     }
 
     function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {

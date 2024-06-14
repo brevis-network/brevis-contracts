@@ -129,8 +129,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                             emit RequestCallbackFailed(_requestIds[i]);
                         }
                     } else if (status == RequestStatus.ZkPending) {
-                        require(request.callback.target == _callbacks[0], "mismatch callback");
-                        require(request.callback.gas == 0, "nozero callback gas");
+                        require(request.callback.target == _callbacks[0], "callback mismatch");
+                        require(request.callback.gas == 0, "invalid gas for batch callback");
                     }
                 }
             }
@@ -182,7 +182,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 dataNum = _requestIds.length;
         require(
             dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length && dataNum == _dataURLs.length,
-            "mismatch length"
+            "length mismatch"
         );
 
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
@@ -358,7 +358,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         RequestStatus _status
     ) private returns (bool) {
         if (_status == RequestStatus.ZkPending) {
-            require(_request.callback.target == _callback, "mismatch callback");
+            require(_request.callback.target == _callback, "callback mismatch");
         }
         if (_callback != address(0)) {
             uint256 gas;
