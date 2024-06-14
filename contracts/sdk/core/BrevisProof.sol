@@ -31,16 +31,13 @@ contract BrevisProof is BrevisAggProof {
         proofs[requestId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
     }
 
-    function hasProof(bytes32 _requestId) external view returns (bool) {
-        return proofs[_requestId] != bytes32(0) || inAgg(_requestId);
-    }
-
-    function hasProofAppData(
+    function validateProofAppData(
         bytes32 _requestId,
         bytes32 _appCommitHash,
         bytes32 _appVkHash
     ) external view returns (bool) {
-        return proofs[_requestId] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash));
+        require(proofs[_requestId] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
+        return true;
     }
 
     function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {

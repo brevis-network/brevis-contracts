@@ -23,7 +23,8 @@ contract BrevisAggProof is Ownable {
         smtContract = _smtContract;
     }
 
-    function mustValidateRequest(
+    // validate a single leaf node in the agg proof data
+    function validateAggProofData(
         uint64 _chainId,
         Brevis.ProofData calldata _proofData,
         bytes32 _merkleRoot,
@@ -53,7 +54,8 @@ contract BrevisAggProof is Ownable {
         require(_merkleRoot == root, "invalid data");
     }
 
-    function mustValidateRequests(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view {
+    // validate all leaf nodes in the agg proof data
+    function validateAggProofData(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view {
         uint dataLen = _proofDataArray.length;
         require(dataLen <= LEAF_NODES_LEN, "size exceeds");
         bytes32[2 * LEAF_NODES_LEN - 1] memory hashes;
@@ -89,7 +91,7 @@ contract BrevisAggProof is Ownable {
         require(merkleRoots[hashes[hashes.length - 1]], "merkle root not exists");
     }
 
-    function mustSubmitAggProof(
+    function submitAggProof(
         uint64 _chainId,
         bytes32[] calldata _requestIds,
         bytes calldata _proofWithPubInputs
@@ -116,10 +118,6 @@ contract BrevisAggProof is Ownable {
         for (uint i = 0; i < _requestIds.length; i++) {
             requestIds[_requestIds[i]] = true;
         }
-    }
-
-    function inAgg(bytes32 _requestId) public view returns (bool) {
-        return requestIds[_requestId];
     }
 
     function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {

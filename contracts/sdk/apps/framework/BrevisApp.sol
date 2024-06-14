@@ -41,7 +41,7 @@ abstract contract BrevisApp is Ownable {
         bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
     ) external {
-        require(IBrevisProof(brevisProof).hasProofAppData(_requestId, _appCommitHash, _appVkHash), "invalid data");
+        IBrevisProof(brevisProof).validateProofAppData(_requestId, _appCommitHash, _appVkHash);
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_appVkHash, _appCircuitOutput);
     }
@@ -53,7 +53,7 @@ abstract contract BrevisApp is Ownable {
         bytes[] calldata _appCircuitOutputs
     ) external {
         require(_proofDataArray.length == _appCircuitOutputs.length, "length not match");
-        IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+        IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
         for (uint i = 0; i < _proofDataArray.length; i++) {
             require(
                 _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
@@ -72,7 +72,7 @@ abstract contract BrevisApp is Ownable {
         uint8 _nodeIndex,
         bytes calldata _appCircuitOutput
     ) external {
-        IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
+        IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
         require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_proofData.appVkHash, _appCircuitOutput);
     }
@@ -88,7 +88,7 @@ abstract contract BrevisApp is Ownable {
             status == IBrevisRequest.RequestStatus.OpAttested || status == IBrevisRequest.RequestStatus.ZkAttested,
             "invalid status"
         );
-        require(brevisRequest.validateRequestOpData(_requestId, _appVkHash, _appCommitHash), "invalid data");
+        brevisRequest.validateRequestOpData(_requestId, _appVkHash, _appCommitHash);
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_appVkHash, _appCircuitOutput);
     }

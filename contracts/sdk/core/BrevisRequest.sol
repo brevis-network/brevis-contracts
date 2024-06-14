@@ -96,9 +96,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes[] calldata _appCircuitOutputs,
         address[] calldata _callbacks
     ) external {
-        IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
+        IBrevisProof(brevisProof).submitAggProof(_chainId, _requestIds, _proof);
         if (_callbacks.length > 0) {
-            IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
+            IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
             require(
                 _requestIds.length == _proofDataArray.length && _requestIds.length == _appCircuitOutputs.length,
                 "length mismatch"
@@ -362,7 +362,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 _appVkHash
     ) external view returns (bool) {
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
-        return opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash));
+        require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
+        return true;
     }
 
     /*********************
