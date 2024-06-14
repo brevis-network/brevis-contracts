@@ -9,14 +9,17 @@ import "../../interfaces/ISigsVerifier.sol";
 import "../lib/Lib.sol";
 
 contract BrevisRequest is IBrevisRequest, FeeVault {
+    // common workflow
     IBrevisProof public brevisProof;
-    ISigsVerifier public immutable sigsVerifier;
-
     uint256 public requestTimeout;
+    mapping(bytes32 => Request) public requests;
+
+    // optimistic workflow
+    ISigsVerifier public immutable sigsVerifier;
     uint256 public challengeWindow;
     uint256 public responseTimeout;
-
-    mapping(bytes32 => Request) public requests;
+    uint256 public depositAskForData;
+    uint256 public depositAskForProof;
     mapping(bytes32 => bytes32) public opdata; // keccak256(abi.encodePacked(appCommitHash, appVkHash));
     mapping(bytes32 => Dispute) public disputes;
 
@@ -152,7 +155,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function refund(bytes32 _requestId, uint256 _amount, address _refundee) external {
-        // TODO: refund for op request
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
         require(
@@ -210,6 +212,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function askForRequestData(bytes32 _requestId) external payable {
+        require(msg.value > depositAskForData, "insufficient deposit");
         // TODO: msg.value should be larger than a configurable value
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
@@ -237,7 +240,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function askForDataAvailabilityProof(bytes32 _requestId) external payable {
-        // TODO: msg.value should be larger than a configurable value
+        require(msg.value > depositAskForProof, "insufficient deposit");
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
@@ -270,7 +273,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function askForDataValidityProof(bytes32 _requestId) external payable {
-        // TODO: msg.value should be larger than a configurable value
+        require(msg.value > depositAskForProof, "insufficient deposit");
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
@@ -290,12 +293,22 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function postDataValidityProof(bytes32 _requestId, uint64 _chainId, bytes calldata _proof) external {
-        (bytes32 requestId, , ) = IBrevisProof(brevisProof).submitProof(_chainId, _proof);
-        require(_requestId == requestId, "requestId and proof not match");
-
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
-        requests[requestKey].status = RequestStatus.ZkAttested;
-        disputes[requestKey].status = DisputeStatus.DataValidityProofPosted;
+        Request storage request = requests[requestKey];
+        Dispute storage dispute = disputes[requestKey];
+        require(
+            request.status == RequestStatus.OpDisputing && dispute.status == DisputeStatus.WaitingForDataValidityProof,
+            "invalid states"
+        );
+
+        (bytes32 requestId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
+            _chainId,
+            _proof
+        );
+        require(_requestId == requestId, "invalid proof: requestId");
+        require(opdata[requestKey] == keccak256(abi.encodePacked(appCommitHash, appVkHash)), "invalid proof: appHash");
+        request.status = RequestStatus.ZkAttested;
+        dispute.status = DisputeStatus.DataValidityProofPosted;
 
         emit DataValidityProofProofPosted(_requestId);
     }
@@ -312,6 +325,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 oldChallengeWindow = challengeWindow;
         challengeWindow = _challengeWindow;
         emit ChallengeWindowUpdated(oldChallengeWindow, _challengeWindow);
+    }
+
+    function setDisputeDeposits(uint256 _amtAskForData, uint256 _amtAskForProof) external onlyOwner {
+        depositAskForData = _amtAskForData;
+        depositAskForProof = _amtAskForProof;
+        emit DisputeDepositsUpdated(_amtAskForData, _amtAskForProof);
     }
 
     function setResponseTimeout(uint256 _responseTimeout) external onlyOwner {

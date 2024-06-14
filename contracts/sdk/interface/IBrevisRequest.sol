@@ -73,6 +73,7 @@ interface IBrevisRequest {
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event ChallengeWindowUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
+    event DisputeDepositsUpdated(uint256 amtAskForData, uint256 amtAskForProof);
 
     function sendRequest(
         bytes32 _requestId,
