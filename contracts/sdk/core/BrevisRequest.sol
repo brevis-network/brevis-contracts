@@ -77,8 +77,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         if (_appCircuitOutput.length > 0) {
             require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         }
-        _brevisCallback(_callback, _requestId, appVkHash, _appCircuitOutput, request, status);
-
+        bool success = _brevisCallback(_callback, appVkHash, _appCircuitOutput, request, status);
+        if (!success) {
+            emit RequestCallbackFailed(_requestId);
+        }
         emit RequestFulfilled(_requestId);
     }
 
@@ -116,14 +118,16 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                         "failed to open output commitment"
                     );
                     if (_callbacks.length > 1) {
-                        _brevisCallback(
+                        bool success = _brevisCallback(
                             _callbacks[i],
-                            _requestIds[i],
                             _proofDataArray[i].appVkHash,
                             _appCircuitOutputs[i],
                             request,
                             status
                         );
+                        if (!success) {
+                            emit RequestCallbackFailed(_requestIds[i]);
+                        }
                     } else if (status == RequestStatus.ZkPending) {
                         require(request.callback.target == _callbacks[0], "mismatch callback");
                         require(request.callback.gas == 0, "nozero callback gas");
@@ -137,12 +141,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                 appVkHashes[i] = _proofDataArray[i].appVkHash;
             }
             (bool success, ) = _callbacks[0].call(
-                abi.encodeWithSelector(
-                    IBrevisApp.brevisBatchCallback.selector,
-                    _requestIds,
-                    appVkHashes,
-                    _appCircuitOutputs
-                )
+                abi.encodeWithSelector(IBrevisApp.brevisBatchCallback.selector, appVkHashes, _appCircuitOutputs)
             );
             if (!success) {
                 emit RequestsCallbackFailed(_requestIds);
@@ -353,12 +352,11 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
     function _brevisCallback(
         address _callback,
-        bytes32 _requestId,
         bytes32 _appVkHash,
         bytes calldata _appCircuitOutput,
         Request storage _request,
         RequestStatus _status
-    ) private {
+    ) private returns (bool) {
         if (_status == RequestStatus.ZkPending) {
             require(_request.callback.target == _callback, "mismatch callback");
         }
@@ -372,12 +370,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             }
             // If the call failed due to insufficient gas, anyone can still call the app.applyBrevisProof directly to proceed
             (bool success, ) = _callback.call{gas: gas}(
-                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _requestId, _appVkHash, _appCircuitOutput)
+                abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _appVkHash, _appCircuitOutput)
             );
             if (!success) {
-                emit RequestCallbackFailed(_requestId);
+                return false;
             }
         }
+        return true;
     }
 
     function _queryRequestStatus(bytes32 _requestId, uint256 _challengeWindow) private view returns (RequestStatus) {

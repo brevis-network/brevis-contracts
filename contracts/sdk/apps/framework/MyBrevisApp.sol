@@ -6,9 +6,5 @@ import "./BrevisApp.sol";
 contract MyBrevisApp is BrevisApp {
     constructor(IBrevisProof _brevisProof) BrevisApp(_brevisProof) {}
 
-    function handleProofResult(
-        bytes32 _requestId,
-        bytes32 _vkHash,
-        bytes calldata _appCircuitOutput
-    ) internal override {}
+    function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal override {}
 }

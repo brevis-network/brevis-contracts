@@ -21,21 +21,16 @@ abstract contract BrevisApp is Ownable {
         brevisRequest = IBrevisRequest(brevisProof.getRequestContract());
     }
 
-    function brevisCallback(
-        bytes32 _requestId,
-        bytes32 _appVkHash,
-        bytes calldata _appCircuitOutput
-    ) external onlyBrevisRequest {
-        handleProofResult(_requestId, _appVkHash, _appCircuitOutput);
+    function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
+        handleProofResult(_appVkHash, _appCircuitOutput);
     }
 
     function brevisBatchCallback(
-        bytes32[] calldata _requestIds,
         bytes32[] calldata _appVkHashs,
         bytes[] calldata _appCircuitOutputs
     ) external onlyBrevisRequest {
-        for (uint i = 0; i < _requestIds.length; i++) {
-            handleProofResult(_requestIds[i], _appVkHashs[i], _appCircuitOutputs[i]);
+        for (uint i = 0; i < _appVkHashs.length; i++) {
+            handleProofResult(_appVkHashs[i], _appCircuitOutputs[i]);
         }
     }
 
@@ -43,7 +38,7 @@ abstract contract BrevisApp is Ownable {
     function applyBrevisProof(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
         (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
         require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
+        handleProofResult(appVkHash, _appCircuitOutput);
     }
 
     // apply multiple requests fulfilled through AggProof
@@ -59,7 +54,7 @@ abstract contract BrevisApp is Ownable {
                 _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
                 "failed to open output commitment"
             );
-            handleProofResult(_proofDataArray[i].commitHash, _proofDataArray[i].appVkHash, _appCircuitOutputs[i]);
+            handleProofResult(_proofDataArray[i].appVkHash, _appCircuitOutputs[i]);
         }
     }
 
@@ -74,7 +69,7 @@ abstract contract BrevisApp is Ownable {
     ) external {
         IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
         require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
+        handleProofResult(_proofData.appVkHash, _appCircuitOutput);
     }
 
     function applyBrevisOpResult(
@@ -90,7 +85,7 @@ abstract contract BrevisApp is Ownable {
         );
         require(brevisRequest.validateRequestOpData(_requestId, _appVkHash, _appCommitHash), "invalid result");
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, _appVkHash, _appCircuitOutput);
+        handleProofResult(_appVkHash, _appCircuitOutput);
     }
 
     function applyBrevisOpResults(
@@ -114,7 +109,7 @@ abstract contract BrevisApp is Ownable {
         OpChallengeWindow = _challangeWindow;
     }
 
-    function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+    function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
     }
 }
