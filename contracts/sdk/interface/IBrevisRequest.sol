@@ -131,4 +131,10 @@ interface IBrevisRequest {
     function queryRequestStatus(bytes32 _requestId) external view returns (RequestStatus);
 
     function queryRequestStatus(bytes32 _requestId, uint256 _appChallengeWindow) external view returns (RequestStatus);
+
+    function validateRequestOpData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash
+    ) external view returns (bool);
 }

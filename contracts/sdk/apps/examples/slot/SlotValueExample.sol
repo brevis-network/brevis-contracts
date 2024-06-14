@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "../../framework/BrevisApp.sol";
 import "../../../interface/IBrevisProof.sol";
 
-contract SlotValueExample is BrevisApp, Ownable {
+contract SlotValueExample is BrevisApp {
     event PastOwnerAttested(address contractAddr, address ownerAddr, uint64 blockNum);
 
     bytes32 public vkHash;

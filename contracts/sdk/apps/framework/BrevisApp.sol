@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../interface/IBrevisProof.sol";
 import "../../interface/IBrevisRequest.sol";
 import "../../lib/Lib.sol";
 
-abstract contract BrevisApp {
+abstract contract BrevisApp is Ownable {
     IBrevisProof public brevisProof;
     IBrevisRequest public brevisRequest;
+    uint256 public OpChallengeWindow;
 
     modifier onlyBrevisRequest() {
         require(msg.sender == address(brevisRequest), "invalid caller");
@@ -73,6 +75,43 @@ abstract contract BrevisApp {
         IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
         require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
+    }
+
+    function applyBrevisOpResult(
+        bytes32 _requestId,
+        bytes32 _appVkHash,
+        bytes32 _appCommitHash,
+        bytes calldata _appCircuitOutput
+    ) public {
+        IBrevisRequest.RequestStatus status = brevisRequest.queryRequestStatus(_requestId, OpChallengeWindow);
+        require(
+            status == IBrevisRequest.RequestStatus.OpAttested || status == IBrevisRequest.RequestStatus.ZkAttested,
+            "invalid status"
+        );
+        require(brevisRequest.validateRequestOpData(_requestId, _appVkHash, _appCommitHash), "invalid result");
+        require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        handleProofResult(_requestId, _appVkHash, _appCircuitOutput);
+    }
+
+    function applyBrevisOpResults(
+        bytes32[] calldata _requestIds,
+        bytes32[] calldata _appVkHashes,
+        bytes32[] calldata _appCommitHashes,
+        bytes[] calldata _appCircuitOutputs
+    ) external {
+        require(
+            _requestIds.length == _appVkHashes.length &&
+                _requestIds.length == _appCommitHashes.length &&
+                _requestIds.length == _appCircuitOutputs.length,
+            "length mismatch"
+        );
+        for (uint256 i = 0; i < _requestIds.length; i++) {
+            applyBrevisOpResult(_requestIds[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
+        }
+    }
+
+    function setOpChallengeWindow(uint256 _challangeWindow) external onlyOwner {
+        OpChallengeWindow = _challangeWindow;
     }
 
     function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {

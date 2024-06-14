@@ -94,8 +94,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
         if (_callbacks.length > 0) {
             IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
-            require(_requestIds.length == _proofDataArray.length, "length mismatch");
-            require(_requestIds.length == _appCircuitOutputs.length, "length mismatch");
+            require(
+                _requestIds.length == _proofDataArray.length && _requestIds.length == _appCircuitOutputs.length,
+                "length mismatch"
+            );
             require(_callbacks.length == 1 || _callbacks.length == _requestIds.length, "length mismtach");
         }
 
@@ -195,7 +197,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         for (uint i = 0; i < _requestIds.length; i++) {
             bytes32 requestKey = _requestIds[i]; // todo: keccak256(abi.encodePacked(_requestIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
-            require(request.status == RequestStatus.OpPending, "invalid request status");
+            require(
+                request.status == RequestStatus.OpPending || request.status == RequestStatus.Null,
+                "invalid request status"
+            );
             request.status = RequestStatus.OpSubmitted;
             request.timestamp = uint64(timestamp);
             opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
@@ -330,6 +335,15 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     function queryRequestTimestamp(bytes32 _requestId) external view returns (uint256) {
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         return requests[requestKey].timestamp;
+    }
+
+    function validateRequestOpData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash
+    ) external view returns (bool) {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        return opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash));
     }
 
     /*********************
