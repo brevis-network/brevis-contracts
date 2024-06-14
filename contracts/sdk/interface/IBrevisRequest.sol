@@ -29,11 +29,6 @@ interface IBrevisRequest {
         bytes32 feeHash; // keccak256(abi.encodePacked(amount, refundee));
     }
 
-    struct Fee {
-        uint256 amount;
-        address refundee;
-    }
-
     struct Callback {
         address target;
         uint64 gas;
