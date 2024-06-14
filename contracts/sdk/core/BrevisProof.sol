@@ -8,9 +8,9 @@ import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisProof is BrevisAggProof {
-    mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address
-    mapping(bytes32 => Brevis.ProofAppData) public proofs;
     address public brevisRequest;
+    mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address
+    mapping(bytes32 => bytes32) public proofs; // requestId => keccak256(abi.encodePacked(appCommitHash, appVkHash));
 
     event VerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
     event BrevisRequestContractUpdated(address brevisRequest);
@@ -28,16 +28,19 @@ contract BrevisProof is BrevisAggProof {
         appCommitHash = data.appCommitHash;
         appVkHash = data.appVkHash;
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
-        proofs[requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas
-        proofs[requestId].appVkHash = data.appVkHash;
+        proofs[requestId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
     }
 
     function hasProof(bytes32 _requestId) external view returns (bool) {
-        return proofs[_requestId].appCommitHash != bytes32(0) || inAgg(_requestId);
+        return proofs[_requestId] != bytes32(0) || inAgg(_requestId);
     }
 
-    function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32) {
-        return (proofs[_requestId].appCommitHash, proofs[_requestId].appVkHash);
+    function hasProofAppData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash
+    ) external view returns (bool) {
+        return proofs[_requestId] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash));
     }
 
     function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {

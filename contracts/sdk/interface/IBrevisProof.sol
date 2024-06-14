@@ -11,8 +11,11 @@ interface IBrevisProof {
 
     function hasProof(bytes32 _requestId) external view returns (bool);
 
-    // return appCommitHash and appVkHash
-    function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32);
+    function hasProofAppData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash
+    ) external view returns (bool);
 
     function mustValidateRequest(
         uint64 _chainId,

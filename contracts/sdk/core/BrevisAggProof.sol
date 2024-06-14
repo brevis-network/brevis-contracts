@@ -7,11 +7,11 @@ import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisAggProof is Ownable {
-    ISMT public smtContract;
+    uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
+    uint8 constant TREE_DEPTH = 4;
+    uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;
 
-    constructor(ISMT _smtContract) {
-        smtContract = _smtContract;
-    }
+    ISMT public smtContract;
 
     mapping(bytes32 => bool) public merkleRoots;
     mapping(bytes32 => bool) public requestIds;
@@ -19,9 +19,9 @@ contract BrevisAggProof is Ownable {
     event SmtContractUpdated(ISMT smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
 
-    uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
-    uint8 constant TREE_DEPTH = 4;
-    uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;
+    constructor(ISMT _smtContract) {
+        smtContract = _smtContract;
+    }
 
     function mustValidateRequest(
         uint64 _chainId,
