@@ -49,10 +49,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         } else {
             revert("invalid request option");
         }
-        Fee memory fee = Fee(msg.value, _refundee);
+        bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee)); // todo: option to add fee
         Callback memory callback = Callback(_callback, _gas);
-        requests[requestKey] = Request(uint64(block.timestamp), status, fee, callback);
-        emit RequestSent(_requestId, msg.sender, msg.value, _callback, _gas, _option);
+        requests[requestKey] = Request(uint64(block.timestamp), status, callback, feeHash);
+        emit RequestSent(_requestId, _refundee, msg.value, _callback, _gas, _option);
     }
 
     function fulfillRequest(
@@ -152,7 +152,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestsFulfilled(_requestIds);
     }
 
-    function refund(bytes32 _requestId) external {
+    function refund(bytes32 _requestId, uint256 _amount, address _refundee) external {
         // TODO: refund for op request
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
@@ -161,8 +161,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             "invalid request status"
         );
         require(block.timestamp > request.timestamp + requestTimeout);
-        require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
-        (bool sent, ) = request.fee.refundee.call{value: request.fee.amount, gas: 50000}("");
+
+        require(request.feeHash == keccak256(abi.encodePacked(_amount, _refundee)), "invalid input");
+        (bool sent, ) = _refundee.call{value: _amount, gas: 50000}("");
         require(sent, "send native failed");
         request.status = RequestStatus.Refunded;
         emit RequestRefunded(_requestId);

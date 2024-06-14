@@ -25,8 +25,8 @@ interface IBrevisRequest {
     struct Request {
         uint64 timestamp;
         RequestStatus status;
-        Fee fee;
         Callback callback;
+        bytes32 feeHash; // keccak256(abi.encodePacked(amount, refundee));
     }
 
     struct Fee {
@@ -57,7 +57,7 @@ interface IBrevisRequest {
 
     event RequestSent(
         bytes32 requestId,
-        address sender,
+        address refundee,
         uint256 fee,
         address callback,
         uint64 gas,
@@ -114,7 +114,7 @@ interface IBrevisRequest {
         uint256[] calldata _powers
     ) external;
 
-    function refund(bytes32 _requestId) external;
+    function refund(bytes32 _requestId, uint256 _amount, address _refundee) external;
 
     function askForRequestData(bytes32 _requestId) external payable;
 
