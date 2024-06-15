@@ -58,8 +58,7 @@ interface IBrevisRequest {
         uint64 nonce,
         address refundee,
         uint256 fee,
-        address callback,
-        uint64 gas,
+        Callback callback,
         RequestOption option
     );
     event RequestFulfilled(bytes32 proofId, uint64 nonce);
@@ -90,8 +89,7 @@ interface IBrevisRequest {
         bytes32 _proofId,
         uint64 _nonce,
         address _refundee,
-        address _callbackTarget,
-        uint64 _gas,
+        Callback calldata _callback,
         RequestOption option
     ) external payable;
 

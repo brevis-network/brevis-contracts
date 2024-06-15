@@ -37,8 +37,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 _proofId,
         uint64 _nonce,
         address _refundee,
-        address _callback,
-        uint64 _gas,
+        Callback calldata _callback,
         RequestOption _option
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
@@ -57,10 +56,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             _refundee = msg.sender;
         }
         bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee));
-        Callback memory callback = Callback(_callback, _gas);
-        onchainRequests[requestKey] = OnchainRequestInfo(feeHash, callback);
+        onchainRequests[requestKey] = OnchainRequestInfo(feeHash, _callback);
 
-        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _gas, _option);
+        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _option);
     }
 
     function fulfillRequest(
@@ -415,7 +413,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         RequestStatus _status
     ) private returns (bool) {
         uint256 gas;
-        if (_status == RequestStatus.ZkPending) { // is onchainRequest
+        if (_status == RequestStatus.ZkPending) {
+            // is onchainRequest
             Callback memory callback = onchainRequests[_requestKey].callback;
             require(callback.target == _callbackTarget, "callback mismatch");
             gas = callback.gas;
