@@ -21,12 +21,14 @@ interface IBrevisRequest {
         Op
     }
 
-    // TODO: save gas
     struct Request {
-        uint64 timestamp;
         RequestStatus status;
+        uint64 timestamp;
+    }
+
+    struct OnchainRequestInfo {
+        bytes32 feeHash; // keccak256(abi.encodePacked(amount, refundee))
         Callback callback;
-        bytes32 feeHash; // keccak256(abi.encodePacked(amount, refundee));
     }
 
     struct Callback {
@@ -88,7 +90,7 @@ interface IBrevisRequest {
         bytes32 _proofId,
         uint64 _nonce,
         address _refundee,
-        address _callback,
+        address _callbackTarget,
         uint64 _gas,
         RequestOption option
     ) external payable;
@@ -99,7 +101,7 @@ interface IBrevisRequest {
         uint64 _chainId,
         bytes calldata _proof,
         bytes calldata _appCircuitOutput,
-        address _callback
+        address _callbackTarget
     ) external;
 
     function fulfillRequests(
@@ -109,7 +111,7 @@ interface IBrevisRequest {
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
-        address[] calldata callbacks
+        address[] calldata _callbackTargets
     ) external;
 
     function fulfillOpRequests(

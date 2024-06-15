@@ -13,6 +13,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     IBrevisProof public brevisProof;
     uint256 public requestTimeout;
     mapping(bytes32 => Request) public requests; // requestKey => Request;
+    mapping(bytes32 => OnchainRequestInfo) public onchainRequests; // requestKey => OnchainRequestInfo
 
     // optimistic workflow
     ISigsVerifier public immutable sigsVerifier;
@@ -41,21 +42,24 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         RequestOption _option
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        require(requests[requestKey].status == RequestStatus.Null, "invalid request status");
-        if (_refundee == address(0)) {
-            _refundee = msg.sender;
-        }
-        RequestStatus status;
+        RequestStatus status = requests[requestKey].status;
+        require(status == RequestStatus.Null, "invalid status");
         if (_option == RequestOption.Zk) {
             status == RequestStatus.ZkPending;
         } else if (_option == RequestOption.Zk) {
             status = RequestStatus.OpPending;
         } else {
-            revert("invalid request option");
+            revert("invalid option");
+        }
+        requests[requestKey] = Request(status, uint64(block.timestamp));
+
+        if (_refundee == address(0)) {
+            _refundee = msg.sender;
         }
         bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee));
         Callback memory callback = Callback(_callback, _gas);
-        requests[requestKey] = Request(uint64(block.timestamp), status, callback, feeHash);
+        onchainRequests[requestKey] = OnchainRequestInfo(feeHash, callback);
+
         emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _gas, _option);
     }
 
@@ -65,7 +69,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint64 _chainId,
         bytes calldata _proof,
         bytes calldata _appCircuitOutput,
-        address _callback
+        address _callbackTarget
     ) external {
         (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
             _chainId,
@@ -76,13 +80,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         RequestStatus status = request.status;
-        require(status == RequestStatus.ZkPending || status == RequestStatus.Null, "invalid request status");
+        require(status == RequestStatus.ZkPending || status == RequestStatus.Null, "invalid status");
         request.status = RequestStatus.ZkAttested;
 
         if (_appCircuitOutput.length > 0) {
             require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         }
-        bool success = _brevisCallback(_callback, appVkHash, _appCircuitOutput, request, status);
+        bool success = _brevisCallback(_callbackTarget, appVkHash, _appCircuitOutput, requestKey, status);
         if (!success) {
             emit RequestCallbackFailed(_proofId, _nonce);
         }
@@ -97,16 +101,16 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes calldata _proof,
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
-        address[] calldata _callbacks
+        address[] calldata _callbackTargets
     ) external {
         IBrevisProof(brevisProof).submitAggProof(_chainId, _proofIds, _proof);
-        if (_callbacks.length > 0) {
+        if (_callbackTargets.length > 0) {
             IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
             require(
                 _proofIds.length == _proofDataArray.length && _proofIds.length == _appCircuitOutputs.length,
                 "length mismatch"
             );
-            require(_callbacks.length == 1 || _callbacks.length == _proofIds.length, "length mismtach");
+            require(_callbackTargets.length == 1 || _callbackTargets.length == _proofIds.length, "length mismtach");
         }
 
         uint256 numFulfilled;
@@ -118,35 +122,36 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
                 request.status = RequestStatus.ZkAttested;
                 numFulfilled++;
 
-                if (_callbacks.length > 0) {
+                if (_callbackTargets.length > 0) {
                     require(
                         _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
                         "failed to open output commitment"
                     );
-                    if (_callbacks.length > 1) {
+                    if (_callbackTargets.length > 1) {
                         bool success = _brevisCallback(
-                            _callbacks[i],
+                            _callbackTargets[i],
                             _proofDataArray[i].appVkHash,
                             _appCircuitOutputs[i],
-                            request,
+                            requestKey,
                             status
                         );
                         if (!success) {
                             emit RequestCallbackFailed(_proofIds[i], _nonces[i]);
                         }
                     } else if (status == RequestStatus.ZkPending) {
-                        require(request.callback.target == _callbacks[0], "callback mismatch");
-                        require(request.callback.gas == 0, "invalid gas for batch callback");
+                        Callback memory callback = onchainRequests[requestKey].callback;
+                        require(callback.target == _callbackTargets[0], "callback mismatch");
+                        require(callback.gas == 0, "invalid gas for batch callback");
                     }
                 }
             }
         }
-        if (_callbacks.length == 1) {
+        if (_callbackTargets.length == 1) {
             bytes32[] memory appVkHashes = new bytes32[](_proofDataArray.length);
             for (uint256 i = 0; i < appVkHashes.length; i++) {
                 appVkHashes[i] = _proofDataArray[i].appVkHash;
             }
-            (bool success, ) = _callbacks[0].call(
+            (bool success, ) = _callbackTargets[0].call(
                 abi.encodeWithSelector(IBrevisApp.brevisBatchCallback.selector, appVkHashes, _appCircuitOutputs)
             );
             if (!success) {
@@ -165,31 +170,31 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         address _refundee
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        require(
-            request.status == RequestStatus.ZkPending || request.status == RequestStatus.OpPending,
-            "invalid request status"
-        );
-        require(request.feeHash == keccak256(abi.encodePacked(_currentFee, _refundee)), "invalid input");
+        RequestStatus status = requests[requestKey].status;
+        require(status == RequestStatus.ZkPending || status == RequestStatus.OpPending, "invalid status");
+
+        OnchainRequestInfo storage info = onchainRequests[requestKey];
+        require(info.feeHash == keccak256(abi.encodePacked(_currentFee, _refundee)), "invalid input");
         uint256 newFee = _currentFee + msg.value;
-        request.feeHash == keccak256(abi.encodePacked(newFee, _refundee));
-        request.callback.gas += _addGas;
-        emit RequestFeeIncreased(_proofId, _nonce, request.callback.gas, newFee);
+        info.feeHash == keccak256(abi.encodePacked(newFee, _refundee));
+        if (_addGas > 0) {
+            info.callback.gas += _addGas;
+        }
+        emit RequestFeeIncreased(_proofId, _nonce, info.callback.gas, newFee);
     }
 
     function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        require(
-            request.status == RequestStatus.ZkPending || request.status == RequestStatus.OpPending,
-            "invalid request status"
-        );
+        Request memory request = requests[requestKey];
+        RequestStatus status = request.status;
+        require(status == RequestStatus.ZkPending || status == RequestStatus.OpPending, "invalid status");
         require(block.timestamp > request.timestamp + requestTimeout);
 
-        require(request.feeHash == keccak256(abi.encodePacked(_amount, _refundee)), "invalid input");
+        bytes32 feeHash = onchainRequests[requestKey].feeHash;
+        require(feeHash == keccak256(abi.encodePacked(_amount, _refundee)), "invalid input");
         (bool sent, ) = _refundee.call{value: _amount, gas: 50000}("");
         require(sent, "send native failed");
-        request.status = RequestStatus.Refunded;
+        requests[requestKey].status = RequestStatus.Refunded;
         emit RequestRefunded(_proofId, _nonce);
     }
 
@@ -219,16 +224,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             _powers
         );
 
-        uint256 timestamp = block.timestamp;
+        uint64 timestamp = uint64(block.timestamp);
         for (uint i = 0; i < _proofIds.length; i++) {
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
-            Request storage request = requests[requestKey];
-            require(
-                request.status == RequestStatus.OpPending || request.status == RequestStatus.Null,
-                "invalid request status"
-            );
-            request.status = RequestStatus.OpSubmitted;
-            request.timestamp = uint64(timestamp);
+            RequestStatus status = requests[requestKey].status;
+            require(status == RequestStatus.OpPending || status == RequestStatus.Null, "invalid status");
+            requests[requestKey] = Request(RequestStatus.OpSubmitted, timestamp);
             opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
         }
 
@@ -407,25 +408,24 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
      *********************/
 
     function _brevisCallback(
-        address _callback,
+        address _callbackTarget,
         bytes32 _appVkHash,
         bytes calldata _appCircuitOutput,
-        Request storage _request,
+        bytes32 _requestKey,
         RequestStatus _status
     ) private returns (bool) {
-        if (_status == RequestStatus.ZkPending) {
-            require(_request.callback.target == _callback, "callback mismatch");
+        uint256 gas;
+        if (_status == RequestStatus.ZkPending) { // is onchainRequest
+            Callback memory callback = onchainRequests[_requestKey].callback;
+            require(callback.target == _callbackTarget, "callback mismatch");
+            gas = callback.gas;
         }
-        if (_callback != address(0)) {
-            uint256 gas;
-            if (_status == RequestStatus.ZkPending) {
-                gas = _request.callback.gas;
-            }
+        if (_callbackTarget != address(0)) {
             if (gas == 0) {
                 gas = gasleft();
             }
             // If the call failed due to insufficient gas, anyone can still call the app.applyBrevisProof directly to proceed
-            (bool success, ) = _callback.call{gas: gas}(
+            (bool success, ) = _callbackTarget.call{gas: gas}(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _appVkHash, _appCircuitOutput)
             );
             if (!success) {
