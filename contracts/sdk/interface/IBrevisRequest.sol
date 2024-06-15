@@ -65,6 +65,7 @@ interface IBrevisRequest {
     event RequestRefunded(bytes32 proofId, uint64 nonce);
     event RequestCallbackFailed(bytes32 proofId, uint64 nonce);
     event RequestsCallbackFailed(bytes32[] proofIds, uint64[] nonces);
+    event RequestFeeIncreased(bytes32 proofId, uint64 nonce, uint256 gas, uint256 fee);
 
     event OpRequestsFulfilled(
         bytes32[] proofIds,
@@ -123,6 +124,14 @@ interface IBrevisRequest {
     ) external;
 
     function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external;
+
+    function increaseGasFee(
+        bytes32 _proofId,
+        uint64 _nonce,
+        uint64 _addGas,
+        uint256 _currentFee,
+        address _refundee
+    ) external payable;
 
     function askForRequestData(bytes32 _proofId, uint64 _nonce) external payable;
 

@@ -53,7 +53,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         } else {
             revert("invalid request option");
         }
-        bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee)); // todo: option to add fee
+        bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee));
         Callback memory callback = Callback(_callback, _gas);
         requests[requestKey] = Request(uint64(block.timestamp), status, callback, feeHash);
         emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _gas, _option);
@@ -155,6 +155,26 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         }
         require(numFulfilled > 0, "no fulfilled requests");
         emit RequestsFulfilled(_proofIds, _nonces);
+    }
+
+    function increaseGasFee(
+        bytes32 _proofId,
+        uint64 _nonce,
+        uint64 _addGas,
+        uint256 _currentFee,
+        address _refundee
+    ) external payable {
+        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
+        Request storage request = requests[requestKey];
+        require(
+            request.status == RequestStatus.ZkPending || request.status == RequestStatus.OpPending,
+            "invalid request status"
+        );
+        require(request.feeHash == keccak256(abi.encodePacked(_currentFee, _refundee)), "invalid input");
+        uint256 newFee = _currentFee + msg.value;
+        request.feeHash == keccak256(abi.encodePacked(newFee, _refundee));
+        request.callback.gas += _addGas;
+        emit RequestFeeIncreased(_proofId, _nonce, request.callback.gas, newFee);
     }
 
     function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external {
