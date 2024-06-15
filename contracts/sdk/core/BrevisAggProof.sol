@@ -14,7 +14,7 @@ contract BrevisAggProof is Ownable {
     ISMT public smtContract;
 
     mapping(bytes32 => bool) public merkleRoots;
-    mapping(bytes32 => bool) public requestIds;
+    mapping(bytes32 => bool) public proofIds;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
     event SmtContractUpdated(ISMT smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
@@ -93,7 +93,7 @@ contract BrevisAggProof is Ownable {
 
     function submitAggProof(
         uint64 _chainId,
-        bytes32[] calldata _requestIds,
+        bytes32[] calldata _proofIds,
         bytes calldata _proofWithPubInputs
     ) external {
         IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
@@ -102,10 +102,10 @@ contract BrevisAggProof is Ownable {
 
         (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
 
-        uint dataLen = _requestIds.length;
+        uint dataLen = _proofIds.length;
         bytes32[LEAF_NODES_LEN] memory rIds;
         for (uint i = 0; i < dataLen; i++) {
-            rIds[i] = _requestIds[i];
+            rIds[i] = _proofIds[i];
         }
         // note, to align with circuit, rIds[dataLen] to rIds[LEAF_NODES_LEN - 1] filled with last real one
         if (dataLen < LEAF_NODES_LEN) {
@@ -113,10 +113,10 @@ contract BrevisAggProof is Ownable {
                 rIds[i] = rIds[dataLen - 1];
             }
         }
-        require(keccak256(abi.encodePacked(rIds)) == commitHash, "requestIds not right");
+        require(keccak256(abi.encodePacked(rIds)) == commitHash, "proofIds not right");
         merkleRoots[root] = true;
-        for (uint i = 0; i < _requestIds.length; i++) {
-            requestIds[_requestIds[i]] = true;
+        for (uint i = 0; i < _proofIds.length; i++) {
+            proofIds[_proofIds[i]] = true;
         }
     }
 

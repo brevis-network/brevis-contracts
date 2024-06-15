@@ -36,12 +36,12 @@ abstract contract BrevisApp is Ownable {
 
     // apply proved request
     function applyBrevisProof(
-        bytes32 _requestId,
+        bytes32 _proofId,
         bytes32 _appVkHash,
         bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
     ) external {
-        brevisProof.validateProofAppData(_requestId, _appCommitHash, _appVkHash);
+        brevisProof.validateProofAppData(_proofId, _appCommitHash, _appVkHash);
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
         handleProofResult(_appVkHash, _appCircuitOutput);
     }
@@ -78,13 +78,14 @@ abstract contract BrevisApp is Ownable {
     }
 
     function applyBrevisOpResult(
-        bytes32 _requestId,
+        bytes32 _proofId,
+        uint64 _nonce,
         bytes32 _appVkHash,
         bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
     ) public {
         require(
-            brevisRequest.validateOpAppData(_requestId, _appVkHash, _appCommitHash, opChallengeWindow),
+            brevisRequest.validateOpAppData(_proofId, _nonce, _appVkHash, _appCommitHash, opChallengeWindow),
             "data not ready to use"
         );
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
@@ -92,18 +93,19 @@ abstract contract BrevisApp is Ownable {
     }
 
     function applyBrevisOpResults(
-        bytes32[] calldata _requestIds,
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
         bytes32[] calldata _appVkHashes,
         bytes32[] calldata _appCommitHashes,
         bytes[] calldata _appCircuitOutputs
     ) external {
-        uint256 len = _requestIds.length;
+        uint256 len = _proofIds.length;
         require(
             len == _appVkHashes.length && len == _appCommitHashes.length && len == _appCircuitOutputs.length,
             "length mismatch"
         );
-        for (uint256 i = 0; i < _requestIds.length; i++) {
-            applyBrevisOpResult(_requestIds[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
+        for (uint256 i = 0; i < _proofIds.length; i++) {
+            applyBrevisOpResult(_proofIds[i], _nonces[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
         }
     }
 
