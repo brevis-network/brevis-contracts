@@ -12,7 +12,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     // common workflow
     IBrevisProof public brevisProof;
     uint256 public requestTimeout;
-    mapping(bytes32 => Request) public requests;
+    mapping(bytes32 => Request) public requests; // requestKey => Request;
 
     // optimistic workflow
     ISigsVerifier public immutable sigsVerifier;
@@ -20,8 +20,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     uint256 public responseTimeout;
     uint256 public depositAskForData;
     uint256 public depositAskForProof;
-    mapping(bytes32 => bytes32) public opdata; // keccak256(abi.encodePacked(appCommitHash, appVkHash));
-    mapping(bytes32 => Dispute) public disputes;
+    mapping(bytes32 => bytes32) public opdata; // requestKey => keccak256(abi.encodePacked(appCommitHash, appVkHash))
+    mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
 
     constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
@@ -213,7 +213,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
     function askForRequestData(bytes32 _requestId) external payable {
         require(msg.value > depositAskForData, "insufficient deposit");
-        // TODO: msg.value should be larger than a configurable value
         bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
@@ -234,7 +233,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         require(request.status == RequestStatus.OpDisputing, "invalid request status");
         require(dispute.status == DisputeStatus.WaitingForRequestData, "invalid dispute status");
 
-        disputes[requestKey].requestDataHash = keccak256(_requestData); // TODO: use claimed mimc?
+        disputes[requestKey].requestDataHash = keccak256(_requestData); // TODO: check availability proof feasibility
         disputes[requestKey].status = DisputeStatus.RequestDataPosted;
         emit RequestDataPosted(_requestId);
     }
@@ -356,14 +355,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         return requests[requestKey].timestamp;
     }
 
-    function validateRequestOpData(
+    function validateOpAppData(
         bytes32 _requestId,
         bytes32 _appCommitHash,
         bytes32 _appVkHash
     ) external view returns (bool) {
-        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
-        require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
-        return true;
+        return _validateOpAppData(_requestId, _appCommitHash, _appVkHash, challengeWindow);
+    }
+
+    function validateOpAppData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash,
+        uint256 _appChallengeWindow
+    ) external view returns (bool) {
+        return _validateOpAppData(_requestId, _appCommitHash, _appVkHash, _appChallengeWindow);
     }
 
     /*********************
@@ -421,5 +427,17 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             }
         }
         return requests[requestKey].status;
+    }
+
+    function _validateOpAppData(
+        bytes32 _requestId,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash,
+        uint256 _challengeWindow
+    ) private view returns (bool readyToUse) {
+        bytes32 requestKey = _requestId; // todo: keccak256(abi.encodePacked(_requestId, _nonce));
+        require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
+        RequestStatus status = _queryRequestStatus(_requestId, _challengeWindow);
+        return (status == RequestStatus.OpAttested || status == RequestStatus.ZkAttested);
     }
 }
