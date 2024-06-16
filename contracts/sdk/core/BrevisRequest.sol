@@ -252,13 +252,14 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
     }
 
     function postRequestData(bytes32 _proofId, uint64 _nonce, bytes calldata _requestData) external {
+        // todo: check msg.sender or signature
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
         require(request.status == RequestStatus.OpDisputing, "invalid request status");
         require(dispute.status == DisputeStatus.WaitingForRequestData, "invalid dispute status");
 
-        disputes[requestKey].requestDataHash = keccak256(_requestData); // TODO: check availability proof feasibility
+        disputes[requestKey].requestDataHash = keccak256(_requestData); // todo: availability proof feasibility
         disputes[requestKey].status = DisputeStatus.RequestDataPosted;
         emit RequestDataPosted(_proofId, _nonce);
     }
@@ -293,7 +294,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             "invalid states"
         );
         disputes[requestKey].status = DisputeStatus.DataAvailabilityProofPosted;
-        // TODO: check proof
+        // todo: validate proof
 
         emit DataAvailabilityProofPosted(_proofId, _nonce);
     }
@@ -419,8 +420,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         RequestStatus _status
     ) private returns (bool) {
         uint256 gas;
-        if (_status == RequestStatus.ZkPending) {
-            // is onchainRequest
+        if (_status == RequestStatus.ZkPending /* is onchain request*/) {
             Callback memory callback = onchainRequests[_requestKey].callback;
             require(callback.target == _callbackTarget, "callback mismatch");
             gas = callback.gas;
@@ -429,7 +429,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
             if (gas == 0) {
                 gas = gasleft();
             }
-            // If the call failed due to insufficient gas, anyone can still call the app.applyBrevisProof directly to proceed
+            // If the call failed due any reason,
+            // anyone can trigger retry later by calling applyBrevisProof on target contract directly.
             (bool success, ) = _callbackTarget.call{gas: gas}(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _appVkHash, _appCircuitOutput)
             );
@@ -446,26 +447,24 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         uint256 _challengeWindow
     ) private view returns (RequestStatus) {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
+        Request memory request = requests[requestKey];
         if (request.status == RequestStatus.OpSubmitted) {
             if (request.timestamp + _challengeWindow < block.timestamp) {
                 return RequestStatus.OpAttested;
             }
         } else if (request.status == RequestStatus.OpDisputing) {
             Dispute storage dispute = disputes[requestKey];
-            if (
-                dispute.status == DisputeStatus.RequestDataPosted ||
-                dispute.status == DisputeStatus.DataAvailabilityProofPosted
-            ) {
+            DisputeStatus dstatus = dispute.status;
+            if (dstatus == DisputeStatus.RequestDataPosted || dstatus == DisputeStatus.DataAvailabilityProofPosted) {
                 if (request.timestamp + _challengeWindow < block.timestamp) {
                     return RequestStatus.OpAttested;
                 }
             } else if (dispute.responseDeadline < block.timestamp) {
-                // WaitingForRequestData || WaitingForDataValidityProof || DataValidityProofPosted
+                // did not respond in time for WaitringForXXX
                 return RequestStatus.OpDisputed;
             }
         }
-        return requests[requestKey].status;
+        return request.status;
     }
 
     function _validateOpAppData(
