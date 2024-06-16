@@ -50,6 +50,8 @@ interface IBrevisRequest {
         DisputeStatus status;
         bytes32 requestDataHash;
         uint256 responseDeadline;
+        address challenger;
+        uint256 deposit;
     }
 
     // todo: reduce event fields

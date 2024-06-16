@@ -216,7 +216,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
 
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         sigsVerifier.verifySigs(
-            abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes),
+            abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes), // todo: dataURL?
             _sigs,
             _signers,
             _powers
@@ -245,6 +245,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForRequestData;
         dispute.responseDeadline = block.timestamp + responseTimeout;
+        dispute.challenger = msg.sender;
+        dispute.deposit = msg.value;
 
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForRequestData, msg.sender);
     }
@@ -275,6 +277,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForDataAvailabilityProof;
         dispute.responseDeadline = block.timestamp + responseTimeout;
+        dispute.challenger = msg.sender;
+        dispute.deposit = msg.value;
 
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataAvailabilityProof, msg.sender);
     }
@@ -310,6 +314,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         request.status = RequestStatus.OpDisputing;
         dispute.status = DisputeStatus.WaitingForDataValidityProof;
         dispute.responseDeadline = block.timestamp + responseTimeout;
+        dispute.challenger = msg.sender;
+        dispute.deposit = msg.value;
 
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataValidityProof, msg.sender);
     }
