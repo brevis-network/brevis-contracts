@@ -251,7 +251,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForRequestData, msg.sender);
     }
 
-    function postRequestData(bytes32 _proofId, uint64 _nonce, bytes calldata _requestData) external {
+    function postRequestData(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes[] calldata _data,
+        uint256 _index,
+        bool _done
+    ) external {
         // todo: check msg.sender or signature
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
@@ -259,9 +265,16 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         require(request.status == RequestStatus.OpDisputing, "invalid request status");
         require(dispute.status == DisputeStatus.WaitingForRequestData, "invalid dispute status");
 
-        disputes[requestKey].requestDataHash = keccak256(_requestData); // todo: availability proof feasibility
-        disputes[requestKey].status = DisputeStatus.RequestDataPosted;
-        emit RequestDataPosted(_proofId, _nonce);
+        RequestDataHash storage dataHash = dispute.requestDataHash;
+        require(dataHash.hashes.length == _index, "invalid index");
+        for (uint i = 0; i < _data.length; i++) {
+            dataHash.hashes.push(keccak256(_data[i]));
+        }
+        if (_done) {
+            dataHash.root = keccak256(abi.encodePacked(dataHash.hashes)); // todo: consider merkle
+            disputes[requestKey].status = DisputeStatus.RequestDataPosted;
+        }
+        emit RequestDataPosted(_proofId, _nonce, _data, _index, _done);
     }
 
     function askForDataAvailabilityProof(bytes32 _proofId, uint64 _nonce) external payable {
@@ -284,7 +297,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataAvailabilityProof, msg.sender);
     }
 
-    function postDataAvailabilityProof(bytes32 _proofId, uint64 _nonce, bytes calldata _proof) external {
+    function postDataAvailabilityProof(bytes32 _proofId, uint64 _nonce, bytes calldata /*proof*/) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];

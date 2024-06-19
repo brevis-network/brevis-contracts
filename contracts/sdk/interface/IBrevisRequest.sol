@@ -46,9 +46,14 @@ interface IBrevisRequest {
         DataValidityProofPosted
     }
 
+    struct RequestDataHash {
+        bytes32[] hashes;
+        bytes32 root;
+    }
+
     struct Dispute {
         DisputeStatus status;
-        bytes32 requestDataHash;
+        RequestDataHash requestDataHash;
         uint256 responseDeadline;
         address challenger;
         uint256 deposit;
@@ -78,7 +83,7 @@ interface IBrevisRequest {
         bytes[] urls
     );
     event AskFor(bytes32 indexed proofId, uint64 nonce, DisputeStatus status, address from);
-    event RequestDataPosted(bytes32 indexed proofId, uint64 nonce);
+    event RequestDataPosted(bytes32 indexed proofId, uint64 nonce, bytes[] data, uint256 index, bool done);
     event DataAvailabilityProofPosted(bytes32 indexed proofId, uint64 nonce);
     event DataValidityProofProofPosted(bytes32 indexed proofId, uint64 nonce);
 
@@ -137,7 +142,13 @@ interface IBrevisRequest {
 
     function askForRequestData(bytes32 _proofId, uint64 _nonce) external payable;
 
-    function postRequestData(bytes32 _proofId, uint64 _nonce, bytes calldata _requestData) external;
+    function postRequestData(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes[] calldata _requestData,
+        uint256 _index,
+        bool _done
+    ) external;
 
     function askForDataAvailabilityProof(bytes32 _proofId, uint64 _nonce) external payable;
 
