@@ -10,7 +10,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
 
-    const deployment = await deploy('SMTUpdateCircuitProofVerifier', { from: deployer, log: true });
+    const deployment = await deploy('SMTUpdateCircuitProofOnOpVerifier', { from: deployer, log: true });
     await verify(hre, deployment);
 };
 
