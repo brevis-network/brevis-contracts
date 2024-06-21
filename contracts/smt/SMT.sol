@@ -64,7 +64,7 @@ contract SMT is ISMT, Ownable {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
 
-        uint256[10] memory input;
+        uint256[9] memory input;
         uint256 m = 1 << 128;
         input[0] = uint256(oldSmtRoot) >> 128;
         input[1] = uint256(oldSmtRoot) % m;
@@ -75,9 +75,8 @@ contract SMT is ISMT, Ownable {
         input[6] = u.endBlockNum;
         input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
         input[8] = uint256(u.nextChunkMerkleRoot) % m;
-        input[9] = uint256(u.commitPub);
-
-        return verifier.verifyProof(u.proof.a, u.proof.b, u.proof.c, u.proof.commitment, input);
+       
+        return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }
 
     function setAnchorProvider(uint64 chainId, address anchorProvider) external onlyOwner {

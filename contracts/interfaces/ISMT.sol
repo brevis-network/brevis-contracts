@@ -9,8 +9,10 @@ interface ISMT {
         uint64 endBlockNum;
         bytes32 endBlockHash;
         bytes32 nextChunkMerkleRoot;
-        IVerifier.Proof proof;
-        bytes32 commitPub;
+        uint256[8] proof;
+        uint256[2] commit;
+        uint256[2] knowledgeProof;
+        uint256[9] input;
     }
 
     function updateRoot(uint64 chainId, SmtUpdate memory u) external;
