@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 import "./FeeVault.sol";
 import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
@@ -22,6 +24,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     uint256 public responseTimeout;
     uint256 public depositAskForData;
     uint256 public depositAskForProof;
+    string public baseDataURL;
     mapping(bytes32 => bytes32) public opdata; // requestKey => keccak256(abi.encodePacked(appCommitHash, appVkHash))
     mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
 
@@ -204,27 +207,26 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64[] calldata _nonces,
         bytes32[] calldata _appCommitHashes,
         bytes32[] calldata _appVkHashes,
-        bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
     ) external whenNotPaused {
         uint256 dataNum = _proofIds.length;
         require(
-            dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length && dataNum == _dataURLs.length,
+            dataNum == _nonces.length && dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length,
             "length mismatch"
         );
 
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         sigsVerifier.verifySigs(
-            abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes), // todo: dataURL?
+            abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes),
             _sigs,
             _signers,
             _powers
         );
 
         uint64 timestamp = uint64(block.timestamp);
-        for (uint i = 0; i < _proofIds.length; i++) {
+        for (uint i = 0; i < dataNum; i++) {
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
             RequestStatus status = requests[requestKey].status;
             require(status == RequestStatus.OpPending || status == RequestStatus.Null, "invalid status");
@@ -232,7 +234,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
         }
 
-        emit OpRequestsFulfilled(_proofIds, _nonces, _appCommitHashes, _appVkHashes, _dataURLs);
+        emit OpRequestsFulfilled(_proofIds, _nonces, _appCommitHashes, _appVkHashes);
     }
 
     function askForRequestData(bytes32 _proofId, uint64 _nonce) external payable {
@@ -391,6 +393,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit ResponseTimeoutUpdated(oldResponseTimeout, _responseTimeout);
     }
 
+    function setBaseDataURL(string memory _url) external onlyOwner {
+        string memory oldURL = baseDataURL;
+        baseDataURL = _url;
+        emit BaseDataUrlUpdated(oldURL, _url);
+    }
+
     /**************************
      *  Public View Functions *
      **************************/
@@ -429,6 +437,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint256 _appChallengeWindow
     ) external view returns (bool) {
         return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, _appChallengeWindow);
+    }
+
+    function dataURL(bytes32 _proofId) external view returns (string memory) {
+        if (bytes(baseDataURL).length == 0) {
+            return "";
+        }
+        return string.concat(baseDataURL, Strings.toHexString(uint256(_proofId), 32));
     }
 
     /*********************

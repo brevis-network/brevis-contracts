@@ -75,13 +75,7 @@ interface IBrevisRequest {
     event RequestsCallbackFailed(bytes32[] proofIds, uint64[] nonces);
     event RequestFeeIncreased(bytes32 proofId, uint64 nonce, uint256 gas, uint256 fee);
 
-    event OpRequestsFulfilled(
-        bytes32[] proofIds,
-        uint64[] nonces,
-        bytes32[] appCommitHashes,
-        bytes32[] appVkHashes,
-        bytes[] urls
-    );
+    event OpRequestsFulfilled(bytes32[] proofIds, uint64[] nonces, bytes32[] appCommitHashes, bytes32[] appVkHashes);
     event AskFor(bytes32 indexed proofId, uint64 nonce, DisputeStatus status, address from);
     event RequestDataPosted(bytes32 indexed proofId, uint64 nonce, bytes[] data, uint256 index, bool done);
     event DataAvailabilityProofPosted(bytes32 indexed proofId, uint64 nonce);
@@ -90,6 +84,7 @@ interface IBrevisRequest {
     event RequestTimeoutUpdated(uint256 from, uint256 to);
     event ChallengeWindowUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
+    event BaseDataUrlUpdated(string from, string to);
     event DisputeDepositsUpdated(uint256 amtAskForData, uint256 amtAskForProof);
 
     function sendRequest(
@@ -124,7 +119,6 @@ interface IBrevisRequest {
         uint64[] calldata _nonces,
         bytes32[] calldata _appCommitHashes,
         bytes32[] calldata _appVkHashes,
-        bytes[] calldata _dataURLs,
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
@@ -180,4 +174,6 @@ interface IBrevisRequest {
         bytes32 _appVkHash,
         uint256 _appChallengeWindow
     ) external view returns (bool);
+
+    function dataURL(bytes32 _proofId) external view returns (string memory);
 }
