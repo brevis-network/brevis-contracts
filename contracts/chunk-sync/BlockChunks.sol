@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IBlockChunks.sol";
 import "../verifiers/interfaces/IZkpVerifier.sol";
 import "../light-client-eth/interfaces/IAnchorBlocks.sol";
+import "../safeguard/BrevisAccess.sol";
 
 uint8 constant TREE_DEPTH = 7;
 uint32 constant NUM_LEAVES = 2 ** 7;
@@ -12,7 +12,7 @@ uint32 constant NUM_LEAVES = 2 ** 7;
 // array indices for reading from the ZKP calldata
 uint32 constant PUBLIC_BYTES_START_IDX = 10 * 32; // the first 10 32bytes are groth16 proof (A/B/C/Commitment)
 
-contract BlockChunks is IBlockChunks, Ownable {
+contract BlockChunks is IBlockChunks, BrevisAccess {
     mapping(uint64 => address) public verifierAddresses; // chainid => snark verifier contract address
     mapping(uint64 => address) public anchorBlockProviders; // chainid => anchorBlockProvider
 
@@ -76,7 +76,7 @@ contract BlockChunks is IBlockChunks, Ownable {
     // update blocks in the "backward" direction, anchoring on a "recent" end blockhash from anchor contract
     // * startBlockNumber must be a multiple of NUM_LEAVES
     // * for now always endBlockNumber = startBlockNumber + NUM_LEAVES - 1 (full update on every NUM_LEAVES blocks chunk)
-    function updateRecent(uint64 chainId, bytes calldata proofData) external {
+    function updateRecent(uint64 chainId, bytes calldata proofData) external onlyActiveProver {
         (
             bytes32 chunkRoot,
             bytes32 prevHash,
@@ -99,7 +99,12 @@ contract BlockChunks is IBlockChunks, Ownable {
 
     // update older blocks in "backwards" direction, anchoring on more recent trusted blockhash
     // must be batch of NUM_LEAVES blocks
-    function updateOld(uint64 chainId, bytes32 nextRoot, uint32 nextNumFinal, bytes calldata proofData) external {
+    function updateOld(
+        uint64 chainId,
+        bytes32 nextRoot,
+        uint32 nextNumFinal,
+        bytes calldata proofData
+    ) external onlyActiveProver {
         (
             bytes32 chunkRoot,
             bytes32 prevHash,

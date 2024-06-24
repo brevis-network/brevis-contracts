@@ -7,8 +7,9 @@ import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
 import "../../interfaces/ISigsVerifier.sol";
 import "../lib/Lib.sol";
+import "../../safeguard/BrevisAccess.sol";
 
-contract BrevisRequest is IBrevisRequest, FeeVault {
+contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     // common workflow
     IBrevisProof public brevisProof;
     uint256 public requestTimeout;
@@ -68,7 +69,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes calldata _proof,
         bytes calldata _appCircuitOutput,
         address _callbackTarget
-    ) external {
+    ) external onlyActiveProver {
         (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
             _chainId,
             _proof
@@ -100,7 +101,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
         address[] calldata _callbackTargets
-    ) external {
+    ) external onlyActiveProver {
         IBrevisProof(brevisProof).submitAggProof(_chainId, _proofIds, _proof);
         if (_callbackTargets.length > 0) {
             IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
@@ -181,7 +182,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit RequestFeeIncreased(_proofId, _nonce, info.callback.gas, newFee);
     }
 
-    function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external {
+    function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external whenNotPaused {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request memory request = requests[requestKey];
         RequestStatus status = request.status;
@@ -207,7 +208,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes[] calldata _sigs,
         address[] calldata _signers,
         uint256[] calldata _powers
-    ) external {
+    ) external whenNotPaused {
         uint256 dataNum = _proofIds.length;
         require(
             dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length && dataNum == _dataURLs.length,
@@ -257,7 +258,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes[] calldata _data,
         uint256 _index,
         bool _done
-    ) external {
+    ) external onlyActiveProver {
         // todo: check msg.sender or signature
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
@@ -297,7 +298,11 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataAvailabilityProof, msg.sender);
     }
 
-    function postDataAvailabilityProof(bytes32 _proofId, uint64 _nonce, bytes calldata /*proof*/) external {
+    function postDataAvailabilityProof(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes calldata /*proof*/
+    ) external onlyActiveProver {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
@@ -334,7 +339,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataValidityProof, msg.sender);
     }
 
-    function postDataValidityProof(bytes32 _proofId, uint64 _nonce, uint64 _chainId, bytes calldata _proof) external {
+    function postDataValidityProof(
+        bytes32 _proofId,
+        uint64 _nonce,
+        uint64 _chainId,
+        bytes calldata _proof
+    ) external onlyActiveProver {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
