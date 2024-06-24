@@ -498,7 +498,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
                     return RequestStatus.OpAttested;
                 }
             } else if (dispute.responseDeadline < block.timestamp) {
-                // did not respond in time for WaitringForXXX
+                // did not respond in time for WaitingForXXX
                 return RequestStatus.OpDisputed;
             }
         }
