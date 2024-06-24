@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
+import "../../safeguard/Ownable.sol";
 
 contract BrevisAggProof is Ownable {
     uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)

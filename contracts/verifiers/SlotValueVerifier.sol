@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/ISlotValueVerifier.sol";
 import "./interfaces/IZkpVerifier.sol";
 import "../chunk-sync/interfaces/IBlockChunks.sol";
+import "../safeguard/Ownable.sol";
 
 contract SlotValueVerifier is ISlotValueVerifier, Ownable {
     uint32 constant PUBLIC_BYTES_START_IDX = 10 * 32;
