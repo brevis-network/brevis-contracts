@@ -6,7 +6,7 @@ import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 import "../interfaces/ISMT.sol";
 
 contract SMT is ISMT, Ownable {
-    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum);
+    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
 
@@ -57,7 +57,7 @@ contract SMT is ISMT, Ownable {
 
         smtRoots[chainId][u.newSmtRoot] = true;
         latestRoots[chainId] = u.newSmtRoot;
-        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum);
+        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, chainId);
     }
 
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
