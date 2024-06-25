@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
-import "../../safeguard/Ownable.sol";
+import "../../safeguard/BrevisAccess.sol";
 
-contract BrevisAggProof is Ownable {
+contract BrevisAggProof is BrevisAccess {
     uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)
     uint8 constant TREE_DEPTH = 4;
     uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;
@@ -95,7 +95,7 @@ contract BrevisAggProof is Ownable {
         uint64 _chainId,
         bytes32[] calldata _proofIds,
         bytes calldata _proofWithPubInputs
-    ) external {
+    ) external onlyActiveProver {
         IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
         require(address(verifier) != address(0), "chain agg proof verifier not set");
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");

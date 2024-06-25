@@ -19,7 +19,7 @@ contract BrevisProof is BrevisAggProof {
     function submitProof(
         uint64 _chainId,
         bytes calldata _proofWithPubInputs
-    ) external returns (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) {
+    ) external onlyActiveProver returns (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) {
         require(verifyRaw(_chainId, _proofWithPubInputs), "proof not valid");
         Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs);
 

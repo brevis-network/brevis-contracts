@@ -16,6 +16,7 @@ async function deployTestBrevisAppContract(admin: Wallet) {
   const brevisRequest = await factory
     .connect(admin)
     .deploy(smt.address, brevisProof.address, '0x0000000000000000000000000000000000000000');
+  await brevisProof.addProvers([brevisRequest.address]);
   return { brevisProof, brevisRequest };
 }
 
