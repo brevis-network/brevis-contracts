@@ -11,7 +11,8 @@
     "clean": "hardhat clean",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "report-gas": "REPORT_GAS=true hardhat test"
+    "report-gas": "REPORT_GAS=true hardhat test",
+    "size-contracts": "hardhat size-contracts > reports/contract_sizes.txt"
   },
   "devDependencies": {
     "@chainsafe/bls": "^7.1.1",
