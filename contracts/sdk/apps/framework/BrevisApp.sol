@@ -41,7 +41,7 @@ abstract contract BrevisApp is Ownable {
         bytes calldata _appCircuitOutput
     ) external {
         brevisProof.validateProofAppData(_proofId, _appCommitHash, _appVkHash);
-        require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
         handleProofResult(_appVkHash, _appCircuitOutput);
     }
 
@@ -54,10 +54,7 @@ abstract contract BrevisApp is Ownable {
         require(_proofDataArray.length == _appCircuitOutputs.length, "length not match");
         brevisProof.validateAggProofData(_chainId, _proofDataArray);
         for (uint i = 0; i < _proofDataArray.length; i++) {
-            require(
-                _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
-                "failed to open output commitment"
-            );
+            require(_proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
             handleProofResult(_proofDataArray[i].appVkHash, _appCircuitOutputs[i]);
         }
     }
@@ -72,7 +69,7 @@ abstract contract BrevisApp is Ownable {
         bytes calldata _appCircuitOutput
     ) external {
         brevisProof.validateAggProofData(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
-        require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
         handleProofResult(_proofData.appVkHash, _appCircuitOutput);
     }
 
@@ -93,7 +90,7 @@ abstract contract BrevisApp is Ownable {
             ),
             "data not ready to use"
         );
-        require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
         handleOpProofResult(_appVkHash, _appCircuitOutput);
     }
 

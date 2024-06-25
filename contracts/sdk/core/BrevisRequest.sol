@@ -86,7 +86,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         request.status = RequestStatus.ZkAttested;
 
         if (_appCircuitOutput.length > 0) {
-            require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
+            require(appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
         }
         bool success = _brevisCallback(_callbackTarget, appVkHash, _appCircuitOutput, requestKey, status);
         if (!success) {
@@ -105,18 +105,23 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes[] calldata _appCircuitOutputs,
         address[] calldata _callbackTargets
     ) external onlyActiveProver {
+        uint256 dataNum = _proofIds.length;
         IBrevisProof(brevisProof).submitAggProof(_chainId, _proofIds, _proof);
         if (_callbackTargets.length > 0) {
+            // verify proof data and circuit outputs
             IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
             require(
-                _proofIds.length == _proofDataArray.length && _proofIds.length == _appCircuitOutputs.length,
+                dataNum == _nonces.length && dataNum == _proofDataArray.length && dataNum == _appCircuitOutputs.length,
                 "length mismatch"
             );
-            require(_callbackTargets.length == 1 || _callbackTargets.length == _proofIds.length, "length mismtach");
+            require(_callbackTargets.length == 1 || _callbackTargets.length == dataNum, "length mismtach");
+            for (uint256 i = 0; i < dataNum; i++) {
+                require(_proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
+            }
         }
 
         uint256 numFulfilled;
-        for (uint256 i = 0; i < _proofIds.length; i++) {
+        for (uint256 i = 0; i < dataNum; i++) {
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
             RequestStatus status = request.status;
@@ -124,27 +129,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
                 request.status = RequestStatus.ZkAttested;
                 numFulfilled++;
 
-                if (_callbackTargets.length > 0) {
-                    require(
-                        _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
-                        "failed to open output commitment"
+                if (_callbackTargets.length > 1) {
+                    bool success = _brevisCallback(
+                        _callbackTargets[i],
+                        _proofDataArray[i].appVkHash,
+                        _appCircuitOutputs[i],
+                        requestKey,
+                        status
                     );
-                    if (_callbackTargets.length > 1) {
-                        bool success = _brevisCallback(
-                            _callbackTargets[i],
-                            _proofDataArray[i].appVkHash,
-                            _appCircuitOutputs[i],
-                            requestKey,
-                            status
-                        );
-                        if (!success) {
-                            emit RequestCallbackFailed(_proofIds[i], _nonces[i]);
-                        }
-                    } else if (status == RequestStatus.ZkPending) {
-                        Callback memory callback = onchainRequests[requestKey].callback;
-                        require(callback.target == _callbackTargets[0], "callback mismatch");
-                        require(callback.gas == 0, "invalid gas for batch callback");
+                    if (!success) {
+                        emit RequestCallbackFailed(_proofIds[i], _nonces[i]);
                     }
+                } else if (_callbackTargets.length == 1 && status == RequestStatus.ZkPending) {
+                    Callback memory callback = onchainRequests[requestKey].callback;
+                    require(callback.target == _callbackTargets[0], "callback mismatch");
+                    require(callback.gas == 0, "invalid gas for batch callback");
                 }
             }
         }
