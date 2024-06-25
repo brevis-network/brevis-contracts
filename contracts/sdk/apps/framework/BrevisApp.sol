@@ -19,6 +19,7 @@ abstract contract BrevisApp is Ownable {
     constructor(IBrevisProof _brevisProof) {
         brevisProof = _brevisProof;
         brevisRequest = IBrevisRequest(brevisProof.getRequestContract());
+        opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
     }
 
     function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
@@ -89,7 +90,7 @@ abstract contract BrevisApp is Ownable {
             "data not ready to use"
         );
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_appVkHash, _appCircuitOutput);
+        handleOpProofResult(_appVkHash, _appCircuitOutput);
     }
 
     function applyBrevisOpResults(
@@ -114,6 +115,10 @@ abstract contract BrevisApp is Ownable {
     }
 
     function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+        // to be overrided by custom app
+    }
+
+    function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
     }
 }
