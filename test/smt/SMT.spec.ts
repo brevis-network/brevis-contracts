@@ -97,6 +97,7 @@ describe('SMT', async () => {
 
   async function fixture([admin]: Wallet[]) {
     const contract = await deployContracts(admin);
+    await contract.addProvers([admin.address]);
     return { admin, contract };
   }
 
@@ -111,12 +112,12 @@ describe('SMT', async () => {
   it('update passes on true proofs', async () => {
     let tx: Promise<ContractTransaction>;
     tx = contract.updateRoot(1, updateNew);
-    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateNew.newSmtRoot, updateNew.endBlockNum, 1);
+    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateNew.newSmtRoot, updateNew.endBlockNum);
     let valid = await contract.isSmtRootValid(1, updateNew.newSmtRoot);
     expect(valid).true;
 
     tx = contract.updateRoot(1, updateOld);
-    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateOld.newSmtRoot, updateOld.endBlockNum, 2);
+    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateOld.newSmtRoot, updateOld.endBlockNum);
     valid = await contract.isSmtRootValid(1, updateOld.newSmtRoot);
     expect(valid).true;
   });
