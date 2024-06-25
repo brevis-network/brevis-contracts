@@ -8,17 +8,15 @@ import "../../lib/Lib.sol";
 
 abstract contract BrevisApp is Ownable {
     IBrevisProof public brevisProof;
-    IBrevisRequest public brevisRequest;
     uint256 public opChallengeWindow;
 
     modifier onlyBrevisRequest() {
-        require(msg.sender == address(brevisRequest), "invalid caller");
+        require(msg.sender == address(brevisProof.getRequestContract()), "invalid caller");
         _;
     }
 
     constructor(IBrevisProof _brevisProof) {
         brevisProof = _brevisProof;
-        brevisRequest = IBrevisRequest(brevisProof.getRequestContract());
         opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
     }
 
@@ -86,7 +84,13 @@ abstract contract BrevisApp is Ownable {
         bytes calldata _appCircuitOutput
     ) public {
         require(
-            brevisRequest.validateOpAppData(_proofId, _nonce, _appVkHash, _appCommitHash, opChallengeWindow),
+            IBrevisRequest(brevisProof.getRequestContract()).validateOpAppData(
+                _proofId,
+                _nonce,
+                _appVkHash,
+                _appCommitHash,
+                opChallengeWindow
+            ),
             "data not ready to use"
         );
         require(_appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
