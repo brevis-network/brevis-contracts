@@ -47,7 +47,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         RequestStatus status;
         if (_option == RequestOption.Zk) {
             status == RequestStatus.ZkPending;
-        } else if (_option == RequestOption.Zk) {
+        } else if (_option == RequestOption.Op) {
             status = RequestStatus.OpPending;
         } else {
             revert("invalid request option");
