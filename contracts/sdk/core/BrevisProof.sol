@@ -16,6 +16,10 @@ contract BrevisProof is BrevisAggProof {
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
+    /*********************************
+     * External and Public Functions *
+     *********************************/
+
     function submitProof(
         uint64 _chainId,
         bytes calldata _proofWithPubInputs
@@ -39,21 +43,11 @@ contract BrevisProof is BrevisAggProof {
         return true;
     }
 
-    function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {
-        IZkpVerifier verifier = verifierAddresses[_chainId];
-        require(address(verifier) != address(0), "chain verifier not set");
-        return verifier.verifyRaw(_proofWithPubInputs);
+    function getRequestContract() external view returns (address) {
+        return brevisRequest;
     }
 
-    function unpackProofData(bytes calldata _proofWithPubInputs) internal pure returns (Brevis.ProofData memory data) {
-        data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
-        data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
-        //data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
-        data.appCommitHash = bytes32(
-            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]
-        );
-        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);
-    }
+    // -------- owner functions --------
 
     function updateVerifierAddress(
         uint64[] calldata _chainIds,
@@ -66,12 +60,28 @@ contract BrevisProof is BrevisAggProof {
         emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);
     }
 
-    function getRequestContract() external view returns (address) {
-        return brevisRequest;
-    }
-
     function updateBrevisRequestContract(address _brevisRequest) public onlyOwner {
         brevisRequest = _brevisRequest;
         emit BrevisRequestContractUpdated(_brevisRequest);
+    }
+
+    /**********************************
+     * Internal and Private Functions *
+     **********************************/
+
+    function unpackProofData(bytes calldata _proofWithPubInputs) internal pure returns (Brevis.ProofData memory data) {
+        data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
+        data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
+        //data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
+        data.appCommitHash = bytes32(
+            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]
+        );
+        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);
+    }
+
+    function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {
+        IZkpVerifier verifier = verifierAddresses[_chainId];
+        require(address(verifier) != address(0), "chain verifier not set");
+        return verifier.verifyRaw(_proofWithPubInputs);
     }
 }

@@ -22,35 +22,34 @@ contract BrevisAggProof is BrevisAccess {
         smtContract = _smtContract;
     }
 
-    // validate a single leaf node in the agg proof data
-    function validateAggProofData(
-        uint64 _chainId,
-        Brevis.ProofData calldata _proofData,
-        bytes32 _merkleRoot,
-        bytes32[] calldata _merkleProof,
-        uint8 _nodeIndex
-    ) external view {
-        require(merkleRoots[_merkleRoot], "merkle root not exists");
-        require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), "invalid smt root");
+    /*********************************
+     * External and Public Functions *
+     *********************************/
 
-        bytes32 proofDataHash = keccak256(
-            abi.encodePacked(
-                _proofData.commitHash,
-                _proofData.smtRoot,
-                _proofData.vkHash,
-                _proofData.appCommitHash,
-                _proofData.appVkHash
-            )
-        );
-        bytes32 root = proofDataHash;
-        for (uint8 depth = 0; depth < TREE_DEPTH; depth++) {
-            if ((_nodeIndex >> depth) & 1 == 0) {
-                root = keccak256(abi.encodePacked(root, _merkleProof[depth]));
-            } else {
-                root = keccak256(abi.encodePacked(_merkleProof[depth], root));
+    function submitAggProof(
+        uint64 _chainId,
+        bytes32[] calldata _proofIds,
+        bytes calldata _proofWithPubInputs
+    ) external onlyActiveProver {
+        IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
+        require(address(verifier) != address(0), "chain agg proof verifier not set");
+        require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
+
+        (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
+
+        uint dataLen = _proofIds.length;
+        bytes32[LEAF_NODES_LEN] memory rIds;
+        for (uint i = 0; i < dataLen; i++) {
+            rIds[i] = _proofIds[i];
+        }
+        // note, to align with circuit, rIds[dataLen] to rIds[LEAF_NODES_LEN - 1] filled with last real one
+        if (dataLen < LEAF_NODES_LEN) {
+            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {
+                rIds[i] = rIds[dataLen - 1];
             }
         }
-        require(_merkleRoot == root, "invalid data");
+        require(keccak256(abi.encodePacked(rIds)) == commitHash, "proofIds not right");
+        merkleRoots[root] = true;
     }
 
     // validate all leaf nodes in the agg proof data
@@ -90,36 +89,38 @@ contract BrevisAggProof is BrevisAccess {
         require(merkleRoots[hashes[hashes.length - 1]], "merkle root not exists");
     }
 
-    function submitAggProof(
+    // validate a single leaf node in the agg proof data
+    function validateAggProofData(
         uint64 _chainId,
-        bytes32[] calldata _proofIds,
-        bytes calldata _proofWithPubInputs
-    ) external onlyActiveProver {
-        IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
-        require(address(verifier) != address(0), "chain agg proof verifier not set");
-        require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
+        Brevis.ProofData calldata _proofData,
+        bytes32 _merkleRoot,
+        bytes32[] calldata _merkleProof,
+        uint8 _nodeIndex
+    ) external view {
+        require(merkleRoots[_merkleRoot], "merkle root not exists");
+        require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), "invalid smt root");
 
-        (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
-
-        uint dataLen = _proofIds.length;
-        bytes32[LEAF_NODES_LEN] memory rIds;
-        for (uint i = 0; i < dataLen; i++) {
-            rIds[i] = _proofIds[i];
-        }
-        // note, to align with circuit, rIds[dataLen] to rIds[LEAF_NODES_LEN - 1] filled with last real one
-        if (dataLen < LEAF_NODES_LEN) {
-            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {
-                rIds[i] = rIds[dataLen - 1];
+        bytes32 proofDataHash = keccak256(
+            abi.encodePacked(
+                _proofData.commitHash,
+                _proofData.smtRoot,
+                _proofData.vkHash,
+                _proofData.appCommitHash,
+                _proofData.appVkHash
+            )
+        );
+        bytes32 root = proofDataHash;
+        for (uint8 depth = 0; depth < TREE_DEPTH; depth++) {
+            if ((_nodeIndex >> depth) & 1 == 0) {
+                root = keccak256(abi.encodePacked(root, _merkleProof[depth]));
+            } else {
+                root = keccak256(abi.encodePacked(_merkleProof[depth], root));
             }
         }
-        require(keccak256(abi.encodePacked(rIds)) == commitHash, "proofIds not right");
-        merkleRoots[root] = true;
+        require(_merkleRoot == root, "invalid data");
     }
 
-    function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {
-        merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
-        commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
-    }
+    // -------- owner functions --------
 
     function updateSmtContract(ISMT _smtContract) public onlyOwner {
         smtContract = _smtContract;
@@ -135,5 +136,14 @@ contract BrevisAggProof is BrevisAccess {
             aggProofVerifierAddress[_chainIds[i]] = _verifierAddresses[i];
         }
         emit AggProofVerifierAddressesUpdated(_chainIds, _verifierAddresses);
+    }
+
+    /**********************************
+     * Internal and Private Functions *
+     **********************************/
+
+    function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {
+        merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
+        commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
     }
 }
