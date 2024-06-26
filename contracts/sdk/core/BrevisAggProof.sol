@@ -14,9 +14,8 @@ contract BrevisAggProof is BrevisAccess {
     ISMT public smtContract;
 
     mapping(bytes32 => bool) public merkleRoots;
-    mapping(bytes32 => bool) public proofIds;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
-    event SmtContractUpdated(ISMT smtContract);
+    event SmtContractUpdated(address smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
 
     constructor(ISMT _smtContract) {
@@ -115,9 +114,6 @@ contract BrevisAggProof is BrevisAccess {
         }
         require(keccak256(abi.encodePacked(rIds)) == commitHash, "proofIds not right");
         merkleRoots[root] = true;
-        for (uint i = 0; i < _proofIds.length; i++) {
-            proofIds[_proofIds[i]] = true;
-        }
     }
 
     function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {
@@ -127,7 +123,7 @@ contract BrevisAggProof is BrevisAccess {
 
     function updateSmtContract(ISMT _smtContract) public onlyOwner {
         smtContract = _smtContract;
-        emit SmtContractUpdated(smtContract);
+        emit SmtContractUpdated(address(smtContract));
     }
 
     function updateAggProofVerifierAddresses(
