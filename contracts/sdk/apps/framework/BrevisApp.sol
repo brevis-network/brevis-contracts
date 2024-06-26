@@ -84,8 +84,8 @@ abstract contract BrevisApp is Ownable {
         require(
             IBrevisRequest(brevisProof.getRequestContract()).validateOpAppData(
                 _requestId,
-                _appVkHash,
                 _appCommitHash,
+                _appVkHash,
                 opChallengeWindow
             ),
             "data not ready to use"
