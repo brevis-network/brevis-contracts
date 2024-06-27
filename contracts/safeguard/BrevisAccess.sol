@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 
 import "./Pauser.sol";
 
-// achive prover access and pauser control using a single map lookup
+// prover and pauser access control using a single map lookup
 abstract contract BrevisAccess is Pauser {
     enum ProverState {
         Null,
@@ -28,8 +28,9 @@ abstract contract BrevisAccess is Pauser {
     }
 
     function addProvers(address[] memory _accounts) public onlyOwner {
+        ProverState state = paused() ? ProverState.Paused : ProverState.Active;
         for (uint256 i = 0; i < _accounts.length; i++) {
-            _addProver(_accounts[i]);
+            _addProver(_accounts[i], state);
         }
     }
 
@@ -57,10 +58,10 @@ abstract contract BrevisAccess is Pauser {
         return provers.length;
     }
 
-    function _addProver(address _account) private {
+    function _addProver(address _account, ProverState _state) private {
         require(proverStates[_account] == ProverState.Null, "account is prover");
         provers.push(_account);
-        proverStates[_account] = ProverState.Active;
+        proverStates[_account] = _state;
         emit ProverAdded(_account);
     }
 
@@ -73,7 +74,7 @@ abstract contract BrevisAccess is Pauser {
                     provers[i] = provers[lastIndex];
                 }
                 provers.pop();
-                proverStates[_account] = ProverState.Null;
+                delete proverStates[_account];
                 emit ProverRemoved(_account);
                 return;
             }
