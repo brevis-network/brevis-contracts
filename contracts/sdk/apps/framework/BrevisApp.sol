@@ -17,6 +17,14 @@ abstract contract BrevisApp is Ownable {
         opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
     }
 
+    function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+        // to be overrided by custom app
+    }
+
+    function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+        // to be overrided by custom app
+    }
+
     function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
         handleProofResult(_appVkHash, _appCircuitOutput);
     }
@@ -69,14 +77,6 @@ abstract contract BrevisApp is Ownable {
 
     function setBrevisRequest(address _brevisRequest) external onlyOwner {
         brevisRequest = _brevisRequest;
-    }
-
-    function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
-        // to be overrided by custom app
-    }
-
-    function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
-        // to be overrided by custom app
     }
 }
 
