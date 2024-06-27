@@ -1,6 +1,6 @@
 import '@nomicfoundation/hardhat-verify';
-import '@nomiclabs/hardhat-ethers';
-import '@nomiclabs/hardhat-waffle';
+import '@nomicfoundation/hardhat-ethers';
+import "@nomicfoundation/hardhat-toolbox";
 import '@typechain/hardhat';
 import 'hardhat-contract-sizer';
 import 'hardhat-deploy';
