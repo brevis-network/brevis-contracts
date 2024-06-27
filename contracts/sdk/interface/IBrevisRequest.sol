@@ -85,6 +85,7 @@ interface IBrevisRequest {
     event ChallengeWindowUpdated(uint256 from, uint256 to);
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
     event BaseDataUrlUpdated(string from, string to);
+    event BrevisProofUpdated(address from, address to);
     event DisputeDepositsUpdated(uint256 amtAskForData, uint256 amtAskForProof);
 
     function sendRequest(
@@ -176,4 +177,6 @@ interface IBrevisRequest {
     ) external view returns (bool);
 
     function dataURL(bytes32 _proofId) external view returns (string memory);
+
+    function getProofContract() external view returns (address);
 }

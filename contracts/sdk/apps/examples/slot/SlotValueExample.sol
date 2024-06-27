@@ -2,14 +2,13 @@
 pragma solidity ^0.8.18;
 
 import "../../framework/BrevisApp.sol";
-import "../../../interface/IBrevisProof.sol";
 
 contract SlotValueExample is BrevisApp {
     event PastOwnerAttested(address contractAddr, address ownerAddr, uint64 blockNum);
 
     bytes32 public vkHash;
 
-    constructor(address brevisProof) BrevisApp(IBrevisProof(brevisProof)) {}
+    constructor(address _brevisRequest) BrevisApp(_brevisRequest) {}
 
     // BrevisQuery contract will call our callback once Brevis backend submits the proof.
     // This method is called with once the proof is verified.

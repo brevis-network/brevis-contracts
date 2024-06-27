@@ -7,12 +7,9 @@ import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
 
 contract BrevisProof is BrevisAggProof {
-    address public brevisRequest;
     mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address
     mapping(bytes32 => bytes32) public proofs; // proofId => keccak256(abi.encodePacked(appCommitHash, appVkHash));
-
     event VerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
-    event BrevisRequestContractUpdated(address brevisRequest);
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
@@ -43,10 +40,6 @@ contract BrevisProof is BrevisAggProof {
         return true;
     }
 
-    function getRequestContract() external view returns (address) {
-        return brevisRequest;
-    }
-
     // -------- owner functions --------
 
     function updateVerifierAddress(
@@ -58,11 +51,6 @@ contract BrevisProof is BrevisAggProof {
             verifierAddresses[_chainIds[i]] = _verifierAddresses[i];
         }
         emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);
-    }
-
-    function updateBrevisRequestContract(address _brevisRequest) public onlyOwner {
-        brevisRequest = _brevisRequest;
-        emit BrevisRequestContractUpdated(_brevisRequest);
     }
 
     /**********************************

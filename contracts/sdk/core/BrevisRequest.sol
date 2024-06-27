@@ -73,10 +73,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes calldata _appCircuitOutput,
         address _callbackTarget
     ) external onlyActiveProver {
-        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
-            _chainId,
-            _proof
-        ); // revert for invalid proof
+        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
         require(_proofId == proofId, "invalid proofId");
 
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
@@ -105,14 +102,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes[] calldata _appCircuitOutputs,
         address[] calldata _callbackTargets
     ) external onlyActiveProver {
-        IBrevisProof(brevisProof).submitAggProof(_chainId, _proofIds, _proof);
-        IBrevisProof(brevisProof).validateAggProofData(_chainId, _proofDataArray);
         uint256 dataNum = _proofIds.length;
-        require(
-            dataNum == _nonces.length && dataNum == _proofDataArray.length && dataNum == _appCircuitOutputs.length,
-            "length mismatch"
-        );
-        require(_callbackTargets.length == 1 || _callbackTargets.length == dataNum, "length mismtach");
+        brevisProof.submitAggProof(_chainId, _proofIds, _proof);
+        brevisProof.validateAggProofData(_chainId, _proofDataArray);
+        require(_callbackTargets.length == 1 || _callbackTargets.length == dataNum, "invalid callback length");
 
         uint256 numFulfilled;
         for (uint256 i = 0; i < dataNum; i++) {
@@ -149,6 +142,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             for (uint256 i = 0; i < appVkHashes.length; i++) {
                 appVkHashes[i] = _proofDataArray[i].appVkHash;
             }
+            // If the call failed due any reason, anyone can trigger retry later by calling applyBrevisAggProof.
             (bool success, ) = _callbackTargets[0].call(
                 abi.encodeWithSelector(IBrevisApp.brevisBatchCallback.selector, appVkHashes, _appCircuitOutputs)
             );
@@ -207,11 +201,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint256[] calldata _powers
     ) external whenNotPaused {
         uint256 dataNum = _proofIds.length;
-        require(
-            dataNum == _nonces.length && dataNum == _appCommitHashes.length && dataNum == _appVkHashes.length,
-            "length mismatch"
-        );
-
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         sigsVerifier.verifySigs(
             abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes),
@@ -350,16 +339,73 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             "invalid states"
         );
 
-        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).submitProof(
-            _chainId,
-            _proof
-        );
+        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
         require(_proofId == proofId, "invalid proof: proofId");
         require(opdata[requestKey] == keccak256(abi.encodePacked(appCommitHash, appVkHash)), "invalid proof: appHash");
         request.status = RequestStatus.ZkAttested;
         dispute.status = DisputeStatus.DataValidityProofPosted;
 
         emit DataValidityProofProofPosted(_proofId, _nonce);
+    }
+
+    // --------------------- app helper functions ---------------------
+
+    // apply proved data to a target contract
+    function applyBrevisProof(
+        bytes32 _proofId,
+        bytes32 _appVkHash,
+        bytes32 _appCommitHash,
+        bytes calldata _appCircuitOutput,
+        address _callbackTarget
+    ) external {
+        brevisProof.validateProofAppData(_proofId, _appCommitHash, _appVkHash);
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
+        (bool success, bytes memory res) = _callbackTarget.call(
+            abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _appVkHash, _appCircuitOutput)
+        );
+        require(success, Utils.getRevertMsg(res));
+    }
+
+    // apply multiple proved data fulfilled through AggProof
+    function applyBrevisAggProof(
+        uint64 _chainId,
+        Brevis.ProofData[] calldata _proofDataArray,
+        bytes[] calldata _appCircuitOutputs,
+        address[] calldata _callbackTargets
+    ) external {
+        uint256 dataNum = _proofDataArray.length;
+        brevisProof.validateAggProofData(_chainId, _proofDataArray);
+        for (uint256 i = 0; i < dataNum; i++) {
+            if (_callbackTargets[i] != address(0)) {
+                require(_proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
+                (bool success, bytes memory res) = _callbackTargets[i].call(
+                    abi.encodeWithSelector(
+                        IBrevisApp.brevisCallback.selector,
+                        _proofDataArray[i].appVkHash,
+                        _appCircuitOutputs[i]
+                    )
+                );
+                require(success, string.concat(Strings.toString(i), ":", Utils.getRevertMsg(res)));
+            }
+        }
+    }
+
+    // apply single proved data fulfilled through AggProof
+    function applyBrevisAggProof(
+        uint64 _chainId,
+        Brevis.ProofData calldata _proofData,
+        bytes32 _merkleRoot,
+        bytes32[] calldata _merkleProof,
+        uint8 _nodeIndex,
+        bytes calldata _appCircuitOutput,
+        address _callbackTarget
+    ) external {
+        brevisProof.validateAggProofData(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
+        require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
+        (bool success, bytes memory res) = _callbackTarget.call(
+            abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _proofData.appVkHash, _appCircuitOutput)
+        );
+        require(success, Utils.getRevertMsg(res));
     }
 
     // --------------------- owner functions ---------------------
@@ -392,6 +438,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         string memory oldURL = baseDataURL;
         baseDataURL = _url;
         emit BaseDataUrlUpdated(oldURL, _url);
+    }
+
+    function setBrevisProof(address _brevisProof) external onlyOwner {
+        address oldAddr = address(brevisProof);
+        brevisProof = IBrevisProof(_brevisProof);
+        emit BrevisProofUpdated(oldAddr, _brevisProof);
     }
 
     /**************************
@@ -441,6 +493,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         return string.concat(baseDataURL, Strings.toHexString(uint256(_proofId), 32));
     }
 
+    function getProofContract() external view returns (address) {
+        return address(brevisProof);
+    }
+
     /*********************
      * Private Functions *
      *********************/
@@ -462,8 +518,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             if (gas == 0) {
                 gas = gasleft();
             }
-            // If the call failed due any reason,
-            // anyone can trigger retry later by calling applyBrevisProof on target contract directly.
+            // If the call failed due any reason, anyone can trigger retry later by calling applyBrevisProof.
             (bool success, ) = _callbackTarget.call{gas: gas}(
                 abi.encodeWithSelector(IBrevisApp.brevisCallback.selector, _appVkHash, _appCircuitOutput)
             );

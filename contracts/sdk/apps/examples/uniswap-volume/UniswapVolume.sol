@@ -2,14 +2,13 @@
 pragma solidity ^0.8.18;
 
 import "../../framework/BrevisApp.sol";
-import "../../../interface/IBrevisProof.sol";
 
 contract UniswapVolume is BrevisApp {
     event SwapVolumeAttested(address user, uint64 sinceBlockNum, uint256 volume);
 
     bytes32 public vkHash;
 
-    constructor(address brevisProof) BrevisApp(IBrevisProof(brevisProof)) {}
+    constructor(address _brevisRequest) BrevisApp(_brevisRequest) {}
 
     // BrevisQuery contract will call our callback once Brevis backend submits the proof.
     function handleProofResult(bytes32 _vkHash, bytes calldata _circuitOutput) internal override {

@@ -30,6 +30,4 @@ interface IBrevisProof {
         bytes32[] calldata _merkleProof,
         uint8 _nodeIndex
     ) external view;
-
-    function getRequestContract() external view returns (address);
 }
