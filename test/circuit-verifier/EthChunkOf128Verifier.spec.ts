@@ -1,25 +1,22 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
 import { BigNumberish, Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
-import { EthChunkOf128Verifier__factory, VerifierGasReport } from '../../typechain';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { ethers } from 'hardhat';
+import { EthChunkOf4Verifier__factory, VerifierGasReport } from '../../typechain';
 
-async function deployContract(admin: Wallet) {
+async function deployContract() {
+  const [admin] = await ethers.getSigners();
   const _factory = await ethers.getContractFactory('EthChunkOf128Verifier');
-  const _contract = await _factory.connect(admin).deploy();
+  const _verifier = await _factory.connect(admin).deploy();
+  const verifierAddress = await _verifier.getAddress()
   const factory = await ethers.getContractFactory('VerifierGasReport');
-  const contract = (await factory.connect(admin).deploy(_contract.address)) as VerifierGasReport;
+  const contract = (await factory.connect(admin).deploy(verifierAddress)) as VerifierGasReport;
   return contract;
 }
 
 describe('Eth chunk of 128 proof verifier', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
-    const contract = await deployContract(admin);
+  async function fixture() {
+    const contract = await deployContract();
     return { admin, contract };
   }
 

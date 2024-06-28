@@ -90,7 +90,7 @@ function getTestProof(startBlkNum: number) {
 
   let allDataHex = '0x';
   for (let i = 0; i < allData.length; i++) {
-    allDataHex = allDataHex + BigInt(allData[i]).toString(16).slice(2).padStart(64, '0');
+    allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
   }
 
   const proofData = allDataHex;

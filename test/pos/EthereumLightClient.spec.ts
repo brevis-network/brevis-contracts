@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { zeroPad } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
-import { lightClientFixture, LightClientFixture, loadFixture } from './fixture';
+import { lightClientFixture, LightClientFixture } from './fixture';
 import { getSyncCommitteeRoot, getSyncPeriodBySlot, newLightClientUpdate, newOptimisticUpdate } from './helper';
 import proof638 from './proof_638.json';
 import update637 from './update_637.json';
 import update638 from './update_638.json';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 let f: LightClientFixture;
 
@@ -33,12 +33,12 @@ describe('EthereumLightClient.processLightClientUpdate()', () => {
     let update = newLightClientUpdate(getUpdate638().data, proof638);
     update.finalizedHeader.executionRoot.branch = [];
     let tx = f.lightClient.connect(admin).processLightClientUpdate(update);
-    await expect(tx).to.be.revertedWith('bad exec root proof');
+    await expect(tx).to.be.revertedWith('bad exec root proof finalized');
 
     update = newLightClientUpdate(getUpdate638().data, proof638);
-    update.finalizedHeader.executionRoot.leaf = zeroPad('0x01', 32);
+    update.finalizedHeader.executionRoot.leaf = ethers.zeroPadValue('0x01', 32);
     tx = f.lightClient.connect(admin).processLightClientUpdate(update);
-    await expect(tx).to.be.revertedWith('bad exec root proof');
+    await expect(tx).to.be.revertedWith('bad exec root proof finalized');
   });
 
   it('rejects update if committee root mapping proof is invalid', async () => {
@@ -53,13 +53,13 @@ describe('EthereumLightClient.processLightClientUpdate()', () => {
     await expect(tx).reverted;
 
     update = newLightClientUpdate(getUpdate638().data, proof638);
-    update.nextSyncCommitteeRoot = zeroPad('0x01', 32); // wrong root
+    update.nextSyncCommitteeRoot = ethers.zeroPadValue('0x01', 32); // wrong root
     tx = f.lightClient.connect(admin).processLightClientUpdate(update);
     await expect(tx).to.be.revertedWith('bad next sync committee proof');
 
     update = newLightClientUpdate(getUpdate638().data, proof638);
     update.nextSyncCommitteeRoot = root;
-    update.nextSyncCommitteeBranch = [zeroPad('0x01', 32)]; // wrong proof
+    update.nextSyncCommitteeBranch = [ethers.zeroPadValue('0x01', 32)]; // wrong proof
     tx = f.lightClient.connect(admin).processLightClientUpdate(update);
     await expect(tx).to.be.revertedWith('bad next sync committee proof');
 
@@ -72,7 +72,7 @@ describe('EthereumLightClient.processLightClientUpdate()', () => {
   it("rejects update if the update's poseidon root doesn't match light client's poseidon root", async () => {
     const [admin] = await ethers.getSigners();
     const update = newLightClientUpdate(getUpdate638().data, proof638);
-    update.syncAggregate.poseidonRoot = zeroPad('0x01', 32);
+    update.syncAggregate.poseidonRoot = ethers.zeroPadValue('0x01', 32);
     const tx = f.lightClient.connect(admin).processLightClientUpdate(update);
     await expect(tx).to.be.revertedWith('bad poseidon root');
   });

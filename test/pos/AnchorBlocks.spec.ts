@@ -1,9 +1,10 @@
 import { expect } from 'chai';
-import { lightClientFixture, LightClientFixture, loadFixture } from './fixture';
+import { lightClientFixture, LightClientFixture } from './fixture';
 import header_8687478_rlp from './header_8687478_rlp.json';
 import { LightClientUpdate, newHeaderWithExecution, newSyncAggregate, ZERO_BYTES_32 } from './helper';
 import proof from './proof_638.json';
 import update638 from './update_638.json';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 let f: LightClientFixture;
 

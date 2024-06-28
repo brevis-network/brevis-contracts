@@ -1,7 +1,6 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
-import { BytesLike, BigNumberish, Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
+import { BytesLike, BigNumberish, Wallet, keccak256, ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
 import {
   MockSMT__factory,
   BatchZkProofVerifier__factory,
@@ -12,48 +11,45 @@ import {
   AggregationVerifier__factory
 } from '../../typechain';
 
-import { Brevis } from '../../typechain/TestBrevisApp';
+import { Brevis } from '../../typechain/contracts/sdk/apps/framework/BrevisApp';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
-import { keccak256 } from 'ethers/lib/utils';
-
-async function deployTestBrevisAppContract(admin: Wallet) {
+async function deployTestBrevisAppContract(admin: ContractRunner) {
   const smtFactory = await ethers.getContractFactory('MockSMT');
   const smt = await smtFactory.connect(admin).deploy();
+  const smtAddress = await smt.getAddress()
   const brevisProofFactory = await ethers.getContractFactory('BrevisProof');
-  const brevisProof = await brevisProofFactory.connect(admin).deploy(smt.address);
+  const brevisProof = await brevisProofFactory.connect(admin).deploy(smtAddress);
+  const brevisProofAddress = await brevisProof.getAddress()
   const verifierF = await ethers.getContractFactory('BatchZkProofVerifier');
   const verifier = await verifierF.connect(admin).deploy();
+  const verifierAddress = await verifier.getAddress()
   const verifierFApp = await ethers.getContractFactory('AggregationVerifier');
   const verifierApp = await verifierFApp.connect(admin).deploy();
+  const verifierAppAddress = await verifierApp.getAddress()
   const chainVerifier = {
-    contractAppZkVerifier: verifier.address,
-    circuitAppZkVerifier: verifierApp.address
+    contractAppZkVerifier: verifierAddress,
+    circuitAppZkVerifier: verifierAppAddress
   };
   await brevisProof.updateVerifierAddress([1], [chainVerifier]);
   const factory = await ethers.getContractFactory('TestBrevisApp');
-  const app = await factory.connect(admin).deploy(brevisProof.address);
+  const app = await factory.connect(admin).deploy(brevisProofAddress);
   return { brevisProof, app };
 }
 
 describe('Brevis App Test', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners()
     const { brevisProof, app } = await deployTestBrevisAppContract(admin);
-    return { admin, brevisProof, app };
+    return {  brevisProof, app };
   }
 
   let app: TestBrevisApp;
   let brevisProof: BrevisProof;
-  let admin: Wallet;
   before(async () => {
     const res = await loadFixture(fixture);
     app = res.app;
     brevisProof = res.brevisProof;
-    admin = res.admin;
   });
 
   it('should pass on biz test', async () => {

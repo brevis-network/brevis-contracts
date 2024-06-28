@@ -7,6 +7,7 @@ import "../../interfaces/IEthereumLightClient.sol";
 import "./libraries/ECDSA.sol";
 import "./libraries/Memory.sol";
 import "./libraries/RLPWriter.sol";
+import "hardhat/console.sol";
 
 // Sample header
 // curl --location --request POST 'https://bsc.getblock.io/API_KEY/testnet/'
@@ -120,8 +121,10 @@ contract PoALightClient is IEthereumLightClient {
         });
 
         bytes32 message = _hashHeaderWithChainId(unsignedHeader, CHAIN_ID);
+        console.logBytes32(message);
 
-        return ECDSA.recover(message, signature);
+        bytes32 h = ECDSA.toEthSignedMessageHash(message);
+        return ECDSA.recover(h, signature);
     }
 
     function _hashHeaderWithChainId(BNBHeaderInfo memory header, uint64 chainId) internal pure returns (bytes32) {
@@ -144,7 +147,8 @@ contract PoALightClient is IEthereumLightClient {
         list[14] = RLPWriter.writeBytes(abi.encodePacked(header.mixHash));
         list[15] = RLPWriter.writeBytes(abi.encodePacked(header.nonce));
 
-        return keccak256(RLPWriter.writeList(list));
+        bytes memory listV = RLPWriter.writeList(list);
+        return keccak256(listV);
     }
 
     function finalizedExecutionStateRootAndSlot() external view returns (bytes32 root, uint64 slot) {

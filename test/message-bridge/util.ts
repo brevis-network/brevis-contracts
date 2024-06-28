@@ -1,17 +1,17 @@
 import { MapDB, Trie } from '@ethereumjs/trie';
 import { Account } from '@ethereumjs/util';
 
-import { arrayify, BytesLike, keccak256, RLP, solidityKeccak256 } from 'ethers/lib/utils';
-import { keccak256 as keccak256Packed } from '@ethersproject/solidity';
+import { toBeArray, BytesLike, keccak256, encodeRlp, solidityPackedKeccak256 } from 'ethers';
+// import { keccak256 as keccak256Packed } from '@ethersproject/solidity';
 
 // simple helper to return hash result as bytes, not hex string
 export function hash2bytes(msg: BytesLike): Uint8Array {
-  return arrayify(keccak256(msg));
+  return toBeArray(keccak256(msg));
 }
 
 // use solidityKeccak256
 export function solHash2Bytes(types: string[], vals: any[]): Uint8Array {
-  return arrayify(solidityKeccak256(types, vals));
+  return toBeArray(solidityPackedKeccak256(types, vals));
 }
 
 export function computeMessageId(
@@ -22,7 +22,7 @@ export function computeMessageId(
   dstChainId: number,
   message: string
 ) {
-  const messageId = keccak256Packed(
+  const messageId = solidityPackedKeccak256(
     ['uint64', 'address', 'address', 'uint64', 'uint64', 'bytes'],
     [nonce, sender, receiver, srcChainId, dstChainId, message]
   );
@@ -58,7 +58,7 @@ export async function generateProof(
 
   // because contract save messageId as map value, rlp encode msg hash
   const messageId = computeMessageId(nonce, sender, receiver, srcChainId, dstChainId, message).messageId;
-  const rlpEncodedHex = RLP.encode(messageId).replace('0x', '');
+  const rlpEncodedHex = encodeRlp(messageId).replace('0x', '');
   const rlpEncodedUInt8Array = new Uint8Array(rlpEncodedHex.length / 2);
   for (let i = 0; i < rlpEncodedHex.length; i += 2) {
     rlpEncodedUInt8Array[i / 2] = parseInt(rlpEncodedHex.substring(i, i + 2), 16);
@@ -80,7 +80,7 @@ export async function generateProof(
   // we only need to make sure storageRoot matches storageTrie.root, note codeHash may be used for isContract check in solidity and should have 32bytes
   const acnt = new Account(undefined, undefined, storageTrie.root(), Buffer.from('0123456789abcdef0123456789abcdef'));
   // acnt path is keccak256(address), value is rlp(acnt)
-  const acntPath = Buffer.from(arrayify(addr));
+  const acntPath = Buffer.from(toBeArray(addr));
   await accountTrie.put(acntPath, acnt.serialize());
   // add more mock accounts so we have a branch for proof
   await accountTrie.put(Buffer.from('1'), acnt.serialize());

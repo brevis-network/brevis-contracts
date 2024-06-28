@@ -1,28 +1,28 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
-import { ContractTransaction, Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
+import { ContractRunner, ContractTransaction, ContractTransactionResponse } from 'ethers';
+import { ethers } from 'hardhat';
 import { ISMT, MockAnchorBlocks__factory, SMT, SMT__factory, TestSmtVerifier__factory } from '../../typechain';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 const depth2EmptySmtRoot = '0x070e068f3c2d0058b210baac3410a1b74537b44a5511b189371e9c852db10416';
 
-async function deployAnchorBlocks(admin: Wallet) {
+async function deployAnchorBlocks(admin: ContractRunner) {
   const factory = await ethers.getContractFactory('MockAnchorBlocks');
   const anchorBlocks = await factory.connect(admin).deploy();
   await anchorBlocks.update(121850623, '0x33a40e4d31779e49311267cedd746360b3ef5eacfd6a7078b135929d5d338b6d');
   return anchorBlocks;
 }
 
-async function deployVerifier(admin: Wallet) {
+async function deployVerifier(admin: ContractRunner) {
   const factory = await ethers.getContractFactory('SMTUpdateCircuitProofOnOpVerifier');
   return factory.connect(admin).deploy();
 }
 
-async function deployContracts(admin: Wallet) {
+async function deployContracts(admin: ContractRunner) {
   const anchorBlocks = await deployAnchorBlocks(admin);
   const verifier = await deployVerifier(admin);
   const factory = await ethers.getContractFactory('SMT');
-  return factory.connect(admin).deploy([1], [anchorBlocks.address], [verifier.address], [depth2EmptySmtRoot]);
+  return factory.connect(admin).deploy([1], [await anchorBlocks.getAddress()], [await verifier.getAddress()], [depth2EmptySmtRoot]);
 }
 
 const updateNew: ISMT.SmtUpdateStruct = {
@@ -78,26 +78,20 @@ const updateOld: ISMT.SmtUpdateStruct = {
 };
 
 describe('SMT', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners();
     const contract = await deployContracts(admin);
-    return { admin, contract };
+    return { contract };
   }
 
   let contract: SMT;
-  let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     contract = res.contract;
-    admin = res.admin;
   });
 
   it('update passes on true proofs', async () => {
-    let tx: Promise<ContractTransaction>;
+    let tx: Promise<ContractTransactionResponse>;
     tx = contract.updateRoot(1, updateNew);
     await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateNew.newSmtRoot, updateNew.endBlockNum, 1);
     let valid = await contract.isSmtRootValid(1, updateNew.newSmtRoot);
@@ -109,7 +103,7 @@ describe('SMT', async () => {
     expect(valid).true;
   });
   it('update reverts on false proofs', async () => {
-    let tx: Promise<ContractTransaction>;
+    let tx: Promise<ContractTransactionResponse>;
     const tmp = updateNew.proof[0];
     updateNew.proof[0] = '0';
     tx = contract.updateRoot(1, updateNew);

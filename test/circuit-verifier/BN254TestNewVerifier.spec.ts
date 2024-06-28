@@ -1,60 +1,87 @@
-// import { expect } from 'chai';
-// import { Fixture } from 'ethereum-waffle';
-// import { BigNumber, BigNumberish, Wallet } from 'ethers';
-// import { ethers, waffle } from 'hardhat';
-// import { BN254NewVerifier__factory, BN254NewVerifier } from '../../typechain';
+import { ethers } from 'hardhat';
+import { expect } from 'chai';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
-// async function deployContract(admin: Wallet) {
-//   const _factory = await ethers.getContractFactory('BN254NewVerifier');
-//   const _contract = await _factory.connect(admin).deploy();
-//   return _contract;
-// }
+import { BrevisBn254Verifier, BrevisBn254Verifier__factory } from '../../typechain';
 
-// describe('BN254 new proof verifier', async () => {
-//   function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-//     const provider = waffle.provider;
-//     return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-//   }
+async function deployContract() {
+  const [admin] = await ethers.getSigners();
+  const contract = await new BrevisBn254Verifier__factory().connect(admin).deploy();
+  return { contract };
+}
 
-//   async function fixture([admin]: Wallet[]) {
-//     const contract = await deployContract(admin);
-//     return { admin, contract };
-//   }
+describe('BN254 verifier', async () => {
+  let contract: BrevisBn254Verifier;
+  beforeEach(async () => {
+    const res = await loadFixture(deployContract);
+    contract = res.contract;
+  });
 
-//   let contract: BN254NewVerifier;
-//   let admin: Wallet;
-//   beforeEach(async () => {
-//     const res = await loadFixture(fixture);
-//     contract = res.contract;
-//     admin = res.admin;
-//   });
+  it('should pass on true proof', async () => {
+    const tx = contract.verifyProof(
+      [
+        BigInt('0x22519da121779e8eae3ca0dda17820f035ea04dc24e4cca303c039c44ea1dfaf'),
+        BigInt('0x2231892ec88e5b80afcc128dda7f67f5670e5bbb04290900cf60f40bb9a84e7a'),
+        BigInt('0x16970e8fe1824d2f7c6b6afcf2d93fc4157d72067d296d567626eb47470dce5d'),
+        BigInt('0x1e4ee7bccdd202d1b767465709275dd2ca0bc1e48e8dd5897fb062efc2210a9b'),
+        BigInt('0x265240a2d3bedf081146666bf1a4997bf361786ece39bdca65a3076eb6c8f239'),
+        BigInt('0x101d51e5ba9ded3918cc35a1f0ba12cf5254b8cfbc117adfcde2dccc3bf8d947'),
 
-//   it('should pass on true proof', async () => {
-//     const result = await contract.verifyProofWithCommit(
-//       [
-//         BigNumber.from('1808400746270349636267254679125757181848956720842592466715612977913086960483'),
-//         BigNumber.from('15355782967283791563637004912405592165010664300137859647696081913033681811743'),
+        BigInt('0x177ef65a6f54c3ed5ef46587486c5863dfde672f5ce7a21030517e4fffbf525a'),
+        BigInt('0x07bcfa46276489d9a55f7c75a2bf53645e1b4885dfff681d7a560cd09020775a')
+      ],
+      [
+        BigInt('0x04c9b82e998bfecac61da6da562bfc5730688cea8437466e75b593ca20ec9e49'),
+        BigInt('0x22447eb0af135719dc80ffa01e59636308fc7f6ac426a55923cfbfe3ef037f37')
+      ],
+      [
+        BigInt('0x0a556c3eb619dbdfd2942e1d9e458577c2e8e52710156d8a2ac9985b02ed95e9'),
+        BigInt('0x184685fbc8c917833963e9dae24bc3c8ac91650e57a9e936fd095c6b27d76e23')
+      ],
+      [
+        BigInt('0x04b64a227c4e2ce2ba210d54ed3969fc2891de5d323ae3c5d6277adc11bdc109'),
+        BigInt('0x08646494e28db9b84dbf61f1725e5174'),
+        BigInt('0xf7eaee5265971f0d92f33559810e4428'),
+        BigInt('0x0f9d2de6cc715cc878ded5252d0ec84d9440b3b60f4b82d8b477944ac1f48999'),
+        BigInt('0x00000000000000000000000000000000'),
+        BigInt('0x00000000000000000000000000000000'),
+        BigInt('0x122e1d04b13e148af66f8fd91acb354519af92b46558fc2b4eb31f2b50cfcb60')
+      ]
+    );
+    await expect(tx).not.reverted
+  });
 
-//         BigNumber.from('10454339805569045893655295550513972204170005418132707901249908737873710201572'),
-//         BigNumber.from('329934161221987699669304799660910125411407030454658304350014424980168156272'),
-//         BigNumber.from('17465039887431385941184736939969735538331955738619092234180450781178397707323'),
-//         BigNumber.from('8850514315872903516736605168709237907291678187703590138702594365127196181136'),
+  it('should revert on false proof', async () => {
+    const tx = contract.verifyProof(
+      [
+        BigInt('0'),
+        BigInt('0x2231892ec88e5b80afcc128dda7f67f5670e5bbb04290900cf60f40bb9a84e7a'),
+        BigInt('0x16970e8fe1824d2f7c6b6afcf2d93fc4157d72067d296d567626eb47470dce5d'),
+        BigInt('0x1e4ee7bccdd202d1b767465709275dd2ca0bc1e48e8dd5897fb062efc2210a9b'),
+        BigInt('0x265240a2d3bedf081146666bf1a4997bf361786ece39bdca65a3076eb6c8f239'),
+        BigInt('0x101d51e5ba9ded3918cc35a1f0ba12cf5254b8cfbc117adfcde2dccc3bf8d947'),
 
-//         BigNumber.from('8475091034611270602699735232057868525031422654690518324744635341779074631659'),
-//         BigNumber.from('15161941799735145042656893527596373848509963058156780749551713716948394776487')
-//       ],
-//       [
-//         BigNumber.from('5421335610452967587599901835807331157677192447190481031355860202789490207366'),
-//         BigNumber.from('8284992782513961937242349918656600733662266424058595783524968317837430079877')
-//       ],
-//       [BigNumber.from('5'), BigNumber.from('0x252a6c79712785a9b844884da30096756aaf491667f62398280d8cbf04cef111')]
-//     );
-//     console.log('result', result);
-//   });
-// });
-
-// function splitHash(h: string): BigNumberish[] {
-//   const a = '0x' + h.substring(0, h.length / 2);
-//   const b = '0x' + h.substring(h.length / 2, h.length);
-//   return [a, b];
-// }
+        BigInt('0x177ef65a6f54c3ed5ef46587486c5863dfde672f5ce7a21030517e4fffbf525a'),
+        BigInt('0x07bcfa46276489d9a55f7c75a2bf53645e1b4885dfff681d7a560cd09020775a')
+      ],
+      [
+        BigInt('0x04c9b82e998bfecac61da6da562bfc5730688cea8437466e75b593ca20ec9e49'),
+        BigInt('0x22447eb0af135719dc80ffa01e59636308fc7f6ac426a55923cfbfe3ef037f37')
+      ],
+      [
+        BigInt('0x0a556c3eb619dbdfd2942e1d9e458577c2e8e52710156d8a2ac9985b02ed95e9'),
+        BigInt('0x184685fbc8c917833963e9dae24bc3c8ac91650e57a9e936fd095c6b27d76e23')
+      ],
+      [
+        BigInt('0x04b64a227c4e2ce2ba210d54ed3969fc2891de5d323ae3c5d6277adc11bdc109'),
+        BigInt('0x08646494e28db9b84dbf61f1725e5174'),
+        BigInt('0xf7eaee5265971f0d92f33559810e4428'),
+        BigInt('0x0f9d2de6cc715cc878ded5252d0ec84d9440b3b60f4b82d8b477944ac1f48999'),
+        BigInt('0x00000000000000000000000000000000'),
+        BigInt('0x00000000000000000000000000000000'),
+        BigInt('0x122e1d04b13e148af66f8fd91acb354519af92b46558fc2b4eb31f2b50cfcb60')
+      ]
+    );
+    await expect(tx).reverted;
+  });
+});
