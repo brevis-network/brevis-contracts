@@ -2,8 +2,9 @@
 pragma solidity ^0.8.18;
 
 import "../../framework/BrevisApp.sol";
+import "../../../../safeguard/Ownable.sol";
 
-contract UniswapVolume is BrevisApp {
+contract UniswapVolume is BrevisApp, Ownable {
     event SwapVolumeAttested(address user, uint64 sinceBlockNum, uint256 volume);
 
     bytes32 public vkHash;

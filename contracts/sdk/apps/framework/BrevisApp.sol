@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-abstract contract BrevisApp is Ownable {
+abstract contract BrevisApp {
     address public brevisRequest;
     uint256 public opChallengeWindow;
 
@@ -14,7 +12,7 @@ abstract contract BrevisApp is Ownable {
 
     constructor(address _brevisRequest) {
         brevisRequest = _brevisRequest;
-        opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
+        _setOpChallengeWindow(2 ** 256 - 1); // disable usage of op result by default
     }
 
     function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
@@ -23,6 +21,16 @@ abstract contract BrevisApp is Ownable {
 
     function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
+    }
+
+    // app contract can implement logics to set opChallengeWindow if needed
+    function _setOpChallengeWindow(uint256 _challangeWindow) internal {
+        opChallengeWindow = _challangeWindow;
+    }
+
+    // app contract can implement logics to update brevisRequest address if needed
+    function _setBrevisRequest(address _brevisRequest) internal {
+        brevisRequest = _brevisRequest;
     }
 
     function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
@@ -69,14 +77,6 @@ abstract contract BrevisApp is Ownable {
         for (uint256 i = 0; i < _proofIds.length; i++) {
             applyBrevisOpResult(_proofIds[i], _nonces[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
         }
-    }
-
-    function setOpChallengeWindow(uint256 _challangeWindow) external onlyOwner {
-        opChallengeWindow = _challangeWindow;
-    }
-
-    function setBrevisRequest(address _brevisRequest) external onlyOwner {
-        brevisRequest = _brevisRequest;
     }
 }
 

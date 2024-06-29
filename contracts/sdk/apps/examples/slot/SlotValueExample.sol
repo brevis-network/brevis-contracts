@@ -2,8 +2,9 @@
 pragma solidity ^0.8.18;
 
 import "../../framework/BrevisApp.sol";
+import "../../../../safeguard/Ownable.sol";
 
-contract SlotValueExample is BrevisApp {
+contract SlotValueExample is BrevisApp, Ownable {
     event PastOwnerAttested(address contractAddr, address ownerAddr, uint64 blockNum);
 
     bytes32 public vkHash;
