@@ -9,7 +9,7 @@ import {
   MockTendermintLightClient,
   MockTendermintLightClient__factory,
   PoALightClient,
-  PoALightClient__factory,
+  PoALightClient__factory
 } from '../../typechain';
 
 describe('PoALightClient Test', async () => {
@@ -85,6 +85,7 @@ describe('PoALightClient Test', async () => {
 
   it('should pass verify header', async () => {
     let rlpInfo = encodeRlp([
+      '0x61',
       '0xbf4d16769b8fd946394957049eef29ed938da92454762fc6ac65e0364ea004c7',
       '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
       '0x35552c16704d214347f29fa77f77da6d75d7c752',
@@ -101,14 +102,14 @@ describe('PoALightClient Test', async () => {
       '0x0000000000000000000000000000000000000000000000000000000000000000',
       '0x0000000000000000'
     ]);
-    console.log(`rlpInfo: ${rlpInfo}`, rlpInfo);
+    // console.log(`rlpInfo: ${rlpInfo}`, rlpInfo);
 
     let messageHash = keccak256(rlpInfo);
-    console.log(`messageHash: ${messageHash}`);
+    // console.log(`messageHash: ${messageHash}`);
 
     let message = getBytes(messageHash);
     let signature = await admin.signMessage(message);
-    console.log(`signature: ${signature}`);
+    // console.log(`signature: ${signature}`);
 
     let header = {
       parentHash: '0xbf4d16769b8fd946394957049eef29ed938da92454762fc6ac65e0364ea004c7',
