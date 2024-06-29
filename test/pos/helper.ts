@@ -1,13 +1,29 @@
-import { Gindex, ProofType, SingleProof, createProof } from '@chainsafe/persistent-merkle-tree';
-import { ByteVectorType, ContainerType, VectorCompositeType } from '@chainsafe/ssz';
 import dotenv from 'dotenv';
-import { BigNumberish, toBeArray, hexlify, BytesLike } from 'ethers';
-import { ethers } from 'hardhat';
-import { ExecutionPayloadStruct, LeafWithBranchStruct } from '../../typechain/contracts/light-client-eth/AnchorBlocks';
-import { BeaconBlockHeaderStruct, LightClientUpdateStruct } from '../../typechain/contracts/light-client-eth/EthereumLightClient';
+import { BigNumberish, BytesLike, getBytes, hexlify } from 'ethers';
+
+import {
+  createProof,
+  Gindex,
+  ProofType,
+  SingleProof,
+} from '@chainsafe/persistent-merkle-tree';
+import {
+  ByteVectorType,
+  ContainerType,
+  VectorCompositeType,
+} from '@chainsafe/ssz';
+
+import {
+  ExecutionPayloadStruct,
+  LeafWithBranchStruct,
+} from '../../typechain/contracts/light-client-eth/AnchorBlocks';
+import {
+  BeaconBlockHeaderStruct,
+  LightClientUpdateStruct,
+} from '../../typechain/contracts/light-client-eth/EthereumLightClient';
+import { HeaderWithExecutionStruct } from '../../typechain/contracts/light-client-eth/LightClientStore';
+import { IBeaconVerifier } from '../../typechain/contracts/verifiers/BeaconVerifier';
 import { ssz } from '../../vendor/lodestar/types';
-import { IBeaconVerifier } from './../../typechain/contracts/verifiers/BeaconVerifier';
-import { HeaderWithExecutionStruct } from './../../typechain/contracts/light-client-eth/LightClientStore';
 import proof from './proof_638.json';
 import update from './update_638.json';
 
@@ -24,7 +40,7 @@ export type UpdateProof = typeof proof;
 export type LightClientUpdate = typeof update.data;
 
 export function sumCommitteeBits(bits: string): number {
-  return toBeArray(bits).reduce((acc, curr) => {
+  return getBytes(bits).reduce((acc, curr) => {
     // curr is 0~255
     let sum = 0;
     // curr.toString(2) is 00000000~11111111
@@ -48,8 +64,8 @@ export function getSyncCommitteeRoot(pubkeys: string[], aggregatePubkey: string)
     aggregatePubkey: pubkeyType
   });
   const root = rootType.hashTreeRoot({
-    pubkeys: pubkeys.map((key) => toBeArray(key)),
-    aggregatePubkey: toBeArray(aggregatePubkey)
+    pubkeys: pubkeys.map((key) => getBytes(key)),
+    aggregatePubkey: getBytes(aggregatePubkey)
   });
   return hexlify(root);
 }

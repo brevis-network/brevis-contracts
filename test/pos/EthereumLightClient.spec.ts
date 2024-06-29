@@ -1,11 +1,18 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import { lightClientFixture, LightClientFixture } from './fixture';
-import { getSyncCommitteeRoot, getSyncPeriodBySlot, newLightClientUpdate, newOptimisticUpdate } from './helper';
+import {
+  getSyncCommitteeRoot,
+  getSyncPeriodBySlot,
+  newLightClientUpdate,
+  newOptimisticUpdate,
+} from './helper';
 import proof638 from './proof_638.json';
 import update637 from './update_637.json';
 import update638 from './update_638.json';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 let f: LightClientFixture;
 

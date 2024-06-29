@@ -1,25 +1,26 @@
+import assert from 'assert';
 import { expect } from 'chai';
-import { BigNumberish, ContractRunner, Wallet } from 'ethers';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { ContractRunner } from 'ethers';
 import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   Bn254Agg16Bn254Verifier,
-  Bn254Agg16Bn254Verifier__factory
+  Bn254Agg16Bn254Verifier__factory,
 } from '../../typechain';
-import assert from 'assert';
-import { hexToBytes } from '../util';
 
 async function deployContract(admin: ContractRunner) {
-  const _factory = await ethers.getContractFactory('Bn254Agg16Bn254Verifier');
+  const _factory = new Bn254Agg16Bn254Verifier__factory();
   const _contract = await _factory.connect(admin).deploy();
   return _contract;
 }
 
 describe('16 bn254 proof aggregation verifier', async () => {
   async function fixture() {
-    const [admin] = await ethers.getSigners()
+    const [admin] = await ethers.getSigners();
     const contract = await deployContract(admin);
-    return { admin, contract };
+    return { contract };
   }
 
   let contract: Bn254Agg16Bn254Verifier;
@@ -40,27 +41,27 @@ describe('16 bn254 proof aggregation verifier', async () => {
         BigInt('17013017322422535754621388735464417826469970866779433642599626359462923223805'), // b11
 
         BigInt('199341362335784188358407382230085009749434421050018979444983503522532056789'), // c0
-        BigInt('10462291537232667351245904513168077236341112261785544481009194723134034279261'), // c1
+        BigInt('10462291537232667351245904513168077236341112261785544481009194723134034279261') // c1
       ],
       [
         BigInt('8281029652804115540779242248394256858262374845244472384326955447842738625749'), // Commitment 0
-        BigInt('16291454333950787529071139148857612321350070812453737627848777377269130231635'), // Commitment 1
+        BigInt('16291454333950787529071139148857612321350070812453737627848777377269130231635') // Commitment 1
       ],
       [
         BigInt('9119409738732686618655070762577648050360522084447116602775900759116236399278'), // Commitment POK0
-        BigInt('20096295095246371279378278495715130754889878869658331075511746223579898895990'), // Commitment POK1
+        BigInt('20096295095246371279378278495715130754889878869658331075511746223579898895990') // Commitment POK1
       ],
       [
         BigInt('114336509697133943113087290526769312348'),
         BigInt('154082401081700815200070389198426915731'),
         BigInt('134926299864838284709497123807691682185'),
-        BigInt('146665854302452622094621623662217484466'),
+        BigInt('146665854302452622094621623662217484466')
       ]
     );
     assert.equal(result, true);
   });
   it('should revert with wrong proof', async () => {
-    const result =  contract.verifyProof(
+    const result = contract.verifyProof(
       [
         BigInt('11830850729108585455172258155696583116114732859436807323920536533716035746043'), // a0
         BigInt('15254079597827780999204351645423160103922071787202866354566367542277164830544'), // a1
@@ -71,23 +72,23 @@ describe('16 bn254 proof aggregation verifier', async () => {
         BigInt('17013017322422535754621388735464417826469970866779433642599626359462923223805'), // b11
 
         BigInt('199341362335784188358407382230085009749434421050018979444983503522532056789'), // c0
-        BigInt('10462291537232667351245904513168077236341112261785544481009194723134034279261'), // c1
+        BigInt('10462291537232667351245904513168077236341112261785544481009194723134034279261') // c1
       ],
       [
         BigInt('8281029652804115540779242248394256858262374845244472384326955447842738625749'), // Commitment 0
-        BigInt('16291454333950787529071139148857612321350070812453737627848777377269130231635'), // Commitment 1
+        BigInt('16291454333950787529071139148857612321350070812453737627848777377269130231635') // Commitment 1
       ],
       [
         BigInt('9119409738732686618655070762577648050360522084447116602775900759116236399278'), // Commitment POK0
-        BigInt('20096295095246371279378278495715130754889878869658331075511746223579898895990'), // Commitment POK1
+        BigInt('20096295095246371279378278495715130754889878869658331075511746223579898895990') // Commitment POK1
       ],
       [
         BigInt('114336509697133943113087290526769312348'),
         BigInt('154082401081700815200070389198426915731'),
         BigInt('134926299864838284709497123807691682185'),
-        BigInt('0'),
+        BigInt('0')
       ]
     );
-    await expect(result).to.be.revertedWithCustomError(contract, 'ProofInvalid()')
+    await expect(result).to.be.revertedWithCustomError(contract, 'ProofInvalid()');
   });
 });

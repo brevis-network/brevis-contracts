@@ -1,11 +1,12 @@
-import { ethers } from 'hardhat';
-import { PoALibTest } from '../../typechain';
-
-import { Wallet, encodeRlp, solidityPackedKeccak256, toBeArray } from 'ethers';
 import { expect } from 'chai';
 import { randomInt } from 'crypto';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { encodeRlp, getBytes, solidityPackedKeccak256 } from 'ethers';
+import { ethers } from 'hardhat';
+
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import { PoALibTest, PoALibTest__factory } from '../../typechain';
 
 describe('PoAUnitTest', async () => {
   async function fixture() {
@@ -14,37 +15,22 @@ describe('PoAUnitTest', async () => {
     return { admin, _poaUintTest };
   }
 
-  function hex2Bytes(hexString: string): number[] {
-    let hex = hexString;
-    const result = [];
-    if (hex.substr(0, 2) === '0x') {
-      hex = hex.slice(2);
-    }
-    if (hex.length % 2 === 1) {
-      hex = '0' + hex;
-    }
-    for (let i = 0; i < hex.length; i += 2) {
-      result.push(parseInt(hex.substr(i, 2), 16));
-    }
-    return result;
-  }
-
   let poaUintTest: PoALibTest;
   let admin: HardhatEthersSigner;
 
   beforeEach(async () => {
     const res = await loadFixture(fixture);
-    poaUintTest = res._poaUintTest as PoALibTest;
+    poaUintTest = res._poaUintTest;
     admin = res.admin as HardhatEthersSigner;
   });
 
   async function deployLib(admin: HardhatEthersSigner) {
-    const factory = await ethers.getContractFactory('PoALibTest');
-    const poaUintTest = (await factory.connect(admin).deploy()) as PoALibTest;
+    const factory = new PoALibTest__factory();
+    const poaUintTest = await factory.connect(admin).deploy();
     return poaUintTest;
   }
 
-  it('should pass retrive part of bytes', async () => {
+  it('should pass retrieve part of bytes', async () => {
     const testBytes = '0x7894745829abbdfe75814218613412afed1238907ba0';
     const bytesLength = testBytes.length / 2 - 1;
 
@@ -180,11 +166,14 @@ describe('PoAUnitTest', async () => {
       ]
     );
 
-//     0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1
-// 0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c
-// 0x5e087f154444d71f493312afa4558e3ab12d2494
-    let signature = await admin.signMessage(toBeArray(messageHash));
-    let signerAddress = await poaUintTest.mockRecoverAddress("0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1", "0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c");
+    // 0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1
+    // 0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c
+    // 0x5e087f154444d71f493312afa4558e3ab12d2494
+    let signature = await admin.signMessage(getBytes(messageHash));
+    let signerAddress = await poaUintTest.mockRecoverAddress(
+      '0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1',
+      '0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c'
+    );
     expect(signerAddress).to.be.eql(admin.address);
   });
 });

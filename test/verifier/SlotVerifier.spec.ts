@@ -1,46 +1,39 @@
-import { assert } from 'console';
-import { BigNumberish, ContractRunner, Wallet, keccak256 } from 'ethers';
-import { ethers,  } from 'hardhat';
-import {
-  MockBlockChunks__factory,
-  MockZkVerifier__factory,
-  SlotValueVerifier,
-  SlotValueVerifier__factory,
-  VerifierGasReport
-} from '../../typechain';
-import { hexToBytes } from '../util';
-import { convertByteArrayToHexString } from '../circuit-verifier/util';
 import { expect } from 'chai';
+import { ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
+import {
+  EthStorageVerifier__factory,
+  MockBlockChunks__factory,
+  SlotValueVerifier,
+  SlotValueVerifier__factory,
+  VerifierGasReport,
+  VerifierGasReport__factory,
+} from '../../typechain';
+import { convertByteArrayToHexString } from '../circuit-verifier/util';
+
 async function deploySlotVerifierContract(admin: ContractRunner) {
-  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
+  const syncerFactory = new MockBlockChunks__factory();
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('SlotValueVerifier');
+  const factory = new SlotValueVerifier__factory();
   const contract = await factory.connect(admin).deploy(await syncer.getAddress());
-  const verifierF = await ethers.getContractFactory('EthStorageVerifier');
+  const verifierF = new EthStorageVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
   await contract.updateVerifierAddress(1, await verifier.getAddress());
 
-  const _factory = await ethers.getContractFactory('VerifierGasReport');
-  const verifierGasReport = (await _factory.connect(admin).deploy(await contract.getAddress())) as VerifierGasReport;
+  const _factory = new VerifierGasReport__factory();
+  const verifierGasReport = await _factory.connect(admin).deploy(await contract.getAddress());
   return { contract, verifierGasReport };
 }
 
 function getTestProof() {
   const publicInputs = [
-    BigInt(
-      convertByteArrayToHexString([103, 197, 210, 106, 230, 239, 0, 173, 207, 151, 13, 155, 24, 118, 240, 234])
-    ),
-    BigInt(
-      convertByteArrayToHexString([236, 65, 249, 77, 136, 183, 160, 41, 158, 157, 97, 9, 205, 217, 188, 216])
-    ),
-    BigInt(
-      convertByteArrayToHexString([230, 66, 26, 191, 243, 181, 187, 60, 128, 126, 39, 8, 155, 41, 116, 25])
-    ),
-    BigInt(
-      convertByteArrayToHexString([251, 9, 216, 152, 169, 76, 141, 172, 214, 149, 130, 94, 141, 128, 60, 56])
-    ),
+    BigInt(convertByteArrayToHexString([103, 197, 210, 106, 230, 239, 0, 173, 207, 151, 13, 155, 24, 118, 240, 234])),
+    BigInt(convertByteArrayToHexString([236, 65, 249, 77, 136, 183, 160, 41, 158, 157, 97, 9, 205, 217, 188, 216])),
+    BigInt(convertByteArrayToHexString([230, 66, 26, 191, 243, 181, 187, 60, 128, 126, 39, 8, 155, 41, 116, 25])),
+    BigInt(convertByteArrayToHexString([251, 9, 216, 152, 169, 76, 141, 172, 214, 149, 130, 94, 141, 128, 60, 56])),
     BigInt(convertByteArrayToHexString([194, 87, 90, 14, 158, 89, 60, 0, 249, 89, 248, 201, 47, 18, 219, 40])),
     BigInt(convertByteArrayToHexString([105, 195, 57, 90, 59, 5, 2, 208, 94, 37, 22, 68, 111, 113, 248, 91])),
     BigInt(
@@ -89,7 +82,7 @@ function getTestProof() {
 }
 
 function getMockAuxiBlkVerifyInfo() {
-  return "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  return '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 }
 
 describe('Slot Verifier Test', async () => {

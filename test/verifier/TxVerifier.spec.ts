@@ -1,27 +1,30 @@
 import { assert } from 'console';
-import { BigNumberish, ContractRunner, Wallet, keccak256 } from 'ethers';
-import { ethers,  } from 'hardhat';
+import { BigNumberish, ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   MockBlockChunks__factory,
   MockZkVerifier__factory,
   TxVerifier,
   TxVerifier__factory,
-  VerifierGasReport
+  VerifierGasReport,
+  VerifierGasReport__factory,
 } from '../../typechain';
-import { hexToBytes, splitHash } from '../util';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { splitHash } from '../util';
 
-async function deployTxVerifierContract(admin: Wallet) {
-  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
+async function deployTxVerifierContract(admin: ContractRunner) {
+  const syncerFactory = new MockBlockChunks__factory();
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('TxVerifier');
+  const factory = new TxVerifier__factory();
   const contract = await factory.connect(admin).deploy(await syncer.getAddress());
-  const verifierF = await ethers.getContractFactory('MockZkVerifier');
+  const verifierF = new MockZkVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
   await contract.updateVerifierAddress(1, await verifier.getAddress());
 
-  const _factory = await ethers.getContractFactory('VerifierGasReport');
-  const verifierGasReport = (await _factory.connect(admin).deploy(await contract.getAddress())) as VerifierGasReport;
+  const _factory = new VerifierGasReport__factory();
+  const verifierGasReport = await _factory.connect(admin).deploy(await contract.getAddress());
   return { contract, verifierGasReport };
 }
 
@@ -64,7 +67,7 @@ function getTestProof(leafHash: string) {
 }
 
 function getMockAuxiBlkVerifyInfo() {
-  return "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  return '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 }
 
 describe('Tx Verifier Test', async () => {

@@ -1,11 +1,16 @@
-import { ethers } from 'hardhat';
-import { PoALightClient, MockTendermintLightClient } from '../../typechain';
-
-import { ContractRunner, Wallet, encodeRlp, keccak256, toBeArray } from 'ethers';
 import { expect } from 'chai';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
+import { ContractRunner, encodeRlp, getBytes, keccak256 } from 'ethers';
+import { ethers } from 'hardhat';
 
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import {
+  MockTendermintLightClient,
+  MockTendermintLightClient__factory,
+  PoALightClient,
+  PoALightClient__factory,
+} from '../../typechain';
 
 describe('PoALightClient Test', async () => {
   async function fixture() {
@@ -16,28 +21,26 @@ describe('PoALightClient Test', async () => {
 
   let poaLC: PoALightClient;
   let mockTLC: MockTendermintLightClient;
-  let admin: HardhatEthersSigner
+  let admin: HardhatEthersSigner;
 
   beforeEach(async () => {
     const res = await loadFixture(fixture);
-    admin = res.admin as HardhatEthersSigner
-    poaLC = res.poaLC as PoALightClient;
-    mockTLC = res.mockTLC as MockTendermintLightClient;
+    admin = res.admin;
+    poaLC = res.poaLC;
+    mockTLC = res.mockTLC;
   });
 
   async function deployLib(admin: ContractRunner) {
-    const mockTLCFactory = await ethers.getContractFactory('MockTendermintLightClient');
-    const mockTLC = (await mockTLCFactory
-      .connect(admin)
-      .deploy('0xffffffffffffffffffffffffffffffffffffffff')) as MockTendermintLightClient;
+    const mockTLCFactory = new MockTendermintLightClient__factory();
+    const mockTLC = await mockTLCFactory.connect(admin).deploy('0xffffffffffffffffffffffffffffffffffffffff');
 
-    const poaLCFactory = await ethers.getContractFactory('PoALightClient');
-    const mockTLCAddress = await mockTLC.getAddress()
-    const poaLC = (await poaLCFactory.connect(admin).deploy(mockTLCAddress)) as PoALightClient;
+    const poaLCFactory = new PoALightClient__factory();
+    const mockTLCAddress = await mockTLC.getAddress();
+    const poaLC = await poaLCFactory.connect(admin).deploy(mockTLCAddress);
 
     return { mockTLC, poaLC };
   }
-  
+
   it('should fail to update header', async () => {
     let extraData =
       '0xd983010000846765746889676f312e31322e3137856c696e7578000000000000c3daa60d95817e2789de3eafd44dc354fe804bf5f08059cde7c86bc1215941d022bf9609ca1dee2881baf2144aa93fc80082e6edd0b9f8eac16f327e7d59f16500';
@@ -96,16 +99,16 @@ describe('PoALightClient Test', async () => {
       '0x5f080818',
       '0xd983010000846765746889676f312e31322e3137856c696e7578000000000000',
       '0x0000000000000000000000000000000000000000000000000000000000000000',
-      '0x0000000000000000',
+      '0x0000000000000000'
     ]);
-    console.log(`rlpInfo: ${rlpInfo}`, rlpInfo)
+    console.log(`rlpInfo: ${rlpInfo}`, rlpInfo);
 
     let messageHash = keccak256(rlpInfo);
-    console.log(`messageHash: ${messageHash}`)
+    console.log(`messageHash: ${messageHash}`);
 
-    let message = toBeArray(messageHash);
+    let message = getBytes(messageHash);
     let signature = await admin.signMessage(message);
-    console.log(`signature: ${signature}`)
+    console.log(`signature: ${signature}`);
 
     let header = {
       parentHash: '0xbf4d16769b8fd946394957049eef29ed938da92454762fc6ac65e0364ea004c7',
@@ -114,7 +117,8 @@ describe('PoALightClient Test', async () => {
       stateRoot: '0x7b5a72075082c31ec909afe5c5df032b6e7f19c686a9a408a2cb6b75dec072a3',
       transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
       receiptsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-      logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+      logsBloom:
+        '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
       difficulty: '0x02',
       number: '0x68b3',
       gasLimit: '0x1c9c380',
@@ -122,7 +126,7 @@ describe('PoALightClient Test', async () => {
       timestamp: '0x5f080818',
       extraData: '0xd983010000846765746889676f312e31322e3137856c696e7578000000000000' + signature.replace('0x', ''),
       mixHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      nonce: '0x0000000000000000',
+      nonce: '0x0000000000000000'
     };
     await mockTLC.updateSigner(admin.address);
 

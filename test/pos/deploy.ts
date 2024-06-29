@@ -1,20 +1,19 @@
-import { Wallet } from 'ethers';
-import { ethers } from 'hardhat';
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
+
 import {
   AnchorBlocks,
   AnchorBlocks__factory,
   BeaconVerifier,
   BeaconVerifier__factory,
-  EthereumLightClient__factory
+  EthereumLightClient__factory,
 } from '../../typechain';
 import { EthereumLightClient } from '../../typechain/contracts/light-client-eth';
 import { getSyncCommitteeRoot } from './helper';
 import update637 from './update_637.json';
-import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
 
 export async function deployLightClient(admin: HardhatEthersSigner): Promise<EthereumLightClient> {
   const zkVerifier = await deployBeaconVerifier(admin);
-  const factory = await ethers.getContractFactory('EthereumLightClient');
+  const factory = new EthereumLightClient__factory();
   return factory.connect(admin).deploy(
     1616508000,
     '0x043db0d9a83813551ee2f33450d23797757d430911a9320530ad8a0eabc43efb',
@@ -26,16 +25,16 @@ export async function deployLightClient(admin: HardhatEthersSigner): Promise<Eth
       update637.data.next_sync_committee.aggregate_pubkey
     ),
     '0x0b90f32a0d03c13a909e40b8bfa0dc049a9f3f8fbaab12ae880a0fa540e709ca', // 638 committee poseidon root
-    await zkVerifier.getAddress(),
+    await zkVerifier.getAddress()
   );
 }
 
 export async function deployBeaconVerifier(admin: HardhatEthersSigner): Promise<BeaconVerifier> {
-  const factory = await ethers.getContractFactory('BeaconVerifier');
+  const factory = new BeaconVerifier__factory();
   return factory.connect(admin).deploy();
 }
 
 export async function deployAnchorBlocks(admin: HardhatEthersSigner, lightClient: string): Promise<AnchorBlocks> {
-  const factory = await ethers.getContractFactory('AnchorBlocks');
+  const factory = new AnchorBlocks__factory();
   return factory.connect(admin).deploy(lightClient);
 }

@@ -1,26 +1,26 @@
 import { expect } from 'chai';
 import { Wallet } from 'ethers';
-import { ethers, } from 'hardhat';
+import { ethers } from 'hardhat';
 
-import { loadFixture, time } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 import {
   MockSMT__factory,
   UniswapSumVolume,
   UniswapSumVolume__factory,
-  UniswapSumVolumeVerifier__factory
+  UniswapSumVolumeVerifier__factory,
 } from '../../typechain';
 
 async function deployUniswapSumContract() {
   const [admin] = await ethers.getSigners();
-  const smtFactory = await ethers.getContractFactory('MockSMT');
+  const smtFactory = new MockSMT__factory();
   const smt = await smtFactory.connect(admin).deploy();
-  const smtAddress = await smt.getAddress()
-  const factory = await ethers.getContractFactory('UniswapSumVolume');
+  const smtAddress = await smt.getAddress();
+  const factory = new UniswapSumVolume__factory();
   const contract = await factory.connect(admin).deploy(smtAddress);
-  const verifierF = await ethers.getContractFactory('UniswapSumVolumeVerifier');
+  const verifierF = new UniswapSumVolumeVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
-  const verifierAddress = await verifier.getAddress()
+  const verifierAddress = await verifier.getAddress();
   await contract.updateVerifierAddress(1, verifierAddress);
 
   return contract;

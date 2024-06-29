@@ -1,15 +1,21 @@
 import { expect } from 'chai';
-import { BigNumberish, Wallet } from 'ethers';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { BigNumberish } from 'ethers';
 import { ethers } from 'hardhat';
-import { EthChunkOf4Verifier__factory, VerifierGasReport } from '../../typechain';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import {
+  EthChunkOf4Verifier__factory,
+  VerifierGasReport,
+  VerifierGasReport__factory,
+} from '../../typechain';
 
 async function deployContract() {
   const [admin] = await ethers.getSigners();
-  const _factory = await ethers.getContractFactory('EthChunkOf4Verifier');
+  const _factory = new EthChunkOf4Verifier__factory();
   const _verifier = await _factory.connect(admin).deploy();
-  const verifierAddress = await _verifier.getAddress()
-  const factory = await ethers.getContractFactory('VerifierGasReport');
+  const verifierAddress = await _verifier.getAddress();
+  const factory = new VerifierGasReport__factory();
   const contract = (await factory.connect(admin).deploy(verifierAddress)) as VerifierGasReport;
   return contract;
 }

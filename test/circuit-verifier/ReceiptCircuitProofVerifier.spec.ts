@@ -1,17 +1,22 @@
-import { ReceiptCircuitProofVerifier, VerifierGasReport } from '../../typechain';
-import { ethers } from 'hardhat';
-import { BigNumberish, ContractRunner, Wallet } from 'ethers';
 import { expect } from 'chai';
-import { splitHash } from '../util';
+import { ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import {
+  ReceiptCircuitProofVerifier,
+  VerifierGasReport,
+} from '../../typechain';
+import { splitHash } from '../util';
 
 describe('Receipt circuit proof verification', async () => {
   async function fixture() {
     const [admin] = await ethers.getSigners();
     const originalVerifier = await deployOriginalVerifier(admin);
-    const address = await originalVerifier.getAddress()
+    const address = await originalVerifier.getAddress();
     const gasReporter = await deployGasReporter(admin, address);
-    return { admin, originalVerifier, gasReporter };
+    return { originalVerifier, gasReporter };
   }
 
   let gasReporter: VerifierGasReport;
@@ -38,7 +43,7 @@ describe('Receipt circuit proof verification', async () => {
       ...splitHash('ec3384944ee3756aba922025ae1805096022e11d0abbb25be199fc918e4e7765'),
       ...splitHash('a3f5f903ac37f86fa7ff562892d94aa31e65dda2a2a356efe693fef0e35ec313'),
       BigInt('17490377'),
-      BigInt('1686893999'),
+      BigInt('1686893999')
     ];
 
     await expect(
@@ -74,7 +79,7 @@ describe('Receipt circuit proof verification', async () => {
       ...splitHash('ec3384944ee3756aba922025ae1805096022e11d0abbb25be199fc918e4e7765'),
       ...splitHash('a3f5f903ac37f86fa7ff562892d94aa31e65dda2a2a356efe693fef0e35ec313'),
       BigInt('17490377'),
-      BigInt('0'), /// Change this for mock failure
+      BigInt('0') /// Change this for mock failure
     ];
 
     await expect(
@@ -154,9 +159,7 @@ describe('Receipt circuit proof verification', async () => {
       allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
     }
 
-    await expect(gasReporter.verifyRaw(allDataHex))
-      .to.emit(gasReporter, 'ProofVerified')
-      .withArgs(true);
+    await expect(gasReporter.verifyRaw(allDataHex)).to.emit(gasReporter, 'ProofVerified').withArgs(true);
   });
 
   it('Verify receipt proof with raw data failure', async () => {
@@ -171,7 +174,7 @@ describe('Receipt circuit proof verification', async () => {
       BigInt(blockHash[1]),
 
       BigInt('17490377'),
-      BigInt('0'),
+      BigInt('0')
     ];
 
     const a = [
@@ -208,9 +211,7 @@ describe('Receipt circuit proof verification', async () => {
       allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
     }
 
-    await expect(gasReporter.verifyRaw(allDataHex))
-      .to.emit(gasReporter, 'ProofVerified')
-      .withArgs(false);
+    await expect(gasReporter.verifyRaw(allDataHex)).to.emit(gasReporter, 'ProofVerified').withArgs(false);
   });
 });
 

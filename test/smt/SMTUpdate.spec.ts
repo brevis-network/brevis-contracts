@@ -1,12 +1,17 @@
 import { expect } from 'chai';
-import { ContractRunner, ContractTransaction, ContractTransactionResponse } from 'ethers';
+import { ContractRunner } from 'ethers';
 import { ethers } from 'hardhat';
-import { SMTUpdateCircuitProofVerifier, SMTUpdateCircuitProofVerifier__factory } from '../../typechain';
-import { splitHash } from '../util';
+
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
+import {
+  SMTUpdateCircuitProofVerifier,
+  SMTUpdateCircuitProofVerifier__factory,
+} from '../../typechain';
+import { splitHash } from '../util';
+
 async function deployVerifier(admin: ContractRunner) {
-  const factory = await ethers.getContractFactory('SMTUpdateCircuitProofVerifier');
+  const factory = new SMTUpdateCircuitProofVerifier__factory();
   return factory.connect(admin).deploy();
 }
 

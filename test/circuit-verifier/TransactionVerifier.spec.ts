@@ -1,9 +1,11 @@
-import { TransactionProofVerifier, VerifierGasReport } from '../../typechain';
-import { ethers } from 'hardhat';
-import { ContractRunner, Wallet } from 'ethers';
 import { expect } from 'chai';
-import { splitHash, hexToBytes } from '../util';
+import { ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import { TransactionProofVerifier, VerifierGasReport } from '../../typechain';
+import { splitHash } from '../util';
 
 describe('Transaction proof verify', async () => {
   async function fixture() {
@@ -22,7 +24,7 @@ describe('Transaction proof verify', async () => {
   async function deployLib(admin: ContractRunner) {
     const _factory = await ethers.getContractFactory('TransactionProofVerifier');
     const _contract = (await _factory.connect(admin).deploy()) as TransactionProofVerifier;
-    const address = await _contract.getAddress()
+    const address = await _contract.getAddress();
     const factory = await ethers.getContractFactory('VerifierGasReport');
     const contract = (await factory.connect(admin).deploy(address)) as VerifierGasReport;
     return contract;
@@ -147,9 +149,7 @@ describe('Transaction proof verify', async () => {
       allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
     }
 
-    await expect(verifier.verifyRaw(allDataHex))
-      .to.emit(verifier, 'ProofVerified')
-      .withArgs(true);
+    await expect(verifier.verifyRaw(allDataHex)).to.emit(verifier, 'ProofVerified').withArgs(true);
   });
 
   it('Verify transaction Proof with raw data failure', async () => {
@@ -201,9 +201,7 @@ describe('Transaction proof verify', async () => {
       allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
     }
 
-    await expect(verifier.verifyRaw(allDataHex))
-      .to.emit(verifier, 'ProofVerified')
-      .withArgs(false);
+    await expect(verifier.verifyRaw(allDataHex)).to.emit(verifier, 'ProofVerified').withArgs(false);
   });
 });
 

@@ -1,17 +1,22 @@
+import {
+  BytesLike,
+  encodeRlp,
+  getBytes,
+  keccak256,
+  solidityPackedKeccak256,
+} from 'ethers';
+
 import { MapDB, Trie } from '@ethereumjs/trie';
 import { Account } from '@ethereumjs/util';
 
-import { toBeArray, BytesLike, keccak256, encodeRlp, solidityPackedKeccak256 } from 'ethers';
-// import { keccak256 as keccak256Packed } from '@ethersproject/solidity';
-
 // simple helper to return hash result as bytes, not hex string
 export function hash2bytes(msg: BytesLike): Uint8Array {
-  return toBeArray(keccak256(msg));
+  return getBytes(keccak256(msg));
 }
 
 // use solidityKeccak256
 export function solHash2Bytes(types: string[], vals: any[]): Uint8Array {
-  return toBeArray(solidityPackedKeccak256(types, vals));
+  return getBytes(solidityPackedKeccak256(types, vals));
 }
 
 export function computeMessageId(
@@ -80,7 +85,7 @@ export async function generateProof(
   // we only need to make sure storageRoot matches storageTrie.root, note codeHash may be used for isContract check in solidity and should have 32bytes
   const acnt = new Account(undefined, undefined, storageTrie.root(), Buffer.from('0123456789abcdef0123456789abcdef'));
   // acnt path is keccak256(address), value is rlp(acnt)
-  const acntPath = Buffer.from(toBeArray(addr));
+  const acntPath = Buffer.from(getBytes(addr));
   await accountTrie.put(acntPath, acnt.serialize());
   // add more mock accounts so we have a branch for proof
   await accountTrie.put(Buffer.from('1'), acnt.serialize());
@@ -88,7 +93,6 @@ export async function generateProof(
   await accountTrie.put(Buffer.from('3'), acnt.serialize());
 
   const acntProof = await accountTrie.createProof(acntPath);
-  // console.log("account proof", acntProof);
 
   return { stProof, acntProof };
 }

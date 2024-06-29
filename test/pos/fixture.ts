@@ -1,10 +1,8 @@
-import { Wallet } from 'ethers';
+import { ethers } from 'hardhat';
 
 import { AnchorBlocks } from '../../typechain';
 import { EthereumLightClient } from '../../typechain/contracts/light-client-eth/EthereumLightClient';
 import { deployAnchorBlocks, deployLightClient } from './deploy';
-import { ethers } from 'hardhat';
-
 
 export interface LightClientFixture {
   lightClient: EthereumLightClient;
@@ -12,7 +10,7 @@ export interface LightClientFixture {
 }
 
 export const lightClientFixture = async (): Promise<LightClientFixture> => {
-  const [admin] = await ethers.getSigners()
+  const [admin] = await ethers.getSigners();
   const lc = await deployLightClient(admin);
   const lcAddress = await lc.getAddress();
   const ab = await deployAnchorBlocks(admin, lcAddress);

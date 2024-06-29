@@ -1,29 +1,28 @@
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { EthStorageVerifier, VerifierGasReport } from '../../typechain';
-import { ethers, } from 'hardhat';
-import { ContractRunner, getBytes } from 'ethers';
-import { convertByteArrayToHexString } from './util';
 import { expect } from 'chai';
-import { hexToBytes } from '../util';
+import { ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import { EthStorageVerifier, VerifierGasReport } from '../../typechain';
+import { convertByteArrayToHexString } from './util';
 
 describe('Eth storage proof verify', async () => {
   async function fixture() {
     const [admin] = await ethers.getSigners();
-    const originalVerifier = await deploy(admin)
-    const address =  await originalVerifier.getAddress()
+    const originalVerifier = await deploy(admin);
+    const address = await originalVerifier.getAddress();
     const verifier = await deployLib(admin, address);
-    return { admin, originalVerifier, verifier };
+    return { originalVerifier, verifier };
   }
 
   let originalVerifier: EthStorageVerifier;
   let verifier: VerifierGasReport;
-  let admin: ContractRunner;
 
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     verifier = res.verifier;
     originalVerifier = res.originalVerifier;
-    admin = res.admin;
   });
 
   async function deployLib(admin: ContractRunner, originalVerifierAddress: string) {
@@ -39,18 +38,10 @@ describe('Eth storage proof verify', async () => {
   }
 
   const publicInputs = [
-    BigInt(
-      convertByteArrayToHexString([103, 197, 210, 106, 230, 239, 0, 173, 207, 151, 13, 155, 24, 118, 240, 234])
-    ),
-    BigInt(
-      convertByteArrayToHexString([236, 65, 249, 77, 136, 183, 160, 41, 158, 157, 97, 9, 205, 217, 188, 216])
-    ),
-    BigInt(
-      convertByteArrayToHexString([230, 66, 26, 191, 243, 181, 187, 60, 128, 126, 39, 8, 155, 41, 116, 25])
-    ),
-    BigInt(
-      convertByteArrayToHexString([251, 9, 216, 152, 169, 76, 141, 172, 214, 149, 130, 94, 141, 128, 60, 56])
-    ),
+    BigInt(convertByteArrayToHexString([103, 197, 210, 106, 230, 239, 0, 173, 207, 151, 13, 155, 24, 118, 240, 234])),
+    BigInt(convertByteArrayToHexString([236, 65, 249, 77, 136, 183, 160, 41, 158, 157, 97, 9, 205, 217, 188, 216])),
+    BigInt(convertByteArrayToHexString([230, 66, 26, 191, 243, 181, 187, 60, 128, 126, 39, 8, 155, 41, 116, 25])),
+    BigInt(convertByteArrayToHexString([251, 9, 216, 152, 169, 76, 141, 172, 214, 149, 130, 94, 141, 128, 60, 56])),
     BigInt(convertByteArrayToHexString([194, 87, 90, 14, 158, 89, 60, 0, 249, 89, 248, 201, 47, 18, 219, 40])),
     BigInt(convertByteArrayToHexString([105, 195, 57, 90, 59, 5, 2, 208, 94, 37, 22, 68, 111, 113, 248, 91])),
     BigInt(
@@ -155,12 +146,10 @@ describe('Eth storage proof verify', async () => {
       allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
     }
 
-    allDataHex = "0x" + allDataHex
+    allDataHex = '0x' + allDataHex;
     const originalResult = await originalVerifier.verifyRaw(allDataHex);
     expect(originalResult).equal(true);
-    await expect(verifier.verifyRaw(allDataHex))
-      .to.emit(verifier, 'ProofVerified')
-      .withArgs(true);
+    await expect(verifier.verifyRaw(allDataHex)).to.emit(verifier, 'ProofVerified').withArgs(true);
   });
 
   it('Failed to Verify Storage Proof', async () => {

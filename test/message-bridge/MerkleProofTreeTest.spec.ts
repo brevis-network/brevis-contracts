@@ -1,9 +1,17 @@
 import assert from 'assert';
-import { ContractRunner, keccak256, decodeRlp, toBeArray, AbiCoder, solidityPackedKeccak256 } from 'ethers';
+import {
+  AbiCoder,
+  ContractRunner,
+  decodeRlp,
+  getBytes,
+  keccak256,
+} from 'ethers';
 import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import { MockMerkleProofTree } from '../../typechain/contracts/apps/message-bridge/mock/MockMerkleProofTree';
 import { computeMessageId, generateProof, hash2bytes } from './util';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 describe('MerkleProofTree Test', async () => {
   async function fixture() {
@@ -48,7 +56,9 @@ describe('MerkleProofTree Test', async () => {
     const storageInfoFromAccountPathValue = decodeRlp(accountPathValue)[2];
     assert.equal(storageInfoFromAccountPathValue, keccak256(stProof[0]));
 
-    const storagePath = hash2bytes(hash2bytes(toBeArray(AbiCoder.defaultAbiCoder().encode(['uint64', 'uint256'], [nonce, 2]))));
+    const storagePath = hash2bytes(
+      hash2bytes(getBytes(AbiCoder.defaultAbiCoder().encode(['uint64', 'uint256'], [nonce, 2])))
+    );
     const storagePathValue = await merkleProofTree.mockRead(storagePath, stProof);
 
     const messageId = computeMessageId(nonce, sender, receiver, chainId, chainId, message).messageId;

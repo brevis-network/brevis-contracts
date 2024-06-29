@@ -1,27 +1,30 @@
+import { expect } from 'chai';
 import { assert } from 'console';
-import { BigNumberish, ContractRunner, Wallet, keccak256 } from 'ethers';
+import { BigNumberish, ContractRunner } from 'ethers';
 import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   MockBlockChunks__factory,
   MockZkVerifier__factory,
   ReceiptVerifier,
   ReceiptVerifier__factory,
-  VerifierGasReport
+  VerifierGasReport,
 } from '../../typechain';
-import { hexToBytes, splitHash } from '../util';
-import { expect } from 'chai';
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { VerifierGasReport__factory } from '../../typechain/factories/contracts/test-helper/VerifierGasReport.sol/VerifierGasReport__factory';
+import { splitHash } from '../util';
 
 async function deployReceiptVerifierContract(admin: ContractRunner) {
-  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
+  const syncerFactory = new MockBlockChunks__factory();
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('ReceiptVerifier');
+  const factory = new ReceiptVerifier__factory();
   const contract = await factory.connect(admin).deploy(await syncer.getAddress());
-  const verifierF = await ethers.getContractFactory('MockZkVerifier');
+  const verifierF = new MockZkVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
   await contract.updateVerifierAddress(1, await verifier.getAddress());
 
-  const _factory = await ethers.getContractFactory('VerifierGasReport');
+  const _factory = new VerifierGasReport__factory();
   const verifierGasReport = (await _factory.connect(admin).deploy(await contract.getAddress())) as VerifierGasReport;
   return { contract, verifierGasReport };
 }
@@ -67,14 +70,14 @@ function getTestProof(leafHash: string) {
 }
 
 function getMockAuxiBlkVerifyInfo() {
-  return "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  return '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 }
 
 describe('Receipt Verifier Test', async () => {
   async function fixture() {
     const [admin] = await ethers.getSigners();
     const { contract, verifierGasReport } = await deployReceiptVerifierContract(admin);
-    return {contract, verifierGasReport };
+    return { contract, verifierGasReport };
   }
 
   let contract: ReceiptVerifier;
