@@ -1,9 +1,10 @@
 import { assert } from 'console';
-import { Fixture } from 'ethereum-waffle';
-import { BigNumber, BigNumberish, Wallet } from 'ethers';
-import { keccak256 } from 'ethers/lib/utils';
-import { ethers, waffle } from 'hardhat';
+import { BigNumberish, ContractRunner, getBytes, keccak256 } from 'ethers';
+import { ethers } from 'hardhat';
 import { MerkleTree } from 'merkletreejs';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   BlockChunks,
   BlockChunks__factory,
@@ -11,20 +12,20 @@ import {
   MockAnchorBlocks__factory,
   MockZkVerifier__factory
 } from '../../typechain';
-import { hexToBytes, splitHash } from '../util';
+import { splitHash } from '../util';
 
-async function deployMockAnchorBlocksContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory('MockAnchorBlocks');
+async function deployMockAnchorBlocksContract(admin: ContractRunner) {
+  const factory = new MockAnchorBlocks__factory();
   const contract = await factory.connect(admin).deploy();
   return contract;
 }
-async function deployMockZkVerifierContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory('MockZkVerifier');
+async function deployMockZkVerifierContract(admin: ContractRunner) {
+  const factory = new MockZkVerifier__factory();
   const contract = await factory.connect(admin).deploy();
   return contract;
 }
-async function deployBlockChunksContract(admin: Wallet) {
-  const factory = await ethers.getContractFactory('BlockChunks');
+async function deployBlockChunksContract(admin: ContractRunner) {
+  const factory = new BlockChunks__factory();
   const contract = await factory.connect(admin).deploy();
   return contract;
 }
@@ -87,54 +88,48 @@ function getTestProof(startBlkNum: number) {
   allData.push(...commit);
   allData.push(...input);
 
-  let allDataHex = '';
+  let allDataHex = '0x';
   for (let i = 0; i < allData.length; i++) {
-    allDataHex = allDataHex + BigNumber.from(allData[i]).toHexString().slice(2).padStart(64, '0');
+    allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
   }
 
-  const proofData = hexToBytes(allDataHex);
+  const proofData = allDataHex;
   return { proofData, endHash };
 }
 
 describe('Block Syncer Test', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
   const chainId = 5;
 
-  async function fixture([admin]: Wallet[]) {
+  async function deployContractsFixture() {
+    const [admin] = await ethers.getSigners();
     const anchor = await deployMockAnchorBlocksContract(admin);
     const verifier = await deployMockZkVerifierContract(admin);
     const syncer = await deployBlockChunksContract(admin);
 
-    await syncer.updateAnchorBlockProvider(chainId, anchor.address);
-    await syncer.updateVerifierAddress(chainId, verifier.address);
+    await syncer.updateAnchorBlockProvider(chainId, await anchor.getAddress());
+    await syncer.updateVerifierAddress(chainId, await verifier.getAddress());
 
-    return { admin, syncer, anchor };
+    return { syncer, anchor };
   }
 
   let syncer: BlockChunks;
-  let admin: Wallet;
   let anchor: MockAnchorBlocks;
   before(async () => {
-    const res = await loadFixture(fixture);
+    const res = await loadFixture(deployContractsFixture);
     syncer = res.syncer;
-    admin = res.admin;
     anchor = res.anchor;
   });
 
   it('should pass on updateRecent', async () => {
     const res = getTestProof(256);
-    await anchor.update(383, hexToBytes(res.endHash));
+    await anchor.update(383, res.endHash);
     await syncer.updateRecent(chainId, res.proofData);
   });
   it('should pass on updateOld', async () => {
     const { proofData } = getTestProof(128);
     const res = getChuckRoot(256);
     const nextRoot = res.root;
-    await syncer.updateOld(chainId, hexToBytes(nextRoot), 128, proofData);
+    await syncer.updateOld(chainId, getBytes('0x' + nextRoot), 128, proofData);
   });
   it('should pass on isBlockHashValid', async () => {
     let success = await syncer.isBlockHashValid({

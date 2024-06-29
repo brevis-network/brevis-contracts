@@ -1,14 +1,22 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
-import { BigNumberish, Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
-import { EthChunkOf4Verifier__factory, VerifierGasReport } from '../../typechain';
+import { BigNumberish } from 'ethers';
+import { ethers } from 'hardhat';
 
-async function deployContract(admin: Wallet) {
-  const _factory = await ethers.getContractFactory('EthChunkOf4Verifier');
-  const _contract = await _factory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('VerifierGasReport');
-  const contract = (await factory.connect(admin).deploy(_contract.address)) as VerifierGasReport;
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import {
+  EthChunkOf4Verifier__factory,
+  VerifierGasReport,
+  VerifierGasReport__factory,
+} from '../../typechain';
+
+async function deployContract() {
+  const [admin] = await ethers.getSigners();
+  const _factory = new EthChunkOf4Verifier__factory();
+  const _verifier = await _factory.connect(admin).deploy();
+  const verifierAddress = await _verifier.getAddress();
+  const factory = new VerifierGasReport__factory();
+  const contract = (await factory.connect(admin).deploy(verifierAddress)) as VerifierGasReport;
   return contract;
 }
 function getTestProof() {
@@ -40,22 +48,15 @@ function getTestProof() {
 }
 
 describe('Eth chunk of 4 proof verifier', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
-    const contract = await deployContract(admin);
-    return { admin, contract };
+  async function fixture() {
+    const contract = await deployContract();
+    return { contract };
   }
 
   let contract: VerifierGasReport;
-  let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     contract = res.contract;
-    admin = res.admin;
   });
 
   it('should pass on true proof', async () => {

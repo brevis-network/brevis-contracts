@@ -1,28 +1,30 @@
 import { assert } from 'console';
-import { Fixture } from 'ethereum-waffle';
-import { BigNumber, BigNumberish, Wallet } from 'ethers';
-import { keccak256 } from 'ethers/lib/utils';
-import { ethers, waffle } from 'hardhat';
+import { BigNumberish, ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   MockBlockChunks__factory,
   MockZkVerifier__factory,
   TxVerifier,
   TxVerifier__factory,
-  VerifierGasReport
+  VerifierGasReport,
+  VerifierGasReport__factory,
 } from '../../typechain';
-import { hexToBytes, splitHash } from '../util';
+import { splitHash } from '../util';
 
-async function deployTxVerifierContract(admin: Wallet) {
-  const syncerFactory = await ethers.getContractFactory('MockBlockChunks');
+async function deployTxVerifierContract(admin: ContractRunner) {
+  const syncerFactory = new MockBlockChunks__factory();
   const syncer = await syncerFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('TxVerifier');
-  const contract = await factory.connect(admin).deploy(syncer.address);
-  const verifierF = await ethers.getContractFactory('MockZkVerifier');
+  const factory = new TxVerifier__factory();
+  const contract = await factory.connect(admin).deploy(await syncer.getAddress());
+  const verifierF = new MockZkVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
-  await contract.updateVerifierAddress(1, verifier.address);
+  await contract.updateVerifierAddress(1, await verifier.getAddress());
 
-  const _factory = await ethers.getContractFactory('VerifierGasReport');
-  const verifierGasReport = (await _factory.connect(admin).deploy(contract.address)) as VerifierGasReport;
+  const _factory = new VerifierGasReport__factory();
+  const verifierGasReport = await _factory.connect(admin).deploy(await contract.getAddress());
   return { contract, verifierGasReport };
 }
 
@@ -30,22 +32,22 @@ function getTestProof(leafHash: string) {
   const mockBlkHash = '0x88bd78528ea4fd5c232978ce51e43f41f0d76ce56e331147c1c9611282308799';
   const input = [...splitHash(leafHash), ...splitHash(mockBlkHash), 17086605, 1681980179];
   const a: [BigNumberish, BigNumberish] = [
-    BigNumber.from('0x091712d21a7fb14be9027310e2cbcc7d9d4132d6422598586a4a1e481d69d234'),
-    BigNumber.from('0x16c655962badf7228ca62ae8d5674c1bdf10cd4edbd880e039a54ef6e2e55eab')
+    BigInt('0x091712d21a7fb14be9027310e2cbcc7d9d4132d6422598586a4a1e481d69d234'),
+    BigInt('0x16c655962badf7228ca62ae8d5674c1bdf10cd4edbd880e039a54ef6e2e55eab')
   ];
   const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
     [
-      BigNumber.from('0x0798c4c36b7d42124034a55327f8af1a2ec29ecedf1dd7c8b72690164f7d7841'),
-      BigNumber.from('0x0398de45e5843c72045fc9d01479c34ea4e6eebfbc8cbb4d13e35f36191c83ca')
+      BigInt('0x0798c4c36b7d42124034a55327f8af1a2ec29ecedf1dd7c8b72690164f7d7841'),
+      BigInt('0x0398de45e5843c72045fc9d01479c34ea4e6eebfbc8cbb4d13e35f36191c83ca')
     ],
     [
-      BigNumber.from('0x1e8324d656f1700f87a9b7f8f06b081f5ed8e7dd363a56fad209997815ea54b6'),
-      BigNumber.from('0x231a2b40a5147fcf71ab6d80de168e6a30cb26b87b14ae0ab7c3c9f1bd355513')
+      BigInt('0x1e8324d656f1700f87a9b7f8f06b081f5ed8e7dd363a56fad209997815ea54b6'),
+      BigInt('0x231a2b40a5147fcf71ab6d80de168e6a30cb26b87b14ae0ab7c3c9f1bd355513')
     ]
   ];
   const c: [BigNumberish, BigNumberish] = [
-    BigNumber.from('0x23d9a9af2e7544e6c0941cdf92115b40ddbd2b0a6bd33ef343823ea4c4e9ec11'),
-    BigNumber.from('0x2eb59836c9c43e2a6a6abc07ca138cb9a70588dd72befa183a4d8af4bec4b44c')
+    BigInt('0x23d9a9af2e7544e6c0941cdf92115b40ddbd2b0a6bd33ef343823ea4c4e9ec11'),
+    BigInt('0x2eb59836c9c43e2a6a6abc07ca138cb9a70588dd72befa183a4d8af4bec4b44c')
   ];
   const commit: [BigNumberish, BigNumberish] = ['0', '0'];
   const allData = [...a];
@@ -54,39 +56,33 @@ function getTestProof(leafHash: string) {
   allData.push(...commit);
   allData.push(...input);
 
-  let allDataHex = '';
+  let allDataHex = '0x';
   for (let i = 0; i < allData.length; i++) {
-    allDataHex = allDataHex + BigNumber.from(allData[i]).toHexString().slice(2).padStart(64, '0');
+    allDataHex = allDataHex + BigInt(allData[i]).toString(16).padStart(64, '0');
   }
 
   allDataHex = allDataHex + 'f901db20b901d7';
 
-  return hexToBytes(allDataHex);
+  return allDataHex;
 }
 
 function getMockAuxiBlkVerifyInfo() {
-  return new Array(8 * 32 + 4).fill(0);
+  return '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 }
 
 describe('Tx Verifier Test', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners();
     const { contract, verifierGasReport } = await deployTxVerifierContract(admin);
-    return { admin, contract, verifierGasReport };
+    return { contract, verifierGasReport };
   }
 
   let contract: TxVerifier;
   let verifierGasReport: VerifierGasReport;
-  let admin: Wallet;
   before(async () => {
     const res = await loadFixture(fixture);
     contract = res.contract;
     verifierGasReport = res.verifierGasReport;
-    admin = res.admin;
   });
 
   it('should pass on decodeTx', async () => {

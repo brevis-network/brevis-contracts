@@ -1,34 +1,34 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
 import { Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
 import {
   MockSMT__factory,
   UniswapSumVolume,
+  UniswapSumVolume__factory,
   UniswapSumVolumeVerifier__factory,
-  UniswapSumVolume__factory
 } from '../../typechain';
 
-async function deployUniswapSumContract(admin: Wallet) {
-  const smtFactory = await ethers.getContractFactory('MockSMT');
+async function deployUniswapSumContract() {
+  const [admin] = await ethers.getSigners();
+  const smtFactory = new MockSMT__factory();
   const smt = await smtFactory.connect(admin).deploy();
-  const factory = await ethers.getContractFactory('UniswapSumVolume');
-  const contract = await factory.connect(admin).deploy(smt.address);
-  const verifierF = await ethers.getContractFactory('UniswapSumVolumeVerifier');
+  const smtAddress = await smt.getAddress();
+  const factory = new UniswapSumVolume__factory();
+  const contract = await factory.connect(admin).deploy(smtAddress);
+  const verifierF = new UniswapSumVolumeVerifier__factory();
   const verifier = await verifierF.connect(admin).deploy();
-  await contract.updateVerifierAddress(1, verifier.address);
+  const verifierAddress = await verifier.getAddress();
+  await contract.updateVerifierAddress(1, verifierAddress);
 
   return contract;
 }
 
 describe('Uniswap Sum Volume App Test', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
-    const contract = await deployUniswapSumContract(admin);
+  async function fixture() {
+    const contract = await deployUniswapSumContract();
     return { admin, contract };
   }
 

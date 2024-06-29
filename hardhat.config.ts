@@ -1,6 +1,6 @@
 import '@nomicfoundation/hardhat-verify';
-import '@nomiclabs/hardhat-ethers';
-import '@nomiclabs/hardhat-waffle';
+import '@nomicfoundation/hardhat-ethers';
+import '@nomicfoundation/hardhat-toolbox';
 import '@typechain/hardhat';
 import 'hardhat-contract-sizer';
 import 'hardhat-deploy';
@@ -24,7 +24,7 @@ const avalancheTestEndpoint = process.env.AVALANCHE_TEST_ENDPOINT || process.env
 const avalancheTestPrivateKey = process.env.AVALANCHE_TEST_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.org';
 const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-const optimismEndpoint = process.env.OPTIMISM_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
+const optimismEndpoint = process.env.OPTIMISM_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
@@ -95,7 +95,7 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: 'typechain',
-    target: 'ethers-v5'
+    target: 'ethers-v6'
   },
   etherscan: {
     apiKey: {

@@ -1,55 +1,36 @@
-import { Fixture } from 'ethereum-waffle';
-import { ethers, waffle } from 'hardhat';
-import { PoALibTest } from '../../typechain';
-
-import { Wallet } from 'ethers';
-import { keccak256, pack } from '@ethersproject/solidity';
 import { expect } from 'chai';
-import { RLP } from 'ethers/lib/utils';
 import { randomInt } from 'crypto';
+import { encodeRlp, getBytes, solidityPackedKeccak256 } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import { PoALibTest, PoALibTest__factory } from '../../typechain';
 
 describe('PoAUnitTest', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners();
     const _poaUintTest = await deployLib(admin);
     return { admin, _poaUintTest };
   }
 
-  function hex2Bytes(hexString: string): number[] {
-    let hex = hexString;
-    const result = [];
-    if (hex.substr(0, 2) === '0x') {
-      hex = hex.slice(2);
-    }
-    if (hex.length % 2 === 1) {
-      hex = '0' + hex;
-    }
-    for (let i = 0; i < hex.length; i += 2) {
-      result.push(parseInt(hex.substr(i, 2), 16));
-    }
-    return result;
-  }
-
   let poaUintTest: PoALibTest;
-  let admin: Wallet;
+  let admin: HardhatEthersSigner;
 
   beforeEach(async () => {
     const res = await loadFixture(fixture);
-    poaUintTest = res._poaUintTest as PoALibTest;
-    admin = res.admin as Wallet;
+    poaUintTest = res._poaUintTest;
+    admin = res.admin as HardhatEthersSigner;
   });
 
-  async function deployLib(admin: Wallet) {
-    const factory = await ethers.getContractFactory('PoALibTest');
-    const poaUintTest = (await factory.connect(admin).deploy()) as PoALibTest;
+  async function deployLib(admin: HardhatEthersSigner) {
+    const factory = new PoALibTest__factory();
+    const poaUintTest = await factory.connect(admin).deploy();
     return poaUintTest;
   }
 
-  it('should pass retrive part of bytes', async () => {
+  it('should pass retrieve part of bytes', async () => {
     const testBytes = '0x7894745829abbdfe75814218613412afed1238907ba0';
     const bytesLength = testBytes.length / 2 - 1;
 
@@ -87,8 +68,8 @@ describe('PoAUnitTest', async () => {
     }
     const binaryData = await poaUintTest.mockToBinary(input);
     expect(binaryData).to.be.eql('0x' + inputInHex);
-    expect(await poaUintTest.mockWriteUint(input)).to.be.eql(RLP.encode(binaryData));
-    expect(await poaUintTest.mockWriteUint(input + 1)).to.not.be.eql(RLP.encode(binaryData));
+    expect(await poaUintTest.mockWriteUint(input)).to.be.eql(encodeRlp(binaryData));
+    expect(await poaUintTest.mockWriteUint(input + 1)).to.not.be.eql(encodeRlp(binaryData));
   });
 
   it('should be able to convert uint256 max to hex value', async () => {
@@ -99,9 +80,9 @@ describe('PoAUnitTest', async () => {
 
   it('should be able to encode address value', async () => {
     const address = '0xffffffffffffffffffffffffffffffffffffffff';
-    expect(await poaUintTest.mockWriteAddress(address)).to.be.eql(RLP.encode(address));
+    expect(await poaUintTest.mockWriteAddress(address)).to.be.eql(encodeRlp(address));
     expect(await poaUintTest.mockWriteAddress(address)).to.be.not.eql(
-      RLP.encode('0x0000000000000000000000000000000000000000')
+      encodeRlp('0x0000000000000000000000000000000000000000')
     );
   });
 
@@ -112,17 +93,17 @@ describe('PoAUnitTest', async () => {
 
   it('should be able to encode string value', async () => {
     let input = 'fdhafaskhfhakfsakfsddasda';
-    expect(await poaUintTest.mockWriteString(input)).to.be.eql(RLP.encode(Uint8Array.from(Buffer.from(input))));
+    expect(await poaUintTest.mockWriteString(input)).to.be.eql(encodeRlp(Uint8Array.from(Buffer.from(input))));
   });
 
   it('should be able to encode bytes value', async () => {
     expect(await poaUintTest.mockWriteBytes('0x')).to.be.eql('0x80');
     let input = '0xabbcdabbcdabbbbcdabbc7381461841341342342d613131231';
-    expect(await poaUintTest.mockWriteBytes(input)).to.be.eql(RLP.encode(input));
+    expect(await poaUintTest.mockWriteBytes(input)).to.be.eql(encodeRlp(input));
   });
 
   it('should be able to encode list value', async () => {
-    /// RLP.encode with original value
+    /// encodeRlp with original value
     /// RLPWriter.sol writes list with encoded value
     const input = [
       '0xffffffffffffffffffffffffffffffffffffffff',
@@ -131,14 +112,14 @@ describe('PoAUnitTest', async () => {
       '0xabbcdabbcdabbbbcdabbc7381461841341342342d613131231'
     ];
     const inputAfterEncoding = input.map((value) => {
-      return RLP.encode(value);
+      return encodeRlp(value);
     });
 
-    expect(await poaUintTest.mockWriteRLPList(inputAfterEncoding)).to.be.eql(RLP.encode(input));
+    expect(await poaUintTest.mockWriteRLPList(inputAfterEncoding)).to.be.eql(encodeRlp(input));
   });
 
   it("should be able to recover signer's address", async () => {
-    let messageHash = keccak256(
+    let messageHash = solidityPackedKeccak256(
       [
         'uint256',
         'bytes',
@@ -185,8 +166,14 @@ describe('PoAUnitTest', async () => {
       ]
     );
 
-    let signature = await admin.signMessage(hex2Bytes(messageHash));
-    let signerAddress = await poaUintTest.mockRecoverAddress(hex2Bytes(messageHash), signature);
+    // 0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1
+    // 0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c
+    // 0x5e087f154444d71f493312afa4558e3ab12d2494
+    let signature = await admin.signMessage(getBytes(messageHash));
+    let signerAddress = await poaUintTest.mockRecoverAddress(
+      '0x5d1a549fea201ae4074d1bec89f3cd59ad1c2a6e03151f823b11cc4396bac3a1',
+      '0xff855cda572a31f045a14da70e5ef19b264de861c00eccb42354b38ad899e1c434053ae9b7139f13eaccd5d44124dda9fb1870efd7374f791bd3f79bbd0bcc3c1c'
+    );
     expect(signerAddress).to.be.eql(admin.address);
   });
 });

@@ -1,16 +1,21 @@
 import { expect } from 'chai';
-import { Fixture } from 'ethereum-waffle';
-import { BigNumber, Wallet } from 'ethers';
-import { ethers, waffle } from 'hardhat';
-import { SMTUpdateCircuitProofVerifier, SMTUpdateCircuitProofVerifier__factory } from '../../typechain';
+import { ContractRunner } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import {
+  SMTUpdateCircuitProofVerifier,
+  SMTUpdateCircuitProofVerifier__factory,
+} from '../../typechain';
 import { splitHash } from '../util';
 
-async function deployVerifier(admin: Wallet) {
-  const factory = await ethers.getContractFactory('SMTUpdateCircuitProofVerifier');
+async function deployVerifier(admin: ContractRunner) {
+  const factory = new SMTUpdateCircuitProofVerifier__factory();
   return factory.connect(admin).deploy();
 }
 
-async function deployContracts(admin: Wallet) {
+async function deployContracts(admin: ContractRunner) {
   const verifier = await deployVerifier(admin);
   return verifier;
 }
@@ -49,42 +54,36 @@ const update = {
 };
 
 describe('SMT Update Circuit Contract Verifier', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners();
     const contract = await deployContracts(admin);
     return { admin, contract };
   }
 
   let contract: SMTUpdateCircuitProofVerifier;
-  let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     contract = res.contract;
-    admin = res.admin;
   });
 
   const publicInputs = [
     ...splitHash(update.oldSmtRoot),
     ...splitHash(update.newSmtRoot),
     ...splitHash(update.endBlockHash),
-    BigNumber.from(update.endBlockNum),
+    BigInt(update.endBlockNum),
     ...splitHash(update.nextChunkMerkleRoot),
-    BigNumber.from(update.commitPub)
+    BigInt(update.commitPub)
   ];
 
   it('update passes on true proofs', async () => {
     const result = await contract.verifyProof(
-      [BigNumber.from(update.proof.a[0]), BigNumber.from(update.proof.a[1])],
+      [BigInt(update.proof.a[0]), BigInt(update.proof.a[1])],
       [
-        [BigNumber.from(update.proof.b[0][0]), BigNumber.from(update.proof.b[0][1])],
-        [BigNumber.from(update.proof.b[1][0]), BigNumber.from(update.proof.b[1][1])]
+        [BigInt(update.proof.b[0][0]), BigInt(update.proof.b[0][1])],
+        [BigInt(update.proof.b[1][0]), BigInt(update.proof.b[1][1])]
       ],
-      [BigNumber.from(update.proof.c[0]), BigNumber.from(update.proof.c[1])],
-      [BigNumber.from(update.proof.commitment[0]), BigNumber.from(update.proof.commitment[1])],
+      [BigInt(update.proof.c[0]), BigInt(update.proof.c[1])],
+      [BigInt(update.proof.commitment[0]), BigInt(update.proof.commitment[1])],
       publicInputs
     );
     expect(result).true;
@@ -92,13 +91,13 @@ describe('SMT Update Circuit Contract Verifier', async () => {
 
   it('update verify failed on false proofs', async () => {
     const tx = contract.verifyProof(
-      [BigNumber.from(0), BigNumber.from(update.proof.a[1])],
+      [BigInt(0), BigInt(update.proof.a[1])],
       [
-        [BigNumber.from(update.proof.b[0][0]), BigNumber.from(update.proof.b[0][1])],
-        [BigNumber.from(update.proof.b[1][0]), BigNumber.from(update.proof.b[1][1])]
+        [BigInt(update.proof.b[0][0]), BigInt(update.proof.b[0][1])],
+        [BigInt(update.proof.b[1][0]), BigInt(update.proof.b[1][1])]
       ],
-      [BigNumber.from(update.proof.c[0]), BigNumber.from(update.proof.c[1])],
-      [BigNumber.from(update.proof.commitment[0]), BigNumber.from(update.proof.commitment[1])],
+      [BigInt(update.proof.c[0]), BigInt(update.proof.c[1])],
+      [BigInt(update.proof.commitment[0]), BigInt(update.proof.commitment[1])],
       publicInputs
     );
     await expect(tx).reverted;

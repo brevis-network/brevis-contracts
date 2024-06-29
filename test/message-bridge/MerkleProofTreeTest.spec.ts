@@ -1,20 +1,18 @@
 import assert from 'assert';
-import { Fixture } from 'ethereum-waffle';
-import { Wallet } from 'ethers';
-import { arrayify, defaultAbiCoder, keccak256, RLP } from 'ethers/lib/utils';
-import { ethers, waffle } from 'hardhat';
-import { MockMerkleProofTree } from '../../typechain/MockMerkleProofTree';
+import { AbiCoder, ContractRunner, decodeRlp, getBytes, keccak256 } from 'ethers';
+import { ethers } from 'hardhat';
+
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+
+import { MockMerkleProofTree__factory } from '../../typechain';
+import { MockMerkleProofTree } from '../../typechain/contracts/apps/message-bridge/mock/MockMerkleProofTree';
 import { computeMessageId, generateProof, hash2bytes } from './util';
 
 describe('MerkleProofTree Test', async () => {
-  function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
-    const provider = waffle.provider;
-    return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
-  }
-
-  async function fixture([admin]: Wallet[]) {
+  async function fixture() {
+    const [admin] = await ethers.getSigners();
     const merkleProofTree = await deployLib(admin);
-    return { admin, merkleProofTree };
+    return { merkleProofTree };
   }
 
   let merkleProofTree: MockMerkleProofTree;
@@ -23,11 +21,11 @@ describe('MerkleProofTree Test', async () => {
   beforeEach(async () => {
     const res = await loadFixture(fixture);
     merkleProofTree = res.merkleProofTree as MockMerkleProofTree;
-    chainId = (await ethers.provider.getNetwork()).chainId;
+    chainId = Number((await ethers.provider.getNetwork()).chainId);
   });
 
-  async function deployLib(admin: Wallet) {
-    const factory = await ethers.getContractFactory('MockMerkleProofTree');
+  async function deployLib(admin: ContractRunner) {
+    const factory = new MockMerkleProofTree__factory();
     const merkleProofTree = factory.connect(admin).deploy();
     return merkleProofTree;
   }
@@ -50,13 +48,15 @@ describe('MerkleProofTree Test', async () => {
 
     const accountPath = hash2bytes(accountAddress);
     const accountPathValue = await merkleProofTree.mockRead(accountPath, acntProof);
-    const storageInfoFromAccountPathValue = RLP.decode(accountPathValue)[2];
+    const storageInfoFromAccountPathValue = decodeRlp(accountPathValue)[2];
     assert.equal(storageInfoFromAccountPathValue, keccak256(stProof[0]));
 
-    const storagePath = hash2bytes(hash2bytes(arrayify(defaultAbiCoder.encode(['uint64', 'uint256'], [nonce, 2]))));
+    const storagePath = hash2bytes(
+      hash2bytes(getBytes(AbiCoder.defaultAbiCoder().encode(['uint64', 'uint256'], [nonce, 2])))
+    );
     const storagePathValue = await merkleProofTree.mockRead(storagePath, stProof);
 
     const messageId = computeMessageId(nonce, sender, receiver, chainId, chainId, message).messageId;
-    assert.equal(RLP.decode(storagePathValue), messageId);
+    assert.equal(decodeRlp(storagePathValue), messageId);
   });
 });

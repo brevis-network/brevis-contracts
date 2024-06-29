@@ -1,0 +1,55 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "@openzeppelin/contracts/access/Ownable.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\n\npragma solidity ^0.8.0;\n\nimport \"../utils/Context.sol\";\n\n/**\n * @dev Contract module which provides a basic access control mechanism, where\n * there is an account (an owner) that can be granted exclusive access to\n * specific functions.\n *\n * By default, the owner account will be the one that deploys the contract. This\n * can later be changed with {transferOwnership}.\n *\n * This module is used through inheritance. It will make available the modifier\n * `onlyOwner`, which can be applied to your functions to restrict their use to\n * the owner.\n */\nabstract contract Ownable is Context {\n    address private _owner;\n\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\n\n    /**\n     * @dev Initializes the contract setting the deployer as the initial owner.\n     */\n    constructor() {\n        _transferOwnership(_msgSender());\n    }\n\n    /**\n     * @dev Returns the address of the current owner.\n     */\n    function owner() public view virtual returns (address) {\n        return _owner;\n    }\n\n    /**\n     * @dev Throws if called by any account other than the owner.\n     */\n    modifier onlyOwner() {\n        require(owner() == _msgSender(), \"Ownable: caller is not the owner\");\n        _;\n    }\n\n    /**\n     * @dev Leaves the contract without owner. It will not be possible to call\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\n     *\n     * NOTE: Renouncing ownership will leave the contract without an owner,\n     * thereby removing any functionality that is only available to the owner.\n     */\n    function renounceOwnership() public virtual onlyOwner {\n        _transferOwnership(address(0));\n    }\n\n    /**\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\n     * Can only be called by the current owner.\n     */\n    function transferOwnership(address newOwner) public virtual onlyOwner {\n        require(newOwner != address(0), \"Ownable: new owner is the zero address\");\n        _transferOwnership(newOwner);\n    }\n\n    /**\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\n     * Internal function without access restriction.\n     */\n    function _transferOwnership(address newOwner) internal virtual {\n        address oldOwner = _owner;\n        _owner = newOwner;\n        emit OwnershipTransferred(oldOwner, newOwner);\n    }\n}\n"
+    },
+    "@openzeppelin/contracts/utils/Context.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\n\npragma solidity ^0.8.0;\n\n/**\n * @dev Provides information about the current execution context, including the\n * sender of the transaction and its data. While these are generally available\n * via msg.sender and msg.data, they should not be accessed in such a direct\n * manner, since when dealing with meta-transactions the account sending and\n * paying for execution may not be the actual sender (as far as an application\n * is concerned).\n *\n * This contract is only required for intermediate, library-like contracts.\n */\nabstract contract Context {\n    function _msgSender() internal view virtual returns (address) {\n        return msg.sender;\n    }\n\n    function _msgData() internal view virtual returns (bytes calldata) {\n        return msg.data;\n    }\n}\n"
+    },
+    "contracts/interfaces/ISMT.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nimport \"../verifiers/zk-verifiers/common/IVerifier.sol\";\n\ninterface ISMT {\n    struct SmtUpdate {\n        bytes32 newSmtRoot;\n        uint64 endBlockNum;\n        bytes32 endBlockHash;\n        bytes32 nextChunkMerkleRoot;\n        uint256[8] proof;\n        uint256[2] commit;\n        uint256[2] knowledgeProof;\n    }\n\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external;\n\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) external view returns (bool);\n}\n"
+    },
+    "contracts/light-client-eth/interfaces/IAnchorBlocks.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\ninterface IAnchorBlocks {\n    function blocks(uint256 blockNum) external view returns (bytes32);\n}\n"
+    },
+    "contracts/smt/SMT.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\nimport \"../light-client-eth/interfaces/IAnchorBlocks.sol\";\nimport \"../interfaces/ISMT.sol\";\n\ncontract SMT is ISMT, Ownable {\n    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);\n    event AnchorProviderUpdated(uint64 chainId, address anchorProvider);\n    event VerifierUpdated(uint64 chainId, address verifier);\n\n    mapping(uint64 => IAnchorBlocks) public anchorProviders;\n    mapping(uint64 => IVerifier) public verifiers;\n\n    mapping(uint64 => mapping(bytes32 => bool)) public smtRoots;\n    mapping(uint64 => bytes32) public latestRoots;\n\n    constructor(\n        uint64[] memory _chainIds,\n        address[] memory _anchorProviders,\n        address[] memory _verifiers,\n        bytes32[] memory _initRoots\n    ) {\n        require(_chainIds.length == _anchorProviders.length, \"len mismatch\");\n        require(_chainIds.length == _verifiers.length, \"len mismatch\");\n        require(_chainIds.length == _initRoots.length, \"len mismatch\");\n        for (uint256 i = 0; i < _chainIds.length; i++) {\n            uint64 chid = _chainIds[i];\n            anchorProviders[chid] = IAnchorBlocks(_anchorProviders[i]);\n            verifiers[chid] = IVerifier(_verifiers[i]);\n            smtRoots[chid][_initRoots[i]] = true;\n            latestRoots[chid] = _initRoots[i];\n        }\n    }\n\n    function getLatestRoot(uint64 chainId) public view returns (bytes32) {\n        return latestRoots[chainId];\n    }\n\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) public view returns (bool) {\n        return smtRoots[chainId][smtRoot];\n    }\n\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external {\n        // If nextChunkMerkleRoot is empty, it means the zk proof bypasses checking if the updated chunk anchors to a known chunk.\n        // Instead, the responsibility of checking the validity of endBlockHash is deferred to this contract.\n        if (u.nextChunkMerkleRoot == 0) {\n            IAnchorBlocks anchorProvider = anchorProviders[chainId];\n            require(address(anchorProvider) != address(0), \"unknown anchor provider\");\n            bytes32 anchorHash = anchorProvider.blocks(u.endBlockNum);\n            require(anchorHash == u.endBlockHash, \"anchor check failed\");\n        }\n        bytes32 root = latestRoots[chainId];\n        bool success = verifyProof(chainId, root, u);\n        require(success, \"invalid zk proof\");\n\n        smtRoots[chainId][u.newSmtRoot] = true;\n        latestRoots[chainId] = u.newSmtRoot;\n        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, chainId);\n    }\n\n    function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {\n        IVerifier verifier = verifiers[chainId];\n        require(address(verifier) != address(0), \"no verifier for chainId\");\n\n        uint256[9] memory input;\n        uint256 m = 1 << 128;\n        input[0] = uint256(oldSmtRoot) >> 128;\n        input[1] = uint256(oldSmtRoot) % m;\n        input[2] = uint256(u.newSmtRoot) >> 128;\n        input[3] = uint256(u.newSmtRoot) % m;\n        input[4] = uint256(u.endBlockHash) >> 128;\n        input[5] = uint256(u.endBlockHash) % m;\n        input[6] = u.endBlockNum;\n        input[7] = uint256(u.nextChunkMerkleRoot) >> 128;\n        input[8] = uint256(u.nextChunkMerkleRoot) % m;\n       \n        return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);\n    }\n\n    function setAnchorProvider(uint64 chainId, address anchorProvider) external onlyOwner {\n        anchorProviders[chainId] = IAnchorBlocks(anchorProvider);\n        emit AnchorProviderUpdated(chainId, anchorProvider);\n    }\n\n    function setVerifier(uint64 chainId, address verifier) external onlyOwner {\n        verifiers[chainId] = IVerifier(verifier);\n        emit VerifierUpdated(chainId, verifier);\n    }\n}\n"
+    },
+    "contracts/smt/TestSMT.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\nimport \"../light-client-eth/interfaces/IAnchorBlocks.sol\";\nimport \"../interfaces/ISMT.sol\";\nimport \"./SMT.sol\";\n\ncontract TestSMT is SMT {\n    constructor(\n        uint64[] memory _chainIds,\n        address[] memory _anchorProviders,\n        address[] memory _verifiers,\n        bytes32[] memory _initRoots\n    ) SMT(_chainIds, _anchorProviders, _verifiers, _initRoots) {}\n\n    // function for testing convenience\n    function addRootForTesting(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyOwner {\n        smtRoots[chainId][newRoot] = true;\n        latestRoots[chainId] = newRoot;\n        emit SmtRootUpdated(newRoot, endBlockNum, chainId);\n    }\n}\n"
+    },
+    "contracts/verifiers/zk-verifiers/common/IVerifier.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\ninterface IVerifier {\n    function verifyProof(\n        uint256[8] calldata proof,\n        uint256[2] calldata commit,\n        uint256[2] calldata knowledgeProof,\n        uint256[9] calldata input\n    ) external view returns (bool r);\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "viaIR": true,
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

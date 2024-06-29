@@ -1,14 +1,29 @@
-import { Gindex, ProofType, SingleProof, createProof } from '@chainsafe/persistent-merkle-tree';
-import { ByteVectorType, ContainerType, VectorCompositeType } from '@chainsafe/ssz';
 import dotenv from 'dotenv';
-import { BigNumberish } from 'ethers';
-import { BytesLike, arrayify } from 'ethers/lib/utils';
-import { ethers } from 'hardhat';
-import { ExecutionPayloadStruct, LeafWithBranchStruct } from '../../typechain/AnchorBlocks';
-import { BeaconBlockHeaderStruct, LightClientUpdateStruct } from '../../typechain/EthereumLightClient';
+import { BigNumberish, BytesLike, getBytes, hexlify } from 'ethers';
+
+import {
+  createProof,
+  Gindex,
+  ProofType,
+  SingleProof,
+} from '@chainsafe/persistent-merkle-tree';
+import {
+  ByteVectorType,
+  ContainerType,
+  VectorCompositeType,
+} from '@chainsafe/ssz';
+
+import {
+  ExecutionPayloadStruct,
+  LeafWithBranchStruct,
+} from '../../typechain/contracts/light-client-eth/AnchorBlocks';
+import {
+  BeaconBlockHeaderStruct,
+  LightClientUpdateStruct,
+} from '../../typechain/contracts/light-client-eth/EthereumLightClient';
+import { HeaderWithExecutionStruct } from '../../typechain/contracts/light-client-eth/LightClientStore';
+import { IBeaconVerifier } from '../../typechain/contracts/verifiers/BeaconVerifier';
 import { ssz } from '../../vendor/lodestar/types';
-import { ProofStruct } from './../../typechain/ILightClientZkVerifier';
-import { HeaderWithExecutionStruct } from './../../typechain/LightClientStore';
 import proof from './proof_638.json';
 import update from './update_638.json';
 
@@ -25,7 +40,7 @@ export type UpdateProof = typeof proof;
 export type LightClientUpdate = typeof update.data;
 
 export function sumCommitteeBits(bits: string): number {
-  return ethers.utils.arrayify(bits).reduce((acc, curr) => {
+  return getBytes(bits).reduce((acc, curr) => {
     // curr is 0~255
     let sum = 0;
     // curr.toString(2) is 00000000~11111111
@@ -49,10 +64,10 @@ export function getSyncCommitteeRoot(pubkeys: string[], aggregatePubkey: string)
     aggregatePubkey: pubkeyType
   });
   const root = rootType.hashTreeRoot({
-    pubkeys: pubkeys.map((key) => arrayify(key)),
-    aggregatePubkey: arrayify(aggregatePubkey)
+    pubkeys: pubkeys.map((key) => getBytes(key)),
+    aggregatePubkey: getBytes(aggregatePubkey)
   });
-  return ethers.utils.hexlify(root);
+  return hexlify(root);
 }
 
 export type HeaderWithExecution = typeof update.data.attested_header;
@@ -62,7 +77,7 @@ export type ExecutionPayloadHeader = typeof update.data.attested_header.executio
 function getExecutionPayloadRoot(eh: ExecutionPayloadHeader) {
   const t = ssz.capella.ExecutionPayloadHeader;
   const v = ssz.capella.ExecutionPayloadHeader.fromJson(eh);
-  const root = ethers.utils.hexlify(t.hashTreeRoot(v));
+  const root = hexlify(t.hashTreeRoot(v));
   return root;
 }
 
@@ -147,7 +162,7 @@ function newPoint(point: string[]): [BigNumberish, BigNumberish] {
   return [point[0], point[1]];
 }
 
-function newGroth16Proof(p: Groth16Proof): ProofStruct {
+function newGroth16Proof(p: Groth16Proof): IBeaconVerifier.ProofStruct {
   return {
     a: newPoint(p.a),
     b: [newPoint(p.b[0]), newPoint(p.b[1])],
@@ -156,7 +171,7 @@ function newGroth16Proof(p: Groth16Proof): ProofStruct {
   };
 }
 
-function emptyGroth16Proof(): ProofStruct {
+function emptyGroth16Proof(): IBeaconVerifier.ProofStruct {
   return {
     a: newPoint(['0', '0']),
     b: [newPoint(['0', '0']), newPoint(['0', '0'])],

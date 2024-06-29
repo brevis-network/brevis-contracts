@@ -13,6 +13,8 @@ export function hexToBytes(hex: string) {
   if (hex.startsWith('0x')) {
     hex = hex.slice(2);
   }
-  for (var bytes = [], c = 0; c < hex.length; c += 2) bytes.push(parseInt(hex.slice(c, c + 2), 16));
+  for (let bytes = [], c = 0; c < hex.length; c += 2) {
+    bytes.push(parseInt(hex.slice(c, c + 2), 16));
+  }
   return bytes;
 }
