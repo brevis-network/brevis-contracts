@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
-import {ethers} from 'hardhat';
-import {DeployFunction} from 'hardhat-deploy/types';
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import {BlockChunks} from '../../typechain';
-import {verify} from '../utils/utils';
+import { ethers } from 'hardhat';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+
+import { BlockChunks } from '../../typechain';
+import { verify } from '../utils/utils';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     log: true
   });
   const [signer] = await ethers.getSigners();
-  const contract = await (await ethers.getContract<BlockChunks>('BlockChunks')).connect(signer);
+  const contract = await ethers.getContractAt('BlockChunks', deployment.address, signer);
   const lc = await deployments.get('AnchorBlocks');
   await contract.updateAnchorBlockProvider(1, lc.address);
   const verifier = await deployments.get('EthChunkOf128Verifier');

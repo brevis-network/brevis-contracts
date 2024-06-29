@@ -4,7 +4,12 @@ import { ethers } from 'hardhat';
 
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
-import { EthStorageVerifier, VerifierGasReport } from '../../typechain';
+import {
+  EthStorageVerifier,
+  EthStorageVerifier__factory,
+  VerifierGasReport,
+  VerifierGasReport__factory
+} from '../../typechain';
 import { convertByteArrayToHexString } from './util';
 
 describe('Eth storage proof verify', async () => {
@@ -26,14 +31,14 @@ describe('Eth storage proof verify', async () => {
   });
 
   async function deployLib(admin: ContractRunner, originalVerifierAddress: string) {
-    const factory = await ethers.getContractFactory('VerifierGasReport');
-    const contract = (await factory.connect(admin).deploy(originalVerifierAddress)) as VerifierGasReport;
+    const factory = new VerifierGasReport__factory();
+    const contract = await factory.connect(admin).deploy(originalVerifierAddress);
     return contract;
   }
 
   async function deploy(admin: ContractRunner) {
-    const etherStorageProofFactory = await ethers.getContractFactory('EthStorageVerifier');
-    const etherStorageContract = (await etherStorageProofFactory.connect(admin).deploy()) as EthStorageVerifier;
+    const etherStorageProofFactory = new EthStorageVerifier__factory();
+    const etherStorageContract = await etherStorageProofFactory.connect(admin).deploy();
     return etherStorageContract;
   }
 

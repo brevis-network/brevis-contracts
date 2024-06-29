@@ -1,15 +1,10 @@
 import assert from 'assert';
-import {
-  AbiCoder,
-  ContractRunner,
-  decodeRlp,
-  getBytes,
-  keccak256,
-} from 'ethers';
+import { AbiCoder, ContractRunner, decodeRlp, getBytes, keccak256 } from 'ethers';
 import { ethers } from 'hardhat';
 
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
+import { MockMerkleProofTree__factory } from '../../typechain';
 import { MockMerkleProofTree } from '../../typechain/contracts/apps/message-bridge/mock/MockMerkleProofTree';
 import { computeMessageId, generateProof, hash2bytes } from './util';
 
@@ -30,7 +25,7 @@ describe('MerkleProofTree Test', async () => {
   });
 
   async function deployLib(admin: ContractRunner) {
-    const factory = await ethers.getContractFactory('MockMerkleProofTree');
+    const factory = new MockMerkleProofTree__factory();
     const merkleProofTree = factory.connect(admin).deploy();
     return merkleProofTree;
   }

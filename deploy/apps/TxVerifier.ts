@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import { ethers } from 'hardhat';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
+
 import { TxVerifier } from '../../typechain';
 import { verify } from '../utils/utils';
 
@@ -22,7 +23,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   });
 
   const [signer] = await ethers.getSigners();
-  const txVerfier = await (await ethers.getContract<TxVerifier>('TxVerifier')).connect(signer);
+  const txVerfier = await ethers.getContractAt('TxVerifier', deployment.address, signer);
   const verifier = await deployments.get('TransactionProofVerifier');
   const tx = await txVerfier.updateVerifierAddress(1, verifier.address);
   console.log('verifier.address', verifier.address);

@@ -4,10 +4,7 @@ import { ethers } from 'hardhat';
 
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
-import {
-  ReceiptCircuitProofVerifier,
-  VerifierGasReport,
-} from '../../typechain';
+import { ReceiptCircuitProofVerifier__factory, VerifierGasReport, VerifierGasReport__factory } from '../../typechain';
 import { splitHash } from '../util';
 
 describe('Receipt circuit proof verification', async () => {
@@ -27,14 +24,14 @@ describe('Receipt circuit proof verification', async () => {
   });
 
   async function deployOriginalVerifier(admin: ContractRunner) {
-    const factory = await ethers.getContractFactory('ReceiptCircuitProofVerifier');
-    const contract = (await factory.connect(admin).deploy()) as ReceiptCircuitProofVerifier;
+    const factory = new ReceiptCircuitProofVerifier__factory();
+    const contract = await factory.connect(admin).deploy();
     return contract;
   }
 
   async function deployGasReporter(admin: ContractRunner, originalVerifierAddress: string) {
-    const factory = await ethers.getContractFactory('VerifierGasReport');
-    const contract = (await factory.connect(admin).deploy(originalVerifierAddress)) as VerifierGasReport;
+    const factory = new VerifierGasReport__factory();
+    const contract = await factory.connect(admin).deploy(originalVerifierAddress);
     return contract;
   }
 

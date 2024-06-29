@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
-import { TransactionProofVerifier, VerifierGasReport } from '../../typechain';
+import { TransactionProofVerifier__factory, VerifierGasReport, VerifierGasReport__factory } from '../../typechain';
 import { splitHash } from '../util';
 
 describe('Transaction proof verify', async () => {
@@ -22,11 +22,11 @@ describe('Transaction proof verify', async () => {
   });
 
   async function deployLib(admin: ContractRunner) {
-    const _factory = await ethers.getContractFactory('TransactionProofVerifier');
-    const _contract = (await _factory.connect(admin).deploy()) as TransactionProofVerifier;
+    const _factory = new TransactionProofVerifier__factory();
+    const _contract = await _factory.connect(admin).deploy();
     const address = await _contract.getAddress();
-    const factory = await ethers.getContractFactory('VerifierGasReport');
-    const contract = (await factory.connect(admin).deploy(address)) as VerifierGasReport;
+    const factory = new VerifierGasReport__factory();
+    const contract = await factory.connect(admin).deploy(address);
     return contract;
   }
 
