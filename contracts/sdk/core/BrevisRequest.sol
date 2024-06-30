@@ -174,7 +174,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit RequestFeeIncreased(_proofId, _nonce, info.callback.gas, newFee);
     }
 
-    function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external whenNotPaused {
+    function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request memory request = requests[requestKey];
         RequestStatus status = request.status;
@@ -245,7 +245,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint256 _index,
         bool _done
     ) external onlyActiveProver {
-        // todo: check msg.sender or signature
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
         Dispute storage dispute = disputes[requestKey];
