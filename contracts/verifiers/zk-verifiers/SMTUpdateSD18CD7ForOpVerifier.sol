@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -10,7 +9,6 @@ pragma solidity ^0.8.0;
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
 contract SMTUpdateCircuitProofOnOpVerifier {
-
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -82,10 +80,14 @@ contract SMTUpdateCircuitProofOnOpVerifier {
     uint256 constant PEDERSEN_G_Y_1 = 3518510766686242646084167009169793143410416394108769285506541954245359469430;
 
     // Pedersen GRootSigmaNeg point in G2 in powers of i
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 = 20573844106836851216683495680715692316448816169379645474552662784955401807782;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 = 10173198368954426359560222122775027390195584468790431924474000180170482567391;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 = 8933462681644689232793574626123804034150276190704931603444382781462281429595;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 = 17690363985422853860548334460761950515160248144161805124506500282167531442429;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 =
+        20573844106836851216683495680715692316448816169379645474552662784955401807782;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 =
+        10173198368954426359560222122775027390195584468790431924474000180170482567391;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 =
+        8933462681644689232793574626123804034150276190704931603444382781462281429595;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 =
+        17690363985422853860548334460761950515160248144161805124506500282167531442429;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 17781150640532246683478288430048881803672435485525463173154420895146090513125;
@@ -251,14 +253,14 @@ contract SMTUpdateCircuitProofOnOpVerifier {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             calldatacopy(f, proof, 0x100)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -297,9 +299,9 @@ contract SMTUpdateCircuitProofOnOpVerifier {
             mstore(add(f, 0x440), PEDERSEN_GROOTSIGMANEG_Y_1)
             mstore(add(f, 0x460), PEDERSEN_GROOTSIGMANEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {

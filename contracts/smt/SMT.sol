@@ -75,7 +75,7 @@ contract SMT is ISMT, BrevisAccess {
         input[6] = u.endBlockNum;
         input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
         input[8] = uint256(u.nextChunkMerkleRoot) % m;
-       
+
         return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }
 
