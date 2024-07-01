@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "./interfaces/IEthereumLightClient.sol";
 import "./interfaces/IAnchorBlocks.sol";
-
 import "./common/Helpers.sol";
 import "./common/Constants.sol";
 import "./common/Types.sol";
+import "../safeguard/BrevisAccess.sol";
 
 uint256 constant EXECUTION_BLOCK_LEFT_PREFIX_LEN = 4;
 
-contract AnchorBlocks is IAnchorBlocks, Ownable {
+contract AnchorBlocks is IAnchorBlocks, BrevisAccess {
     // BlockHashWitness is the RLP code that witnesses the generation of block hash given the ParentHash field
     struct BlockHashWitness {
         bytes left;
@@ -45,7 +43,7 @@ contract AnchorBlocks is IAnchorBlocks, Ownable {
         LightClientOptimisticUpdate memory hb,
         bytes32 blockHash,
         BlockHashWitness[] memory chainProof
-    ) external {
+    ) external onlyActiveProver {
         require(chainProof.length > 0, "invalid proof length");
         (uint256 headBlockNum, bytes32 headBlockHash) = verifyHeadBlock(hb);
         uint256 blockNum = headBlockNum - chainProof.length;

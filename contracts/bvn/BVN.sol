@@ -157,7 +157,6 @@ contract BVN {
 
             address valAddr = signerVals[signer];
             require(isBondedValidator(valAddr), "not bonded validator");
-            // TODO: gas optmization, getValidatorTokens already called in getTotalTokens()
             signedTokens += staking.getValidatorTokens(valAddr);
             if (signedTokens >= quorum) {
                 return true;

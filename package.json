@@ -11,7 +11,8 @@
     "clean": "hardhat clean",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "report-gas": "REPORT_GAS=true hardhat test"
+    "report-gas": "REPORT_GAS=true hardhat test",
+    "size-contracts": "hardhat size-contracts > reports/contract_sizes.txt"
   },
   "devDependencies": {
     "@chainsafe/bls": "^7.1.1",
@@ -58,6 +59,8 @@
     "@uniswap/v4-core": "uniswap/v4-core",
     "merkletreejs": "0.3.10",
     "solidity-bytes-utils": "^0.8.0",
-    "solidity-rlp": "^2.0.7"
+    "solidity-rlp": "^2.0.7",
+    "@rumblefishdev/hardhat-kms-signer": "1.1.2",
+    "aws-sdk": "2.1419.0"
   }
 }

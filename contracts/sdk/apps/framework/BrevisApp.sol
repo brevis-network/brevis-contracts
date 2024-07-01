@@ -1,62 +1,91 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "../../interface/IBrevisProof.sol";
-import "../../lib/Lib.sol";
-
 abstract contract BrevisApp {
-    IBrevisProof public brevisProof;
+    address public brevisRequest;
+    uint256 public opChallengeWindow;
 
-    constructor(IBrevisProof _brevisProof) {
-        brevisProof = _brevisProof;
+    modifier onlyBrevisRequest() {
+        require(msg.sender == brevisRequest, "invalid caller");
+        _;
     }
 
-    function validateRequest(
-        bytes32 _requestId,
-        uint64 _chainId,
-        Brevis.ExtractInfos memory _extractInfos
-    ) public view virtual returns (bool) {
-        brevisProof.validateRequest(_requestId, _chainId, _extractInfos);
-        return true;
+    constructor(address _brevisRequest) {
+        brevisRequest = _brevisRequest;
+        _setOpChallengeWindow(2 ** 256 - 1); // disable usage of op result by default
     }
 
-    function brevisCallback(bytes32 _requestId, bytes calldata _appCircuitOutput) external {
-        (bytes32 appCommitHash, bytes32 appVkHash) = IBrevisProof(brevisProof).getProofAppData(_requestId);
-        require(appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_requestId, appVkHash, _appCircuitOutput);
-    }
-
-    function handleProofResult(bytes32 _requestId, bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+    function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
     }
 
+    function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
+        // to be overrided by custom app
+    }
+
+    // app contract can implement logics to set opChallengeWindow if needed
+    function _setOpChallengeWindow(uint256 _challangeWindow) internal {
+        opChallengeWindow = _challangeWindow;
+    }
+
+    // app contract can implement logics to update brevisRequest address if needed
+    function _setBrevisRequest(address _brevisRequest) internal {
+        brevisRequest = _brevisRequest;
+    }
+
+    function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
+        handleProofResult(_appVkHash, _appCircuitOutput);
+    }
+
     function brevisBatchCallback(
-        uint64 _chainId,
-        Brevis.ProofData[] calldata _proofDataArray,
+        bytes32[] calldata _appVkHashes,
         bytes[] calldata _appCircuitOutputs
-    ) external {
-        require(_proofDataArray.length == _appCircuitOutputs.length, "length not match");
-        IBrevisProof(brevisProof).mustValidateRequests(_chainId, _proofDataArray);
-        for (uint i = 0; i < _proofDataArray.length; i++) {
-            require(
-                _proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]),
-                "failed to open output commitment"
-            );
-            handleProofResult(_proofDataArray[i].commitHash, _proofDataArray[i].appVkHash, _appCircuitOutputs[i]);
+    ) external onlyBrevisRequest {
+        for (uint i = 0; i < _appVkHashes.length; i++) {
+            handleProofResult(_appVkHashes[i], _appCircuitOutputs[i]);
         }
     }
 
-    // handle request in AggProof case, called by biz side
-    function singleRun(
-        uint64 _chainId,
-        Brevis.ProofData calldata _proofData,
-        bytes32 _merkleRoot,
-        bytes32[] calldata _merkleProof,
-        uint8 _nodeIndex,
+    function applyBrevisOpResult(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes32 _appVkHash,
+        bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
-    ) external {
-        IBrevisProof(brevisProof).mustValidateRequest(_chainId, _proofData, _merkleRoot, _merkleProof, _nodeIndex);
-        require(_proofData.appCommitHash == keccak256(_appCircuitOutput), "failed to open output commitment");
-        handleProofResult(_proofData.commitHash, _proofData.appVkHash, _appCircuitOutput);
+    ) public {
+        require(
+            IBrevisRequest(brevisRequest).validateOpAppData(
+                _proofId,
+                _nonce,
+                _appCommitHash,
+                _appVkHash,
+                opChallengeWindow
+            ),
+            "data not ready to use"
+        );
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
+        handleOpProofResult(_appVkHash, _appCircuitOutput);
     }
+
+    function applyBrevisOpResults(
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
+        bytes32[] calldata _appVkHashes,
+        bytes32[] calldata _appCommitHashes,
+        bytes[] calldata _appCircuitOutputs
+    ) external {
+        for (uint256 i = 0; i < _proofIds.length; i++) {
+            applyBrevisOpResult(_proofIds[i], _nonces[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
+        }
+    }
+}
+
+interface IBrevisRequest {
+    function validateOpAppData(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes32 _appCommitHash,
+        bytes32 _appVkHash,
+        uint256 _appChallengeWindow
+    ) external view returns (bool);
 }

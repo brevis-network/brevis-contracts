@@ -4,57 +4,18 @@ pragma solidity ^0.8.18;
 import "solidity-rlp/contracts/RLPReader.sol";
 
 library Brevis {
-    uint256 constant NumField = 5; // supports at most 5 fields per receipt log
-
-    struct ReceiptInfo {
-        uint64 blkNum;
-        uint64 receiptIndex; // ReceiptIndex in the block
-        LogInfo[NumField] logs;
-    }
-
-    struct LogInfo {
-        LogExtraInfo logExtraInfo;
-        uint64 logIndex; // LogIndex of the field
-        bytes32 value;
-    }
-
-    struct LogExtraInfo {
-        uint8 valueFromTopic;
-        uint64 valueIndex; // index of the fields in topic or data
-        address contractAddress;
-        bytes32 logTopic0;
-    }
-
-    struct StorageInfo {
-        bytes32 blockHash;
-        address account;
-        bytes32 slot;
-        bytes32 slotValue;
-        uint64 blockNumber;
-    }
-
-    struct TransactionInfo {
-        bytes32 leafHash;
-        bytes32 blockHash;
-        uint64 blockNumber;
-        uint64 blockTime;
-        bytes leafRlpPrefix;
-    }
-
-    struct ExtractInfos {
-        bytes32 smtRoot;
-        ReceiptInfo[] receipts;
-        StorageInfo[] stores;
-        TransactionInfo[] txs;
-    }
-
     // retrieved from proofData, to align the logs with circuit...
     struct ProofData {
         bytes32 commitHash;
         bytes32 vkHash;
         bytes32 appCommitHash; // zk-program computing circuit commit hash
         bytes32 appVkHash; // zk-program computing circuit Verify Key hash
-        bytes32 smtRoot; // for zk-program computing proof only
+        bytes32 smtRoot;
+    }
+
+    struct ProofAppData {
+        bytes32 appCommitHash;
+        bytes32 appVkHash;
     }
 }
 
@@ -134,5 +95,19 @@ library Tx {
             v += 27;
         }
         return ecrecover(message, v, r, s);
+    }
+}
+
+library Utils {
+    // https://ethereum.stackexchange.com/a/83577
+    // https://github.com/Uniswap/v3-periphery/blob/v1.0.0/contracts/base/Multicall.sol
+    function getRevertMsg(bytes memory _returnData) internal pure returns (string memory) {
+        // If the _res length is less than 68, then the transaction failed silently (without a revert message)
+        if (_returnData.length < 68) return "Transaction reverted silently";
+        assembly {
+            // Slice the sighash.
+            _returnData := add(_returnData, 0x04)
+        }
+        return abi.decode(_returnData, (string)); // All that remains is the revert string
     }
 }
