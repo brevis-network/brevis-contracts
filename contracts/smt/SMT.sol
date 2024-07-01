@@ -6,7 +6,7 @@ import "../interfaces/ISMT.sol";
 import "../safeguard/BrevisAccess.sol";
 
 contract SMT is ISMT, BrevisAccess {
-    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum);
+    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
 
@@ -57,14 +57,14 @@ contract SMT is ISMT, BrevisAccess {
 
         smtRoots[chainId][u.newSmtRoot] = true;
         latestRoots[chainId] = u.newSmtRoot;
-        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum);
+        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, chainId);
     }
 
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
 
-        uint256[10] memory input;
+        uint256[9] memory input;
         uint256 m = 1 << 128;
         input[0] = uint256(oldSmtRoot) >> 128;
         input[1] = uint256(oldSmtRoot) % m;
@@ -75,9 +75,8 @@ contract SMT is ISMT, BrevisAccess {
         input[6] = u.endBlockNum;
         input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
         input[8] = uint256(u.nextChunkMerkleRoot) % m;
-        input[9] = uint256(u.commitPub);
-
-        return verifier.verifyProof(u.proof.a, u.proof.b, u.proof.c, u.proof.commitment, input);
+       
+        return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }
 
     function setAnchorProvider(uint64 chainId, address anchorProvider) external onlyOwner {
