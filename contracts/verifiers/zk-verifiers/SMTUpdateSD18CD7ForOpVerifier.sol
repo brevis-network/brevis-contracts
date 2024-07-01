@@ -240,7 +240,7 @@ contract SMTUpdateCircuitProofOnOpVerifier {
         uint256[2] calldata commit,
         uint256[2] calldata knowledgeProof,
         uint256[9] calldata input
-    ) public view {
+    ) public view returns (bool) {
         uint256 inputFr = uint256(keccak256(abi.encodePacked(commit[0], commit[1]))) % MOD_R;
         (uint256 x, uint256 y) = publicInputMSM(input, inputFr, commit);
 
@@ -307,5 +307,7 @@ contract SMTUpdateCircuitProofOnOpVerifier {
             // We assume the contract is correctly generated, so the verification key is valid.
             revert ProofInvalid();
         }
+
+        return success;
     }
 }
