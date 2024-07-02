@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "../lib/Lib.sol";
+import "../../interfaces/ISigsVerifier.sol";
 
 interface IBrevisRequest {
     enum RequestStatus {
@@ -16,14 +17,10 @@ interface IBrevisRequest {
         Refunded
     }
 
-    enum RequestOption {
-        Zk,
-        Op
-    }
-
     struct Request {
         RequestStatus status;
         uint64 timestamp;
+        uint8 sigmap;
     }
 
     struct OnchainRequestInfo {
@@ -66,7 +63,7 @@ interface IBrevisRequest {
         address refundee,
         uint256 fee,
         Callback callback,
-        RequestOption option
+        uint8 instruction
     );
     event RequestFulfilled(bytes32 proofId, uint64 nonce);
     event RequestsFulfilled(bytes32[] proofIds, uint64[] nonces);
@@ -93,7 +90,7 @@ interface IBrevisRequest {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        RequestOption option
+        uint8 instruction
     ) external payable;
 
     function fulfillRequest(
@@ -120,9 +117,8 @@ interface IBrevisRequest {
         uint64[] calldata _nonces,
         bytes32[] calldata _appCommitHashes,
         bytes32[] calldata _appVkHashes,
-        bytes[] calldata _sigs,
-        address[] calldata _signers,
-        uint256[] calldata _powers
+        IBvnSigsVerifier.SigInfo calldata _bvnSigInfo,
+        IAvsSigsVerifier.SigInfo calldata _eigenSigInfo
     ) external;
 
     function refund(bytes32 _proofId, uint64 _nonce, uint256 _amount, address _refundee) external;

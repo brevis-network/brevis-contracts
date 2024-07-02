@@ -7,9 +7,9 @@ import "./FeeVault.sol";
 import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
-import "../../interfaces/ISigsVerifier.sol";
 import "../lib/Lib.sol";
 import "../../safeguard/BrevisAccess.sol";
+import "../../interfaces/ISigsVerifier.sol";
 
 contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     // common workflow
@@ -19,7 +19,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     mapping(bytes32 => OnchainRequestInfo) public onchainRequests; // requestKey => OnchainRequestInfo
 
     // optimistic workflow
-    ISigsVerifier public immutable sigsVerifier;
+    uint8 constant INST_INDEX_SIG_BVN = 0;
+    uint8 constant INST_INDEX_SIG_AVS = 1;
+    uint8 constant INST_INDEX_OP = 7;
+
+    IBvnSigsVerifier public bvnSigsVerifier;
+    IAvsSigsVerifier public avsSigsVerifier;
     uint256 public challengeWindow;
     uint256 public responseTimeout;
     uint256 public depositAskForData;
@@ -28,9 +33,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     mapping(bytes32 => bytes32) public opdata; // requestKey => keccak256(abi.encodePacked(appCommitHash, appVkHash))
     mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
 
-    constructor(address _feeCollector, IBrevisProof _brevisProof, ISigsVerifier _sigsVerifier) FeeVault(_feeCollector) {
+    constructor(
+        address _feeCollector,
+        IBrevisProof _brevisProof,
+        IBvnSigsVerifier _bvnSigsVerifier
+    ) FeeVault(_feeCollector) {
         brevisProof = _brevisProof;
-        sigsVerifier = _sigsVerifier;
+        bvnSigsVerifier = _bvnSigsVerifier;
     }
 
     /*********************************
@@ -42,19 +51,17 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        RequestOption _option
+        uint8 _instruction
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         RequestStatus status = requests[requestKey].status;
         require(status == RequestStatus.Null, "invalid status");
-        if (_option == RequestOption.Zk) {
-            status == RequestStatus.ZkPending;
-        } else if (_option == RequestOption.Op) {
-            status = RequestStatus.OpPending;
+        if (_bitGet(_instruction, INST_INDEX_OP)) {
+            status == RequestStatus.OpPending;
         } else {
-            revert("invalid option");
+            status = RequestStatus.ZkPending;
         }
-        requests[requestKey] = Request(status, uint64(block.timestamp));
+        requests[requestKey] = Request(status, uint64(block.timestamp), _instruction);
 
         if (_refundee == address(0)) {
             _refundee = msg.sender;
@@ -62,7 +69,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee));
         onchainRequests[requestKey] = OnchainRequestInfo(feeHash, _callback);
 
-        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _option);
+        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _instruction);
     }
 
     function fulfillRequest(
@@ -196,25 +203,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64[] calldata _nonces,
         bytes32[] calldata _appCommitHashes,
         bytes32[] calldata _appVkHashes,
-        bytes[] calldata _sigs,
-        address[] calldata _signers,
-        uint256[] calldata _powers
+        IBvnSigsVerifier.SigInfo calldata _bvnSigInfo,
+        IAvsSigsVerifier.SigInfo calldata _avsSigInfo
     ) external whenNotPaused {
-        uint256 dataNum = _proofIds.length;
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
-        sigsVerifier.verifySigs(
-            abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes),
-            _sigs,
-            _signers,
-            _powers
-        );
+        bytes memory bvnSignedData = abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes);
+        bvnSigsVerifier.verifySigs(bvnSignedData, _bvnSigInfo.sigs, _bvnSigInfo.signers, _bvnSigInfo.powers);
+        bytes memory avsSignedData = abi.encodePacked(bvnSignedData, _avsSigInfo.blockNum);
+        avsSigsVerifier.verifySigs(keccak256(avsSignedData), _avsSigInfo.blockNum, _avsSigInfo.params);
 
         uint64 timestamp = uint64(block.timestamp);
-        for (uint i = 0; i < dataNum; i++) {
+        for (uint i = 0; i < _proofIds.length; i++) {
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
             RequestStatus status = requests[requestKey].status;
             require(status == RequestStatus.OpPending || status == RequestStatus.Null, "invalid status");
-            requests[requestKey] = Request(RequestStatus.OpSubmitted, timestamp);
+            requests[requestKey] = Request(RequestStatus.OpSubmitted, timestamp, 0);
             opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
         }
 
@@ -439,6 +442,14 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit BrevisProofUpdated(oldAddr, _brevisProof);
     }
 
+    function setBvnSigsVerifier(IBvnSigsVerifier _bvnSigsVerifier) external onlyOwner {
+        bvnSigsVerifier = _bvnSigsVerifier;
+    }
+
+    function setAvsSigsVerifier(IAvsSigsVerifier _avsSigsVerifier) external onlyOwner {
+        avsSigsVerifier = _avsSigsVerifier;
+    }
+
     /**************************
      *  Public View Functions *
      **************************/
@@ -559,5 +570,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
         RequestStatus status = _queryRequestStatus(_proofId, _nonce, _challengeWindow);
         return (status == RequestStatus.OpAttested || status == RequestStatus.ZkAttested);
+    }
+
+    function _bitGet(uint8 value, uint8 index) private pure returns (bool) {
+        uint256 mask = 1 << index;
+        return value & mask != 0;
     }
 }

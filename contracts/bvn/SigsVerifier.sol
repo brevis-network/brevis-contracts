@@ -9,7 +9,7 @@ import "../interfaces/ISigsVerifier.sol";
 /**
  * @title Multi-sig verification and management functions for {Bridge}.
  */
-contract SigsVerifier is Ownable, ISigsVerifier {
+contract SigsVerifier is Ownable, IBvnSigsVerifier {
     using ECDSA for bytes32;
 
     bytes32 public ssHash;
