@@ -38,9 +38,26 @@ contract SigsVerifier is Ownable, IBvnSigsVerifier {
         address[] calldata _signers,
         uint256[] calldata _powers
     ) public view override {
+        verifySigs(keccak256(_msg), _sigs, _signers, _powers);
+    }
+
+    /**
+     * @notice Verifies that a message is signed by a quorum among the signers
+     * The sigs must be sorted by signer addresses in ascending order.
+     * @param _msgHash hash of signed message
+     * @param _sigs list of signatures sorted by signer addresses in ascending order
+     * @param _signers sorted list of current signers
+     * @param _powers powers of current signers
+     */
+    function verifySigs(
+        bytes32 _msgHash,
+        bytes[] calldata _sigs,
+        address[] calldata _signers,
+        uint256[] calldata _powers
+    ) public view override {
         bytes32 h = keccak256(abi.encodePacked(_signers, _powers));
         require(ssHash == h, "mismatch current signers");
-        _verifySignedPowers(keccak256(_msg).toEthSignedMessageHash(), _sigs, _signers, _powers);
+        _verifySignedPowers(_msgHash.toEthSignedMessageHash(), _sigs, _signers, _powers);
     }
 
     /**

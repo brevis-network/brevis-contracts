@@ -17,6 +17,20 @@ interface IBvnSigsVerifier {
         uint256[] calldata _powers
     ) external view;
 
+    /**
+     * @notice Verifies that a message is signed by a quorum among the signers.
+     * @param _msgHash hash of signed message
+     * @param _sigs list of signatures sorted by signer addresses in ascending order
+     * @param _signers sorted list of current signers
+     * @param _powers powers of current signers
+     */
+    function verifySigs(
+        bytes32 _msgHash,
+        bytes[] calldata _sigs,
+        address[] calldata _signers,
+        uint256[] calldata _powers
+    ) external view;
+
     struct SigInfo {
         bytes[] sigs;
         address[] signers;
