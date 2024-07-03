@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 abstract contract BrevisApp {
     address public brevisRequest;
     uint256 public opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
-    uint8 public opSigOption = 1; // require BVN sig by default
+    uint8 public opSigOption = 0x01; // require BVN sig by default
 
     modifier onlyBrevisRequest() {
         require(msg.sender == brevisRequest, "invalid caller");
@@ -64,8 +64,8 @@ abstract contract BrevisApp {
                 _nonce,
                 _appCommitHash,
                 _appVkHash,
-                opSigOption,
-                1
+                opChallengeWindow,
+                opSigOption
             ),
             "data not ready to use"
         );
