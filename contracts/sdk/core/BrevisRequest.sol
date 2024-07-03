@@ -209,14 +209,13 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint8 option = 0;
         require(_bvnSigInfo.sigs.length > 0 || _avsSigInfo.blockNum > 0, "empty sigs");
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
-        bytes memory bvnSignedData = abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes);
+        bytes memory signedData = abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes);
         if (_bvnSigInfo.sigs.length > 0) {
-            bvnSigsVerifier.verifySigs(bvnSignedData, _bvnSigInfo.sigs, _bvnSigInfo.signers, _bvnSigInfo.powers);
+            bvnSigsVerifier.verifySigs(signedData, _bvnSigInfo.sigs, _bvnSigInfo.signers, _bvnSigInfo.powers);
             option = _bitSet(option, OPT_IDX_SIG_BVN);
         }
         if (_avsSigInfo.blockNum > 0) {
-            bytes memory avsSignedData = abi.encodePacked(bvnSignedData, _avsSigInfo.blockNum);
-            avsSigsVerifier.verifySigs(keccak256(avsSignedData), _avsSigInfo.blockNum, _avsSigInfo.params);
+            avsSigsVerifier.verifySigs(keccak256(signedData), _avsSigInfo.blockNum, _avsSigInfo.params);
             option = _bitSet(option, OPT_IDX_SIG_AVS);
         }
         _submitOpStates(_proofIds, _nonces, _appCommitHashes, _appVkHashes, option); // to avoid "stack too deep"
