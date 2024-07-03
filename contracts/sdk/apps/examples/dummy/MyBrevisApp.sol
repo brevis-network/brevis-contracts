@@ -17,11 +17,11 @@ contract MyBrevisApp is BrevisApp, Ownable {
         emit ReceiveProofResult(_vkHash, keccak256(_appCircuitOutput), false);
     }
 
-    function setOpChallengeWindow(uint256 _challangeWindow) external onlyOwner {
-        _setOpChallengeWindow(_challangeWindow);
+    function setBrevisOpConfig(uint64 _challengeWindow, uint8 _sigOption) external onlyOwner {
+        brevisOpConfig = BrevisOpConfig(_challengeWindow, _sigOption);
     }
 
     function setBrevisRequest(address _brevisRequest) external onlyOwner {
-        _setBrevisRequest(_brevisRequest);
+        brevisRequest = _brevisRequest;
     }
 }

@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+// App that accepts both ZK- and OP-attested results.
 abstract contract BrevisApp {
     address public brevisRequest;
-    uint256 public opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
-    uint8 public opSigOption = 0x01; // require BVN sig by default
+
+    struct BrevisOpConfig {
+        uint64 challengeWindow;
+        uint8 sigOption;
+    }
+    // default: disable OP, require bvn sig
+    BrevisOpConfig public brevisOpConfig = BrevisOpConfig(2 ** 64 - 1, 0x01);
 
     modifier onlyBrevisRequest() {
         require(msg.sender == brevisRequest, "invalid caller");
@@ -21,21 +27,6 @@ abstract contract BrevisApp {
 
     function handleOpProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
         // to be overrided by custom app
-    }
-
-    // app contract can implement logics to set opChallengeWindow if needed
-    function _setOpChallengeWindow(uint256 _challangeWindow) internal {
-        opChallengeWindow = _challangeWindow;
-    }
-
-    // app contract can implement logics to set opSigOption if needed
-    function _setOpSigOption(uint8 _opSigOption) internal {
-        opSigOption = _opSigOption;
-    }
-
-    // app contract can implement logics to update brevisRequest address if needed
-    function _setBrevisRequest(address _brevisRequest) internal {
-        brevisRequest = _brevisRequest;
     }
 
     function brevisCallback(bytes32 _appVkHash, bytes calldata _appCircuitOutput) external onlyBrevisRequest {
@@ -58,19 +49,16 @@ abstract contract BrevisApp {
         bytes32 _appCommitHash,
         bytes calldata _appCircuitOutput
     ) public {
-        require(
-            IBrevisRequest(brevisRequest).validateOpAppData(
-                _proofId,
-                _nonce,
-                _appCommitHash,
-                _appVkHash,
-                opChallengeWindow,
-                opSigOption
-            ),
-            "data not ready to use"
+        (uint256 challengeWindow, uint8 sigOption) = _getBrevisConfig();
+        _applyBrevisOpResult(
+            _proofId,
+            _nonce,
+            _appVkHash,
+            _appCommitHash,
+            _appCircuitOutput,
+            challengeWindow,
+            sigOption
         );
-        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
-        handleOpProofResult(_appVkHash, _appCircuitOutput);
     }
 
     function applyBrevisOpResults(
@@ -80,9 +68,47 @@ abstract contract BrevisApp {
         bytes32[] calldata _appCommitHashes,
         bytes[] calldata _appCircuitOutputs
     ) external {
+        (uint256 challengeWindow, uint8 sigOption) = _getBrevisConfig();
         for (uint256 i = 0; i < _proofIds.length; i++) {
-            applyBrevisOpResult(_proofIds[i], _nonces[i], _appVkHashes[i], _appCommitHashes[i], _appCircuitOutputs[i]);
+            _applyBrevisOpResult(
+                _proofIds[i],
+                _nonces[i],
+                _appVkHashes[i],
+                _appCommitHashes[i],
+                _appCircuitOutputs[i],
+                challengeWindow,
+                sigOption
+            );
         }
+    }
+
+    function _applyBrevisOpResult(
+        bytes32 _proofId,
+        uint64 _nonce,
+        bytes32 _appVkHash,
+        bytes32 _appCommitHash,
+        bytes calldata _appCircuitOutput,
+        uint256 _challengeWindow,
+        uint8 _sigOption
+    ) private {
+        require(
+            IBrevisRequest(brevisRequest).validateOpAppData(
+                _proofId,
+                _nonce,
+                _appCommitHash,
+                _appVkHash,
+                _challengeWindow,
+                _sigOption
+            ),
+            "data not ready to use"
+        );
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
+        handleOpProofResult(_appVkHash, _appCircuitOutput);
+    }
+
+    function _getBrevisConfig() private view returns (uint256, uint8) {
+        BrevisOpConfig memory config = brevisOpConfig;
+        return (uint256(config.challengeWindow), config.sigOption);
     }
 }
 
