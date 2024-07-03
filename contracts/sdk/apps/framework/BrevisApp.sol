@@ -3,7 +3,8 @@ pragma solidity ^0.8.18;
 
 abstract contract BrevisApp {
     address public brevisRequest;
-    uint256 public opChallengeWindow;
+    uint256 public opChallengeWindow = 2 ** 256 - 1; // disable usage of op result by default
+    uint8 public opSigOption = 1; // require BVN sig by default
 
     modifier onlyBrevisRequest() {
         require(msg.sender == brevisRequest, "invalid caller");
@@ -12,7 +13,6 @@ abstract contract BrevisApp {
 
     constructor(address _brevisRequest) {
         brevisRequest = _brevisRequest;
-        _setOpChallengeWindow(2 ** 256 - 1); // disable usage of op result by default
     }
 
     function handleProofResult(bytes32 _vkHash, bytes calldata _appCircuitOutput) internal virtual {
@@ -26,6 +26,11 @@ abstract contract BrevisApp {
     // app contract can implement logics to set opChallengeWindow if needed
     function _setOpChallengeWindow(uint256 _challangeWindow) internal {
         opChallengeWindow = _challangeWindow;
+    }
+
+    // app contract can implement logics to set opSigOption if needed
+    function _setOpSigOption(uint8 _opSigOption) internal {
+        opSigOption = _opSigOption;
     }
 
     // app contract can implement logics to update brevisRequest address if needed
@@ -59,7 +64,8 @@ abstract contract BrevisApp {
                 _nonce,
                 _appCommitHash,
                 _appVkHash,
-                opChallengeWindow
+                opSigOption,
+                1
             ),
             "data not ready to use"
         );
@@ -86,6 +92,7 @@ interface IBrevisRequest {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
-        uint256 _appChallengeWindow
+        uint256 _appChallengeWindow,
+        uint8 _option
     ) external view returns (bool);
 }

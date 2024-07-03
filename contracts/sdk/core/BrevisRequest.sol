@@ -19,10 +19,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     mapping(bytes32 => OnchainRequestInfo) public onchainRequests; // requestKey => OnchainRequestInfo
 
     // optimistic workflow
-    uint8 constant INST_INDEX_SIG_BVN = 0;
-    uint8 constant INST_INDEX_SIG_AVS = 1;
-    uint8 constant INST_INDEX_OP = 7;
-
     IBvnSigsVerifier public bvnSigsVerifier;
     IAvsSigsVerifier public avsSigsVerifier;
     uint256 public challengeWindow;
@@ -32,6 +28,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     string public baseDataURL;
     mapping(bytes32 => bytes32) public opdata; // requestKey => keccak256(abi.encodePacked(appCommitHash, appVkHash))
     mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
+
+    uint8 constant OPT_IDX_SIG_BVN = 0;
+    uint8 constant OPT_IDX_SIG_AVS = 1;
 
     constructor(
         address _feeCollector,
@@ -51,17 +50,18 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        uint8 _instruction
+        uint8 _option
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         RequestStatus status = requests[requestKey].status;
         require(status == RequestStatus.Null, "invalid status");
-        if (_bitGet(_instruction, INST_INDEX_OP)) {
-            status == RequestStatus.OpPending;
+        _option = _option & 0x03; // binary 00000011
+        if (_option == 0) {
+            status == RequestStatus.ZkPending;
         } else {
-            status = RequestStatus.ZkPending;
+            status = RequestStatus.OpPending;
         }
-        requests[requestKey] = Request(status, uint64(block.timestamp), _instruction);
+        requests[requestKey] = Request(status, uint64(block.timestamp), _option);
 
         if (_refundee == address(0)) {
             _refundee = msg.sender;
@@ -69,7 +69,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32 feeHash = keccak256(abi.encodePacked(msg.value, _refundee));
         onchainRequests[requestKey] = OnchainRequestInfo(feeHash, _callback);
 
-        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _instruction);
+        emit RequestSent(_proofId, _nonce, _refundee, msg.value, _callback, _option);
     }
 
     function fulfillRequest(
@@ -205,22 +205,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32[] calldata _appVkHashes,
         IBvnSigsVerifier.SigInfo calldata _bvnSigInfo,
         IAvsSigsVerifier.SigInfo calldata _avsSigInfo
-    ) external whenNotPaused {
+    ) external onlyActiveProver {
+        uint8 option = 0;
+        require(_bvnSigInfo.sigs.length > 0 || _avsSigInfo.blockNum > 0, "empty sigs");
         bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "FulfillRequests"));
         bytes memory bvnSignedData = abi.encodePacked(domain, _proofIds, _nonces, _appCommitHashes, _appVkHashes);
-        bvnSigsVerifier.verifySigs(bvnSignedData, _bvnSigInfo.sigs, _bvnSigInfo.signers, _bvnSigInfo.powers);
-        bytes memory avsSignedData = abi.encodePacked(bvnSignedData, _avsSigInfo.blockNum);
-        avsSigsVerifier.verifySigs(keccak256(avsSignedData), _avsSigInfo.blockNum, _avsSigInfo.params);
-
-        uint64 timestamp = uint64(block.timestamp);
-        for (uint i = 0; i < _proofIds.length; i++) {
-            bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
-            RequestStatus status = requests[requestKey].status;
-            require(status == RequestStatus.OpPending || status == RequestStatus.Null, "invalid status");
-            requests[requestKey] = Request(RequestStatus.OpSubmitted, timestamp, 0);
-            opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
+        if (_bvnSigInfo.sigs.length > 0) {
+            bvnSigsVerifier.verifySigs(bvnSignedData, _bvnSigInfo.sigs, _bvnSigInfo.signers, _bvnSigInfo.powers);
+            option = _bitSet(option, OPT_IDX_SIG_BVN);
         }
-
+        if (_avsSigInfo.blockNum > 0) {
+            bytes memory avsSignedData = abi.encodePacked(bvnSignedData, _avsSigInfo.blockNum);
+            avsSigsVerifier.verifySigs(keccak256(avsSignedData), _avsSigInfo.blockNum, _avsSigInfo.params);
+            option = _bitSet(option, OPT_IDX_SIG_AVS);
+        }
+        _submitOpStates(_proofIds, _nonces, _appCommitHashes, _appVkHashes, option); // to avoid "stack too deep"
         emit OpRequestsFulfilled(_proofIds, _nonces, _appCommitHashes, _appVkHashes);
     }
 
@@ -442,19 +441,23 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit BrevisProofUpdated(oldAddr, _brevisProof);
     }
 
-    function setBvnSigsVerifier(IBvnSigsVerifier _bvnSigsVerifier) external onlyOwner {
-        bvnSigsVerifier = _bvnSigsVerifier;
+    function setBvnSigsVerifier(address _bvnSigsVerifier) external onlyOwner {
+        address oldAddr = address(bvnSigsVerifier);
+        bvnSigsVerifier = IBvnSigsVerifier(_bvnSigsVerifier);
+        emit BvnSigsVerifierUpdated(oldAddr, _bvnSigsVerifier);
     }
 
-    function setAvsSigsVerifier(IAvsSigsVerifier _avsSigsVerifier) external onlyOwner {
-        avsSigsVerifier = _avsSigsVerifier;
+    function setAvsSigsVerifier(address _avsSigsVerifier) external onlyOwner {
+        address oldAddr = address(avsSigsVerifier);
+        avsSigsVerifier = IAvsSigsVerifier(_avsSigsVerifier);
+        emit BvnSigsVerifierUpdated(oldAddr, _avsSigsVerifier);
     }
 
     /**************************
      *  Public View Functions *
      **************************/
 
-    function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus) {
+    function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus, uint8) {
         return _queryRequestStatus(_proofId, _nonce, challengeWindow);
     }
 
@@ -462,7 +465,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32 _proofId,
         uint64 _nonce,
         uint256 _appChallengeWindow
-    ) external view returns (RequestStatus) {
+    ) external view returns (RequestStatus, uint8) {
         return _queryRequestStatus(_proofId, _nonce, _appChallengeWindow);
     }
 
@@ -475,9 +478,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32 _proofId,
         uint64 _nonce,
         bytes32 _appCommitHash,
-        bytes32 _appVkHash
+        bytes32 _appVkHash,
+        uint8 _option
     ) external view returns (bool) {
-        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, challengeWindow);
+        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, challengeWindow, _option);
     }
 
     function validateOpAppData(
@@ -485,9 +489,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
-        uint256 _appChallengeWindow
+        uint256 _appChallengeWindow,
+        uint8 _option
     ) external view returns (bool) {
-        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, _appChallengeWindow);
+        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, _appChallengeWindow, _option);
     }
 
     function dataURL(bytes32 _proofId) external view returns (string memory) {
@@ -533,30 +538,51 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         return true;
     }
 
+    function _submitOpStates(
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
+        uint8 option
+    ) private {
+        uint64 timestamp = uint64(block.timestamp);
+        for (uint i = 0; i < _proofIds.length; i++) {
+            bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
+            Request memory request = requests[requestKey];
+            if (request.status == RequestStatus.OpPending) {
+                require(request.option == option, "insufficient types of sigs");
+            } else {
+                require(request.status == RequestStatus.Null, "invalid status");
+            }
+            requests[requestKey] = Request(RequestStatus.OpSubmitted, timestamp, option);
+            opdata[requestKey] = keccak256(abi.encodePacked(_appCommitHashes[i], _appVkHashes[i]));
+        }
+    }
+
     function _queryRequestStatus(
         bytes32 _proofId,
         uint64 _nonce,
         uint256 _challengeWindow
-    ) private view returns (RequestStatus) {
+    ) private view returns (RequestStatus, uint8) {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request memory request = requests[requestKey];
         if (request.status == RequestStatus.OpSubmitted) {
             if (request.timestamp + _challengeWindow < block.timestamp) {
-                return RequestStatus.OpAttested;
+                return (RequestStatus.OpAttested, request.option);
             }
         } else if (request.status == RequestStatus.OpDisputing) {
             Dispute storage dispute = disputes[requestKey];
             DisputeStatus dstatus = dispute.status;
             if (dstatus == DisputeStatus.RequestDataPosted || dstatus == DisputeStatus.DataAvailabilityProofPosted) {
                 if (request.timestamp + _challengeWindow < block.timestamp) {
-                    return RequestStatus.OpAttested;
+                    return (RequestStatus.OpAttested, request.option);
                 }
             } else if (dispute.responseDeadline < block.timestamp) {
                 // did not respond in time for WaitingForXXX
-                return RequestStatus.OpDisputed;
+                return (RequestStatus.OpDisputed, request.option);
             }
         }
-        return request.status;
+        return (request.status, request.option);
     }
 
     function _validateOpAppData(
@@ -564,16 +590,27 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
-        uint256 _challengeWindow
+        uint256 _challengeWindow,
+        uint8 _option
     ) private view returns (bool readyToUse) {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
-        RequestStatus status = _queryRequestStatus(_proofId, _nonce, _challengeWindow);
-        return (status == RequestStatus.OpAttested || status == RequestStatus.ZkAttested);
+        (RequestStatus status, uint8 option) = _queryRequestStatus(_proofId, _nonce, _challengeWindow);
+        if (status == RequestStatus.OpAttested) {
+            return (_option & option) == _option;
+        } else if (status == RequestStatus.ZkAttested) {
+            return true;
+        }
+        return false;
     }
 
-    function _bitGet(uint8 value, uint8 index) private pure returns (bool) {
-        uint256 mask = 1 << index;
-        return value & mask != 0;
+    function _bitGet(uint8 _value, uint8 _index) private pure returns (bool) {
+        uint8 mask = uint8(1 << _index);
+        return _value & mask != 0;
+    }
+
+    function _bitSet(uint8 _value, uint8 _index) private pure returns (uint8) {
+        uint8 mask = uint8(1 << _index);
+        return _value | mask;
     }
 }

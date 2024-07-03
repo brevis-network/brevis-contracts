@@ -20,7 +20,7 @@ interface IBrevisRequest {
     struct Request {
         RequestStatus status;
         uint64 timestamp;
-        uint8 sigmap;
+        uint8 option;
     }
 
     struct OnchainRequestInfo {
@@ -57,14 +57,7 @@ interface IBrevisRequest {
     }
 
     // todo: reduce event fields
-    event RequestSent(
-        bytes32 proofId,
-        uint64 nonce,
-        address refundee,
-        uint256 fee,
-        Callback callback,
-        uint8 instruction
-    );
+    event RequestSent(bytes32 proofId, uint64 nonce, address refundee, uint256 fee, Callback callback, uint8 option);
     event RequestFulfilled(bytes32 proofId, uint64 nonce);
     event RequestsFulfilled(bytes32[] proofIds, uint64[] nonces);
     event RequestRefunded(bytes32 proofId, uint64 nonce);
@@ -83,6 +76,8 @@ interface IBrevisRequest {
     event ResponseTimeoutUpdated(uint256 from, uint256 to);
     event BaseDataUrlUpdated(string from, string to);
     event BrevisProofUpdated(address from, address to);
+    event BvnSigsVerifierUpdated(address from, address to);
+    event AvsSigsVerifierUpdated(address from, address to);
     event DisputeDepositsUpdated(uint256 amtAskForData, uint256 amtAskForProof);
 
     function sendRequest(
@@ -90,7 +85,7 @@ interface IBrevisRequest {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        uint8 instruction
+        uint8 _option
     ) external payable;
 
     function fulfillRequest(
@@ -149,19 +144,20 @@ interface IBrevisRequest {
 
     function postDataValidityProof(bytes32 _proofId, uint64 _nonce, uint64 _chainId, bytes calldata _proof) external;
 
-    function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus);
+    function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus, uint8);
 
     function queryRequestStatus(
         bytes32 _proofId,
         uint64 _nonce,
         uint256 _appChallengeWindow
-    ) external view returns (RequestStatus);
+    ) external view returns (RequestStatus, uint8);
 
     function validateOpAppData(
         bytes32 _proofId,
         uint64 _nonce,
         bytes32 _appCommitHash,
-        bytes32 _appVkHash
+        bytes32 _appVkHash,
+        uint8 _option
     ) external view returns (bool);
 
     function validateOpAppData(
@@ -169,7 +165,8 @@ interface IBrevisRequest {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
-        uint256 _appChallengeWindow
+        uint256 _appChallengeWindow,
+        uint8 _option
     ) external view returns (bool);
 
     function dataURL(bytes32 _proofId) external view returns (string memory);
