@@ -417,16 +417,16 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit ChallengeWindowUpdated(oldChallengeWindow, _challengeWindow);
     }
 
-    function setDisputeDeposits(uint256 _amtAskForData, uint256 _amtAskForProof) external onlyOwner {
-        depositAskForData = _amtAskForData;
-        depositAskForProof = _amtAskForProof;
-        emit DisputeDepositsUpdated(_amtAskForData, _amtAskForProof);
-    }
-
     function setResponseTimeout(uint256 _responseTimeout) external onlyOwner {
         uint256 oldResponseTimeout = responseTimeout;
         responseTimeout = _responseTimeout;
         emit ResponseTimeoutUpdated(oldResponseTimeout, _responseTimeout);
+    }
+
+    function setDisputeDeposits(uint256 _amtAskForData, uint256 _amtAskForProof) external onlyOwner {
+        depositAskForData = _amtAskForData;
+        depositAskForProof = _amtAskForProof;
+        emit DisputeDepositsUpdated(_amtAskForData, _amtAskForProof);
     }
 
     function setBaseDataURL(string memory _url) external onlyOwner {
@@ -469,11 +469,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         return _queryRequestStatus(_proofId, _nonce, _appChallengeWindow);
     }
 
-    function queryRequestTimestamp(bytes32 _proofId, uint64 _nonce) external view returns (uint256) {
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        return requests[requestKey].timestamp;
-    }
-
     function validateOpAppData(
         bytes32 _proofId,
         uint64 _nonce,
@@ -500,10 +495,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             return "";
         }
         return string.concat(baseDataURL, Strings.toHexString(uint256(_proofId), 32));
-    }
-
-    function getProofContract() external view returns (address) {
-        return address(brevisProof);
     }
 
     /*********************
@@ -602,11 +593,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
             return true;
         }
         return false;
-    }
-
-    function _bitGet(uint8 _value, uint8 _index) private pure returns (bool) {
-        uint8 mask = uint8(1 << _index);
-        return _value & mask != 0;
     }
 
     function _bitSet(uint8 _value, uint8 _index) private pure returns (uint8) {

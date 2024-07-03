@@ -50,9 +50,9 @@ interface IBrevisRequest {
 
     struct Dispute {
         DisputeStatus status;
+        address challenger;
         RequestDataHash requestDataHash;
         uint256 responseDeadline;
-        address challenger;
         uint256 deposit;
     }
 
@@ -170,6 +170,4 @@ interface IBrevisRequest {
     ) external view returns (bool);
 
     function dataURL(bytes32 _proofId) external view returns (string memory);
-
-    function getProofContract() external view returns (address);
 }
