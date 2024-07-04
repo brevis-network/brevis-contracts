@@ -50,7 +50,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        uint8 _option
+        uint8 _option // bitmap 0: zk, 1: op bvn, 2: op avs, 3: op bvn and avs
     ) external payable {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         RequestStatus status = requests[requestKey].status;
@@ -287,7 +287,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     function postDataAvailabilityProof(
         bytes32 _proofId,
         uint64 _nonce,
-        bytes calldata /*proof*/
+        bytes calldata // proof
     ) external onlyActiveProver {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];

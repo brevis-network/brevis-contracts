@@ -7,7 +7,7 @@ abstract contract BrevisApp {
 
     struct BrevisOpConfig {
         uint64 challengeWindow;
-        uint8 sigOption;
+        uint8 sigOption; // bitmap to express expected sigs: bit 0 is bvn, bit 1 is avs
     }
     // default: disable OP, require bvn sig
     BrevisOpConfig public brevisOpConfig = BrevisOpConfig(2 ** 64 - 1, 0x01);

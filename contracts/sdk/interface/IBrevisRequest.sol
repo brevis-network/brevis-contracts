@@ -85,7 +85,7 @@ interface IBrevisRequest {
         uint64 _nonce,
         address _refundee,
         Callback calldata _callback,
-        uint8 _option
+        uint8 _option // bitmap 0: zk, 1: op bvn, 2: op avs, 3: op bvn and avs
     ) external payable;
 
     function fulfillRequest(
