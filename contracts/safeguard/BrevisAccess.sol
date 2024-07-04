@@ -58,6 +58,10 @@ abstract contract BrevisAccess is Pauser {
         return provers.length;
     }
 
+    function isActiveProver(address _account) public view returns (bool) {
+        return proverStates[_account] == ProverState.Active;
+    }
+
     function _addProver(address _account, ProverState _state) private {
         require(proverStates[_account] == ProverState.Null, "account is prover");
         provers.push(_account);

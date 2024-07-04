@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./FeeVault.sol";
 import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
+import "../interface/IBrevisDispute.sol";
 import "../interface/IBrevisApp.sol";
 import "../lib/Lib.sol";
 import "../../safeguard/BrevisAccess.sol";
@@ -21,13 +22,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     // optimistic workflow
     IBvnSigsVerifier public bvnSigsVerifier;
     IAvsSigsVerifier public avsSigsVerifier;
-    uint256 public challengeWindow;
-    uint256 public responseTimeout;
-    uint256 public depositAskForData;
-    uint256 public depositAskForProof;
+    IBrevisDispute public brevisDispute;
     string public baseDataURL;
     mapping(bytes32 => bytes32) public opdata; // requestKey => keccak256(abi.encodePacked(appCommitHash, appVkHash))
-    mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
 
     uint8 constant OPT_IDX_SIG_BVN = 0;
     uint8 constant OPT_IDX_SIG_AVS = 1;
@@ -222,130 +219,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit OpRequestsFulfilled(_proofIds, _nonces, _appCommitHashes, _appVkHashes);
     }
 
-    function askForRequestData(bytes32 _proofId, uint64 _nonce) external payable {
-        require(msg.value > depositAskForData, "insufficient deposit");
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(request.status == RequestStatus.OpSubmitted, "not in a disputable status");
-        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
-
-        request.status = RequestStatus.OpDisputing;
-        dispute.status = DisputeStatus.WaitingForRequestData;
-        dispute.responseDeadline = block.timestamp + responseTimeout;
-        dispute.challenger = msg.sender;
-        dispute.deposit = msg.value;
-
-        emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForRequestData, msg.sender);
-    }
-
-    function postRequestData(
-        bytes32 _proofId,
-        uint64 _nonce,
-        bytes[] calldata _data,
-        uint256 _index,
-        bool _done
-    ) external onlyActiveProver {
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(request.status == RequestStatus.OpDisputing, "invalid request status");
-        require(dispute.status == DisputeStatus.WaitingForRequestData, "invalid dispute status");
-
-        RequestDataHash storage dataHash = dispute.requestDataHash;
-        require(dataHash.hashes.length == _index, "invalid index");
-        for (uint i = 0; i < _data.length; i++) {
-            dataHash.hashes.push(keccak256(_data[i]));
-        }
-        if (_done) {
-            dataHash.root = keccak256(abi.encodePacked(dataHash.hashes)); // todo: consider merkle
-            disputes[requestKey].status = DisputeStatus.RequestDataPosted;
-        }
-        emit RequestDataPosted(_proofId, _nonce, _data, _index, _done);
-    }
-
-    function askForDataAvailabilityProof(bytes32 _proofId, uint64 _nonce) external payable {
-        require(msg.value > depositAskForProof, "insufficient deposit");
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(
-            request.status == RequestStatus.OpDisputing && dispute.status == DisputeStatus.RequestDataPosted,
-            "invalid states"
-        );
-        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
-
-        request.status = RequestStatus.OpDisputing;
-        dispute.status = DisputeStatus.WaitingForDataAvailabilityProof;
-        dispute.responseDeadline = block.timestamp + responseTimeout;
-        dispute.challenger = msg.sender;
-        dispute.deposit = msg.value;
-
-        emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataAvailabilityProof, msg.sender);
-    }
-
-    function postDataAvailabilityProof(
-        bytes32 _proofId,
-        uint64 _nonce,
-        bytes calldata // proof
-    ) external onlyActiveProver {
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(
-            request.status == RequestStatus.OpDisputing &&
-                dispute.status == DisputeStatus.WaitingForDataAvailabilityProof,
-            "invalid states"
-        );
-        disputes[requestKey].status = DisputeStatus.DataAvailabilityProofPosted;
-        // todo: validate proof
-
-        emit DataAvailabilityProofPosted(_proofId, _nonce);
-    }
-
-    function askForDataValidityProof(bytes32 _proofId, uint64 _nonce) external payable {
-        require(msg.value > depositAskForProof, "insufficient deposit");
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(
-            request.status == RequestStatus.OpSubmitted ||
-                (request.status == RequestStatus.OpDisputing &&
-                    dispute.status != DisputeStatus.WaitingForDataValidityProof),
-            "invalid states"
-        );
-        require(request.timestamp + challengeWindow > block.timestamp, "pass challenge window");
-
-        request.status = RequestStatus.OpDisputing;
-        dispute.status = DisputeStatus.WaitingForDataValidityProof;
-        dispute.responseDeadline = block.timestamp + responseTimeout;
-        dispute.challenger = msg.sender;
-        dispute.deposit = msg.value;
-
-        emit AskFor(_proofId, _nonce, DisputeStatus.WaitingForDataValidityProof, msg.sender);
-    }
-
-    function postDataValidityProof(
-        bytes32 _proofId,
-        uint64 _nonce,
-        uint64 _chainId,
-        bytes calldata _proof
-    ) external onlyActiveProver {
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request storage request = requests[requestKey];
-        Dispute storage dispute = disputes[requestKey];
-        require(
-            request.status == RequestStatus.OpDisputing && dispute.status == DisputeStatus.WaitingForDataValidityProof,
-            "invalid states"
-        );
-
-        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
-        require(_proofId == proofId, "invalid proof: proofId");
-        require(opdata[requestKey] == keccak256(abi.encodePacked(appCommitHash, appVkHash)), "invalid proof: appHash");
-        request.status = RequestStatus.ZkAttested;
-        dispute.status = DisputeStatus.DataValidityProofPosted;
-
-        emit DataValidityProofProofPosted(_proofId, _nonce);
+    function setRequestStatus(bytes32 requestKey, RequestStatus _status) external {
+        require(msg.sender == address(brevisDispute), "invalid setter");
+        requests[requestKey].status = _status;
     }
 
     // --------------------- app helper functions ---------------------
@@ -410,24 +286,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit RequestTimeoutUpdated(oldTimeout, _timeout);
     }
 
-    function setChallengeWindow(uint256 _challengeWindow) external onlyOwner {
-        uint256 oldChallengeWindow = challengeWindow;
-        challengeWindow = _challengeWindow;
-        emit ChallengeWindowUpdated(oldChallengeWindow, _challengeWindow);
-    }
-
-    function setResponseTimeout(uint256 _responseTimeout) external onlyOwner {
-        uint256 oldResponseTimeout = responseTimeout;
-        responseTimeout = _responseTimeout;
-        emit ResponseTimeoutUpdated(oldResponseTimeout, _responseTimeout);
-    }
-
-    function setDisputeDeposits(uint256 _amtAskForData, uint256 _amtAskForProof) external onlyOwner {
-        depositAskForData = _amtAskForData;
-        depositAskForProof = _amtAskForProof;
-        emit DisputeDepositsUpdated(_amtAskForData, _amtAskForProof);
-    }
-
     function setBaseDataURL(string memory _url) external onlyOwner {
         string memory oldURL = baseDataURL;
         baseDataURL = _url;
@@ -438,6 +296,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         address oldAddr = address(brevisProof);
         brevisProof = IBrevisProof(_brevisProof);
         emit BrevisProofUpdated(oldAddr, _brevisProof);
+    }
+
+    function setBrevisDispute(address _brevisDispute) external onlyOwner {
+        address oldAddr = address(brevisDispute);
+        brevisDispute = IBrevisDispute(_brevisDispute);
+        emit BrevisDisputeUpdated(oldAddr, _brevisDispute);
     }
 
     function setBvnSigsVerifier(address _bvnSigsVerifier) external onlyOwner {
@@ -452,12 +316,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         emit BvnSigsVerifierUpdated(oldAddr, _avsSigsVerifier);
     }
 
-    /**************************
-     *  Public View Functions *
-     **************************/
+    // --------------------- view functions ---------------------
 
     function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus, uint8) {
-        return _queryRequestStatus(_proofId, _nonce, challengeWindow);
+        return _queryRequestStatus(_proofId, _nonce, brevisDispute.getChallengeWindow());
     }
 
     function queryRequestStatus(
@@ -475,6 +337,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes32 _appVkHash,
         uint8 _option
     ) external view returns (bool) {
+        uint256 challengeWindow = brevisDispute.getChallengeWindow();
         return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, challengeWindow, _option);
     }
 
@@ -561,13 +424,12 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
                 return (RequestStatus.OpAttested, request.option);
             }
         } else if (request.status == RequestStatus.OpDisputing) {
-            Dispute storage dispute = disputes[requestKey];
-            DisputeStatus dstatus = dispute.status;
+            DisputeStatus dstatus = brevisDispute.getDisputeStatus(requestKey);
             if (dstatus == DisputeStatus.RequestDataPosted || dstatus == DisputeStatus.DataAvailabilityProofPosted) {
                 if (request.timestamp + _challengeWindow < block.timestamp) {
                     return (RequestStatus.OpAttested, request.option);
                 }
-            } else if (dispute.responseDeadline < block.timestamp) {
+            } else if (brevisDispute.getResponseDeadline(requestKey) < block.timestamp) {
                 // did not respond in time for WaitingForXXX
                 return (RequestStatus.OpDisputed, request.option);
             }

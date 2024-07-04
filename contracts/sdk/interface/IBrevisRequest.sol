@@ -1,84 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+import "./IBrevisTypes.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISigsVerifier.sol";
 
-interface IBrevisRequest {
-    enum RequestStatus {
-        Null,
-        ZkPending,
-        ZkAttested,
-        OpPending,
-        OpSubmitted,
-        OpDisputing,
-        OpDisputed,
-        OpAttested,
-        Refunded
-    }
-
-    struct Request {
-        RequestStatus status;
-        uint64 timestamp;
-        uint8 option;
-    }
-
-    struct OnchainRequestInfo {
-        bytes32 feeHash; // keccak256(abi.encodePacked(amount, refundee))
-        Callback callback;
-    }
-
-    struct Callback {
-        address target;
-        uint64 gas;
-    }
-
-    enum DisputeStatus {
-        Null,
-        WaitingForRequestData,
-        RequestDataPosted,
-        WaitingForDataAvailabilityProof,
-        DataAvailabilityProofPosted,
-        WaitingForDataValidityProof,
-        DataValidityProofPosted
-    }
-
-    struct RequestDataHash {
-        bytes32[] hashes;
-        bytes32 root;
-    }
-
-    struct Dispute {
-        DisputeStatus status;
-        address challenger;
-        RequestDataHash requestDataHash;
-        uint256 responseDeadline;
-        uint256 deposit;
-    }
-
+interface IBrevisRequest is IBrevisTypes {
     // todo: reduce event fields
     event RequestSent(bytes32 proofId, uint64 nonce, address refundee, uint256 fee, Callback callback, uint8 option);
+
     event RequestFulfilled(bytes32 proofId, uint64 nonce);
     event RequestsFulfilled(bytes32[] proofIds, uint64[] nonces);
+    event OpRequestsFulfilled(bytes32[] proofIds, uint64[] nonces, bytes32[] appCommitHashes, bytes32[] appVkHashes);
+
     event RequestRefunded(bytes32 proofId, uint64 nonce);
     event RequestCallbackFailed(bytes32 proofId, uint64 nonce);
     event RequestsCallbackFailed(bytes32[] proofIds, uint64[] nonces);
     event RequestFeeIncreased(bytes32 proofId, uint64 nonce, uint256 gas, uint256 fee);
 
-    event OpRequestsFulfilled(bytes32[] proofIds, uint64[] nonces, bytes32[] appCommitHashes, bytes32[] appVkHashes);
-    event AskFor(bytes32 indexed proofId, uint64 nonce, DisputeStatus status, address from);
-    event RequestDataPosted(bytes32 indexed proofId, uint64 nonce, bytes[] data, uint256 index, bool done);
-    event DataAvailabilityProofPosted(bytes32 indexed proofId, uint64 nonce);
-    event DataValidityProofProofPosted(bytes32 indexed proofId, uint64 nonce);
-
     event RequestTimeoutUpdated(uint256 from, uint256 to);
-    event ChallengeWindowUpdated(uint256 from, uint256 to);
-    event ResponseTimeoutUpdated(uint256 from, uint256 to);
     event BaseDataUrlUpdated(string from, string to);
     event BrevisProofUpdated(address from, address to);
+    event BrevisDisputeUpdated(address from, address to);
     event BvnSigsVerifierUpdated(address from, address to);
     event AvsSigsVerifierUpdated(address from, address to);
-    event DisputeDepositsUpdated(uint256 amtAskForData, uint256 amtAskForProof);
 
     function sendRequest(
         bytes32 _proofId,
@@ -125,24 +70,6 @@ interface IBrevisRequest {
         uint256 _currentFee,
         address _refundee
     ) external payable;
-
-    function askForRequestData(bytes32 _proofId, uint64 _nonce) external payable;
-
-    function postRequestData(
-        bytes32 _proofId,
-        uint64 _nonce,
-        bytes[] calldata _requestData,
-        uint256 _index,
-        bool _done
-    ) external;
-
-    function askForDataAvailabilityProof(bytes32 _proofId, uint64 _nonce) external payable;
-
-    function postDataAvailabilityProof(bytes32 _proofId, uint64 _nonce, bytes calldata _proof) external;
-
-    function askForDataValidityProof(bytes32 _proofId, uint64 _nonce) external payable;
-
-    function postDataValidityProof(bytes32 _proofId, uint64 _nonce, uint64 _chainId, bytes calldata _proof) external;
 
     function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus, uint8);
 
