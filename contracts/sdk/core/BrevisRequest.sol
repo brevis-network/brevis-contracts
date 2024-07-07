@@ -319,15 +319,15 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     // --------------------- view functions ---------------------
 
     function queryRequestStatus(bytes32 _proofId, uint64 _nonce) external view returns (RequestStatus, uint8) {
-        return _queryRequestStatus(_proofId, _nonce, brevisDispute.getChallengeWindow());
+        return _queryRequestStatus(keccak256(abi.encodePacked(_proofId, _nonce)), brevisDispute.getChallengeWindow());
     }
 
     function queryRequestStatus(
         bytes32 _proofId,
         uint64 _nonce,
-        uint256 _appChallengeWindow
+        uint256 _challengeWindow
     ) external view returns (RequestStatus, uint8) {
-        return _queryRequestStatus(_proofId, _nonce, _appChallengeWindow);
+        return _queryRequestStatus(keccak256(abi.encodePacked(_proofId, _nonce)), _challengeWindow);
     }
 
     function validateOpAppData(
@@ -346,10 +346,35 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
-        uint256 _appChallengeWindow,
+        uint256 _challengeWindow,
         uint8 _option
     ) external view returns (bool) {
-        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, _appChallengeWindow, _option);
+        return _validateOpAppData(_proofId, _nonce, _appCommitHash, _appVkHash, _challengeWindow, _option);
+    }
+
+    function validateOpAppData(
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
+        uint256 _challengeWindow,
+        uint8 _option
+    ) external view returns (bool) {
+        for (uint256 i = 0; i < _proofIds.length; i++) {
+            if (
+                !_validateOpAppData(
+                    _proofIds[i],
+                    _nonces[i],
+                    _appCommitHashes[i],
+                    _appVkHashes[i],
+                    _challengeWindow,
+                    _option
+                )
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     function dataURL(bytes32 _proofId) external view returns (string memory) {
@@ -413,23 +438,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     }
 
     function _queryRequestStatus(
-        bytes32 _proofId,
-        uint64 _nonce,
+        bytes32 _requestKey, // keccak256(abi.encodePacked(_proofId, _nonce))
         uint256 _challengeWindow
     ) private view returns (RequestStatus, uint8) {
-        bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
-        Request memory request = requests[requestKey];
+        Request memory request = requests[_requestKey];
         if (request.status == RequestStatus.OpSubmitted) {
             if (request.timestamp + _challengeWindow < block.timestamp) {
                 return (RequestStatus.OpAttested, request.option);
             }
         } else if (request.status == RequestStatus.OpDisputing) {
-            DisputeStatus dstatus = brevisDispute.getDisputeStatus(requestKey);
+            DisputeStatus dstatus = brevisDispute.getDisputeStatus(_requestKey);
             if (dstatus == DisputeStatus.RequestDataPosted || dstatus == DisputeStatus.DataAvailabilityProofPosted) {
                 if (request.timestamp + _challengeWindow < block.timestamp) {
                     return (RequestStatus.OpAttested, request.option);
                 }
-            } else if (brevisDispute.getResponseDeadline(requestKey) < block.timestamp) {
+            } else if (brevisDispute.getResponseDeadline(_requestKey) < block.timestamp) {
                 // did not respond in time for WaitingForXXX
                 return (RequestStatus.OpDisputed, request.option);
             }
@@ -447,7 +470,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     ) private view returns (bool readyToUse) {
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         require(opdata[requestKey] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), "invalid data");
-        (RequestStatus status, uint8 option) = _queryRequestStatus(_proofId, _nonce, _challengeWindow);
+        (RequestStatus status, uint8 option) = _queryRequestStatus(requestKey, _challengeWindow);
         if (status == RequestStatus.OpAttested) {
             return (_option & option) == _option;
         } else if (status == RequestStatus.ZkAttested) {

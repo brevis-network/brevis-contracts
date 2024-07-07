@@ -96,5 +96,14 @@ interface IBrevisRequest is IBrevisTypes {
         uint8 _option
     ) external view returns (bool);
 
+    function validateOpAppData(
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
+        uint256 _appChallengeWindow,
+        uint8 _option
+    ) external view returns (bool);
+
     function dataURL(bytes32 _proofId) external view returns (string memory);
 }

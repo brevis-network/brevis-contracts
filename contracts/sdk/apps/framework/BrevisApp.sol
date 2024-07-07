@@ -50,15 +50,19 @@ abstract contract BrevisApp {
         bytes calldata _appCircuitOutput
     ) public {
         (uint256 challengeWindow, uint8 sigOption) = _getBrevisConfig();
-        _applyBrevisOpResult(
-            _proofId,
-            _nonce,
-            _appVkHash,
-            _appCommitHash,
-            _appCircuitOutput,
-            challengeWindow,
-            sigOption
+        require(
+            IBrevisRequest(brevisRequest).validateOpAppData(
+                _proofId,
+                _nonce,
+                _appCommitHash,
+                _appVkHash,
+                challengeWindow,
+                sigOption
+            ),
+            "data not ready to use"
         );
+        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
+        handleOpProofResult(_appVkHash, _appCircuitOutput);
     }
 
     function applyBrevisOpResults(
@@ -69,41 +73,21 @@ abstract contract BrevisApp {
         bytes[] calldata _appCircuitOutputs
     ) external {
         (uint256 challengeWindow, uint8 sigOption) = _getBrevisConfig();
-        for (uint256 i = 0; i < _proofIds.length; i++) {
-            _applyBrevisOpResult(
-                _proofIds[i],
-                _nonces[i],
-                _appVkHashes[i],
-                _appCommitHashes[i],
-                _appCircuitOutputs[i],
-                challengeWindow,
-                sigOption
-            );
-        }
-    }
-
-    function _applyBrevisOpResult(
-        bytes32 _proofId,
-        uint64 _nonce,
-        bytes32 _appVkHash,
-        bytes32 _appCommitHash,
-        bytes calldata _appCircuitOutput,
-        uint256 _challengeWindow,
-        uint8 _sigOption
-    ) private {
         require(
             IBrevisRequest(brevisRequest).validateOpAppData(
-                _proofId,
-                _nonce,
-                _appCommitHash,
-                _appVkHash,
-                _challengeWindow,
-                _sigOption
+                _proofIds,
+                _nonces,
+                _appCommitHashes,
+                _appVkHashes,
+                challengeWindow,
+                sigOption
             ),
             "data not ready to use"
         );
-        require(_appCommitHash == keccak256(_appCircuitOutput), "invalid circuit output");
-        handleOpProofResult(_appVkHash, _appCircuitOutput);
+        for (uint256 i = 0; i < _proofIds.length; i++) {
+            require(_appCommitHashes[i] == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
+            handleOpProofResult(_appVkHashes[i], _appCircuitOutputs[i]);
+        }
     }
 
     function _getBrevisConfig() private view returns (uint256, uint8) {
@@ -118,6 +102,15 @@ interface IBrevisRequest {
         uint64 _nonce,
         bytes32 _appCommitHash,
         bytes32 _appVkHash,
+        uint256 _appChallengeWindow,
+        uint8 _option
+    ) external view returns (bool);
+
+    function validateOpAppData(
+        bytes32[] calldata _proofIds,
+        uint64[] calldata _nonces,
+        bytes32[] calldata _appCommitHashes,
+        bytes32[] calldata _appVkHashes,
         uint256 _appChallengeWindow,
         uint8 _option
     ) external view returns (bool);
