@@ -11,6 +11,7 @@ import "../interface/IBrevisApp.sol";
 import "../lib/Lib.sol";
 import "../../safeguard/BrevisAccess.sol";
 import "../../interfaces/ISigsVerifier.sol";
+import "../../lib/Utils.sol";
 
 contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     // common workflow
