@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "solidity-rlp/contracts/RLPReader.sol";
+import "../../lib/RLPReader.sol";
 
 library Brevis {
     // retrieved from proofData, to align the logs with circuit...

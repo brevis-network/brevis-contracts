@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "solidity-rlp/contracts/RLPReader.sol";
+import "../lib/RLPReader.sol";
 import "./interfaces/IReceiptVerifier.sol";
 import "./interfaces/IZkpVerifier.sol";
 import "../chunk-sync/interfaces/IBlockChunks.sol";
