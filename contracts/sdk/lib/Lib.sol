@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "../../verifiers/RLPReader.sol";
+import "../../lib/RLPReader.sol";
 
 library Brevis {
     uint256 constant NumField = 5; // supports at most 5 fields per receipt log

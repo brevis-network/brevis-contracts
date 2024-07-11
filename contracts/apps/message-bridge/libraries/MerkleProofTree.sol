@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.18;
 
-import "./RLPReader.sol";
+import "../../../lib/RLPReader.sol";
 
 library MerkleProofTree {
     using RLPReader for RLPReader.RLPItem;

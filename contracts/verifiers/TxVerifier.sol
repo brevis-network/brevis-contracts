@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./RLPReader.sol";
+import "../lib/RLPReader.sol";
 import "./interfaces/ITxVerifier.sol";
 import "./interfaces/IZkpVerifier.sol";
 import "../chunk-sync/interfaces/IBlockChunks.sol";

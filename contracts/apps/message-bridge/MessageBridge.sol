@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IMessageBridge.sol";
 import "./interfaces/IMessageReceiverApp.sol";
-import "./libraries/RLPReader.sol";
 import "./libraries/MerkleProofTree.sol";
 import "./libraries/MsgLib.sol";
+import "../../lib/RLPReader.sol";
 import "../../interfaces/IEthereumLightClient.sol";
 import "../../verifiers/interfaces/ISlotValueVerifier.sol";
 
