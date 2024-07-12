@@ -15,7 +15,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   // const anchorProvider = await deployments.get('AnchorBlocks');
   const anchorProvider = await deployments.get('SameChainAnchorBlocks');
   const verifier = await deployments.get('SMTUpdateCircuitProofOnOpVerifier');
-  const args = [[10], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
+  const args = [[84532], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
   const deployment = await deploy('SMT', { from: deployer, log: true, args: args });
   await verify(hre, deployment);
 };
