@@ -39,6 +39,21 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bvnSigsVerifier = _bvnSigsVerifier;
     }
 
+    // this is only to be called by Proxy via delegateCall as initOwner will require _owner is 0.
+    // so calling init on this contract directly will guarantee to fail
+    function init(
+        address _feeCollector,
+        IBrevisProof _brevisProof,
+        IBvnSigsVerifier _bvnSigsVerifier,
+        uint256 _requestTimeout
+    ) external {
+        initOwner();
+        feeCollector = _feeCollector;
+        brevisProof = _brevisProof;
+        bvnSigsVerifier = _bvnSigsVerifier;
+        requestTimeout = _requestTimeout;
+    }
+
     /*********************************
      * External and Public Functions *
      *********************************/
