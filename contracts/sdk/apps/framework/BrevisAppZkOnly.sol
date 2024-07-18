@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 // App that only accepts ZK-attested results.
-abstract contract BrevisZkApp {
+abstract contract BrevisAppZkOnly {
     address public brevisRequest;
 
     modifier onlyBrevisRequest() {
