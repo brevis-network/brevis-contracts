@@ -16,12 +16,12 @@ contract BrevisDispute is IBrevisDispute {
     mapping(bytes32 => Dispute) public disputes; // requestKey => Dispute
 
     modifier onlyActiveProver() {
-        require(brevisRequest.isActiveProver(msg.sender), "not invalid prover");
+        require(brevisRequest.isActiveProver(msg.sender), "invalid prover");
         _;
     }
 
     modifier onlyOwner() {
-        require(brevisRequest.owner() == msg.sender, "not invalid prover");
+        require(brevisRequest.owner() == msg.sender, "invalid prover");
         _;
     }
 

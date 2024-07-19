@@ -18,12 +18,12 @@ abstract contract BrevisAccess is Pauser {
     event ProverRemoved(address account);
 
     modifier onlyProver() {
-        require(proverStates[msg.sender] != ProverState.Null, "not invalid prover");
+        require(proverStates[msg.sender] != ProverState.Null, "invalid prover");
         _;
     }
 
     modifier onlyActiveProver() {
-        require(proverStates[msg.sender] == ProverState.Active, "not invalid prover");
+        require(proverStates[msg.sender] == ProverState.Active, "invalid prover");
         _;
     }
 
