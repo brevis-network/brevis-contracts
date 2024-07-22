@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {DataTypes as dt} from "./DataTypes.sol";
-import "../interfaces/ISigsVerifier.sol";
 import "./libraries/PbStaking.sol";
 import "../safeguard/Pauser.sol";
 import "../safeguard/Whitelist.sol";
@@ -14,7 +13,7 @@ import "../safeguard/Whitelist.sol";
 /**
  * @title A Staking contract shared by all external sidechains and apps
  */
-contract Staking is ISigsVerifier, Pauser, Whitelist {
+contract Staking is Pauser, Whitelist {
     using SafeERC20 for IERC20;
     using ECDSA for bytes32;
 
@@ -464,12 +463,7 @@ contract Staking is ISigsVerifier, Pauser, Whitelist {
      * @param _msg signed message
      * @param _sigs the list of signatures
      */
-    function verifySigs(
-        bytes memory _msg,
-        bytes[] calldata _sigs,
-        address[] calldata,
-        uint256[] calldata
-    ) public view override {
+    function verifySigs(bytes memory _msg, bytes[] calldata _sigs, address[] calldata, uint256[] calldata) public view {
         require(verifySignatures(_msg, _sigs), "Failed to verify sigs");
     }
 

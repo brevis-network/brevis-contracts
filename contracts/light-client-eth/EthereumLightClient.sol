@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "./interfaces/IEthereumLightClient.sol";
 import "./LightClientStore.sol";
 import "./common/Helpers.sol";
 import "./common/Constants.sol";
 import "./common/Types.sol";
+import "../safeguard/BrevisAccess.sol";
 
-contract EthereumLightClient is IEthereumLightClient, LightClientStore, Ownable {
+contract EthereumLightClient is IEthereumLightClient, LightClientStore, BrevisAccess {
     event OptimisticUpdate(uint256 slot, bytes32 executionStateRoot);
     event FinalityUpdate(uint256 slot, bytes32 executionStateRoot);
     event SyncCommitteeUpdated(uint256 period, bytes32 sszRoot, bytes32 poseidonRoot);
@@ -75,7 +74,7 @@ contract EthereumLightClient is IEthereumLightClient, LightClientStore, Ownable 
         delete bestValidUpdate;
     }
 
-    function processLightClientUpdate(LightClientUpdate memory update) public {
+    function processLightClientUpdate(LightClientUpdate memory update) public onlyActiveProver {
         bool quorumReached = hasSupermajority(update.syncAggregate.participation);
         bool betterUpdate = isBetterUpdate(update, bestValidUpdate);
         require(betterUpdate || quorumReached, "quorum not reached");

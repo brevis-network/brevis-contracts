@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 import "../interfaces/ISMT.sol";
+import "../safeguard/BrevisAccess.sol";
 
-contract SMT is ISMT, Ownable {
+contract SMT is ISMT, BrevisAccess {
     event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
@@ -42,7 +42,7 @@ contract SMT is ISMT, Ownable {
         return smtRoots[chainId][smtRoot];
     }
 
-    function updateRoot(uint64 chainId, SmtUpdate memory u) external {
+    function updateRoot(uint64 chainId, SmtUpdate memory u) external onlyActiveProver {
         // If nextChunkMerkleRoot is empty, it means the zk proof bypasses checking if the updated chunk anchors to a known chunk.
         // Instead, the responsibility of checking the validity of endBlockHash is deferred to this contract.
         if (u.nextChunkMerkleRoot == 0) {
@@ -75,7 +75,7 @@ contract SMT is ISMT, Ownable {
         input[6] = u.endBlockNum;
         input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
         input[8] = uint256(u.nextChunkMerkleRoot) % m;
-       
+
         return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }
 

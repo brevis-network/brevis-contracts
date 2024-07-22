@@ -111,6 +111,7 @@ describe('Block Syncer Test', async () => {
 
     await syncer.updateAnchorBlockProvider(chainId, anchor.address);
     await syncer.updateVerifierAddress(chainId, verifier.address);
+    await syncer.addProvers([admin.address]);
 
     return { admin, syncer, anchor };
   }

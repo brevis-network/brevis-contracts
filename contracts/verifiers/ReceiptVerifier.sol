@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/RLPReader.sol";
 import "./interfaces/IReceiptVerifier.sol";
 import "./interfaces/IZkpVerifier.sol";
 import "../chunk-sync/interfaces/IBlockChunks.sol";
+import "../safeguard/Ownable.sol";
 
 contract ReceiptVerifier is IReceiptVerifier, Ownable {
     using RLPReader for bytes;
