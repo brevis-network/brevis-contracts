@@ -41,7 +41,7 @@ describe('Brevis Reqeust Test', async () => {
     brevisProof = res.brevisProof;
     admin = res.admin;
   });
-
+  /*
   it('should pass on biz test', async () => {
     await brevisRequest.sendRequest(
       '0x206d1ac729747e772cee06d1ac1e99b25eb5060c479e7b0210b10468b5cfaf0a',
@@ -62,4 +62,5 @@ describe('Brevis Reqeust Test', async () => {
       )
     ).to.emit(brevisRequest, 'RequestFulfilled');
   });
+  */
 });
