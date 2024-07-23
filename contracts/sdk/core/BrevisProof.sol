@@ -13,6 +13,13 @@ contract BrevisProof is BrevisAggProof {
 
     constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}
 
+    // To support upgradable deployment.
+    // Can only be called once by Proxy via delegateCall, as initOwner will require _owner is 0.
+    function init(ISMT _smtContract) external {
+        initOwner();
+        smtContract = _smtContract;
+    }
+
     /*********************************
      * External and Public Functions *
      *********************************/
