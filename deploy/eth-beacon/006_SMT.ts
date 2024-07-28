@@ -5,7 +5,7 @@ import { verify } from '../utils/utils';
 
 dotenv.config();
 
-const defaultSmtRoot = '0x1138d0ac4aedc38fa8d5f64859de3cd2837a6e5267203da1b7ff0fbd85e1faec';
+const defaultSmtRoot = '0x004300568188b28b528f66274840cfb1b499d704b3888f69d434f981c6a467a9';
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
