@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../light-client-eth/interfaces/IAnchorBlocks.sol";
 import "../interfaces/ISMT.sol";
+import "../safeguard/BrevisAccess.sol";
 
-contract SMT is ISMT, Ownable {
+contract SMT is ISMT, BrevisAccess {
     event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
