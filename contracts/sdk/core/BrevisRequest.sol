@@ -6,8 +6,9 @@ import "../interface/IBrevisRequest.sol";
 import "../interface/IBrevisProof.sol";
 import "../interface/IBrevisApp.sol";
 import "../lib/Lib.sol";
+import "../../safeguard/BrevisAccess.sol";
 
-contract BrevisRequest is IBrevisRequest, FeeVault {
+contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
     uint256 public requestTimeout;
     IBrevisProof public brevisProof;
 
@@ -36,7 +37,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         bytes calldata _proof,
         bool _withAppProof,
         bytes calldata _appCircuitOutput
-    ) external {
+    ) external onlyActiveProver {
         require(!IBrevisProof(brevisProof).hasProof(_requestId), "proof already generated");
 
         bytes32 reqIdFromProof = IBrevisProof(brevisProof).submitProof(_chainId, _proof, _withAppProof); // will revert if proof is not valid
@@ -66,7 +67,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault {
         Brevis.ProofData[] calldata _proofDataArray,
         bytes[] calldata _appCircuitOutputs,
         address _callback
-    ) external {
+    ) external onlyActiveProver {
         IBrevisProof(brevisProof).mustSubmitAggProof(_chainId, _requestIds, _proof);
 
         for (uint8 i = 1; i < _requestIds.length; i++) {
