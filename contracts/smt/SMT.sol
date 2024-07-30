@@ -42,7 +42,7 @@ contract SMT is ISMT, BrevisAccess {
         return smtRoots[chainId][smtRoot];
     }
 
-    function updateRoot(uint64 chainId, SmtUpdate memory u) external {
+    function updateRoot(uint64 chainId, SmtUpdate memory u) external onlyActiveProver {
         // If nextChunkMerkleRoot is empty, it means the zk proof bypasses checking if the updated chunk anchors to a known chunk.
         // Instead, the responsibility of checking the validity of endBlockHash is deferred to this contract.
         if (u.nextChunkMerkleRoot == 0) {
