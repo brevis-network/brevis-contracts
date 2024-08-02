@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
 import "../../verifiers/interfaces/IZkpVerifier.sol";
+import "../../safeguard/BrevisAccess.sol";
 
-contract BrevisAggProof is Ownable {
+contract BrevisAggProof is BrevisAccess {
     ISMT public smtContract;
 
     constructor(ISMT _smtContract) {
@@ -93,7 +93,7 @@ contract BrevisAggProof is Ownable {
         uint64 _chainId,
         bytes32[] calldata _requestIds,
         bytes calldata _proofWithPubInputs
-    ) external {
+    ) external onlyActiveProver {
         IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
         require(address(verifier) != address(0), "chain agg proof verifier not set");
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");

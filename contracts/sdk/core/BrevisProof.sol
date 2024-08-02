@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./BrevisAggProof.sol";
 import "../lib/Lib.sol";
 import "../../interfaces/ISMT.sol";
@@ -26,7 +25,7 @@ contract BrevisProof is BrevisAggProof {
         uint64 _chainId,
         bytes calldata _proofWithPubInputs,
         bool _withAppProof
-    ) external returns (bytes32 _requestId) {
+    ) external onlyActiveProver returns (bytes32 _requestId) {
         require(verifyRaw(_chainId, _proofWithPubInputs, _withAppProof), "proof not valid");
         Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs, _withAppProof);
         require(data.vkHash > 0, "vkHash should be larger than 0");
