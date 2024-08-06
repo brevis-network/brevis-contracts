@@ -5,21 +5,16 @@ import { verify } from '../utils/utils';
 
 dotenv.config();
 
+
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const smt = await deployments.get('MockSMT');
-  const args = [smt.address];
-  const deployment = await deploy('BrevisProof', {
-    from: deployer,
-    log: true,
-    args: args
-  });
-  await verify(hre, deployment, args);
+  const deployment = await deploy('MockSMT', { from: deployer, log: true, });
+  await verify(hre, deployment);
 };
 
-deployFunc.tags = ['BrevisProof'];
+deployFunc.tags = ['MockSMT'];
 deployFunc.dependencies = [];
 export default deployFunc;

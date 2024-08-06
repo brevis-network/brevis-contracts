@@ -1,5 +1,5 @@
 {
-  "address": "0x4446e0f8417C1db113899929A8F3cEe8e0DcBCDb",
+  "address": "0xea80589a5f3A45554555634525deFF2EcB6CC4FF",
   "abi": [
     {
       "inputs": [
@@ -17,18 +17,18 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32[]",
-          "name": "vkHashes",
-          "type": "bytes32[]"
+          "internalType": "uint64[]",
+          "name": "chainIds",
+          "type": "uint64[]"
         },
         {
           "indexed": false,
-          "internalType": "uint256[]",
-          "name": "sizes",
-          "type": "uint256[]"
+          "internalType": "contract IZkpVerifier[]",
+          "name": "newAddresses",
+          "type": "address[]"
         }
       ],
-      "name": "BatchTierVkHashesUpdated",
+      "name": "AggProofVerifierAddressesUpdated",
       "type": "event"
     },
     {
@@ -55,7 +55,72 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "contract ISMT",
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "PauserAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "PauserRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "ProverAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "ProverRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
           "name": "smtContract",
           "type": "address"
         }
@@ -68,27 +133,28 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint64[]",
           "name": "chainIds",
           "type": "uint64[]"
         },
         {
-          "components": [
-            {
-              "internalType": "contract IZkpVerifier",
-              "name": "contractAppZkVerifier",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IZkpVerifier",
-              "name": "circuitAppZkVerifier",
-              "type": "address"
-            }
-          ],
           "indexed": false,
-          "internalType": "struct BrevisProof.ChainZKVerifier[]",
+          "internalType": "contract IZkpVerifier[]",
           "name": "newAddresses",
-          "type": "tuple[]"
+          "type": "address[]"
         }
       ],
       "name": "VerifierAddressesUpdated",
@@ -97,18 +163,238 @@
     {
       "inputs": [
         {
-          "internalType": "bytes32",
-          "name": "_requestId",
-          "type": "bytes32"
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
         }
       ],
-      "name": "getProofAppData",
+      "name": "addPauser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "addPausers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "addProvers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "aggProofVerifierAddress",
       "outputs": [
+        {
+          "internalType": "contract IZkpVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISMT",
+          "name": "_smtContract",
+          "type": "address"
+        }
+      ],
+      "name": "init",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
+        }
+      ],
+      "name": "isActiveProver",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isPauser",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
         {
           "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
-        },
+        }
+      ],
+      "name": "merkleRoots",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numPausers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numProvers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "pauserList",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "pausers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "proofs",
+      "outputs": [
         {
           "internalType": "bytes32",
           "name": "",
@@ -121,13 +407,278 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "proverStates",
+      "outputs": [
+        {
+          "internalType": "enum BrevisAccess.ProverState",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "provers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "removePauser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "removePausers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "removeProvers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renouncePauser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "smtContract",
+      "outputs": [
+        {
+          "internalType": "contract ISMT",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "_proofIds",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_proofWithPubInputs",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitAggProof",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_proofWithPubInputs",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitProof",
+      "outputs": [
+        {
           "internalType": "bytes32",
-          "name": "_requestId",
+          "name": "proofId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "appCommitHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "appVkHash",
           "type": "bytes32"
         }
       ],
-      "name": "getProofData",
-      "outputs": [
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "_chainIds",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "contract IZkpVerifier[]",
+          "name": "_verifierAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "updateAggProofVerifierAddresses",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISMT",
+          "name": "_smtContract",
+          "type": "address"
+        }
+      ],
+      "name": "updateSmtContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "_chainIds",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "contract IZkpVerifier[]",
+          "name": "_verifierAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "updateVerifierAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "commitHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "vkHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "appCommitHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "appVkHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "smtRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct Brevis.ProofData[]",
+          "name": "_proofDataArray",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "validateAggProofData",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_chainId",
+          "type": "uint64"
+        },
         {
           "components": [
             {
@@ -157,359 +708,56 @@
             }
           ],
           "internalType": "struct Brevis.ProofData",
-          "name": "",
+          "name": "_proofData",
           "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_requestId",
-          "type": "bytes32"
-        }
-      ],
-      "name": "hasProof",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "name": "proofs",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "commitHash",
-          "type": "bytes32"
         },
         {
           "internalType": "bytes32",
-          "name": "vkHash",
+          "name": "_merkleRoot",
           "type": "bytes32"
         },
-        {
-          "internalType": "bytes32",
-          "name": "appCommitHash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "appVkHash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "smtRoot",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
         {
           "internalType": "bytes32[]",
-          "name": "_vkHashes",
+          "name": "_merkleProof",
           "type": "bytes32[]"
         },
         {
-          "internalType": "uint256[]",
-          "name": "_sizes",
-          "type": "uint256[]"
+          "internalType": "uint8",
+          "name": "_nodeIndex",
+          "type": "uint8"
         }
       ],
-      "name": "setBatchTierVkHashes",
+      "name": "validateAggProofData",
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "smtContract",
-      "outputs": [
-        {
-          "internalType": "contract ISMT",
-          "name": "",
-          "type": "address"
-        }
-      ],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "_chainId",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "_proofId",
+          "type": "bytes32"
         },
         {
-          "internalType": "bytes",
-          "name": "_proofWithPubInputs",
-          "type": "bytes"
+          "internalType": "bytes32",
+          "name": "_appCommitHash",
+          "type": "bytes32"
         },
+        {
+          "internalType": "bytes32",
+          "name": "_appVkHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "validateProofAppData",
+      "outputs": [
         {
           "internalType": "bool",
-          "name": "_withAppProof",
+          "name": "",
           "type": "bool"
         }
       ],
-      "name": "submitProof",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_requestId",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ISMT",
-          "name": "_smtContract",
-          "type": "address"
-        }
-      ],
-      "name": "updateSmtContract",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint64[]",
-          "name": "_chainIds",
-          "type": "uint64[]"
-        },
-        {
-          "components": [
-            {
-              "internalType": "contract IZkpVerifier",
-              "name": "contractAppZkVerifier",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IZkpVerifier",
-              "name": "circuitAppZkVerifier",
-              "type": "address"
-            }
-          ],
-          "internalType": "struct BrevisProof.ChainZKVerifier[]",
-          "name": "_verifierAddresses",
-          "type": "tuple[]"
-        }
-      ],
-      "name": "updateVerifierAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_requestId",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint64",
-          "name": "_chainId",
-          "type": "uint64"
-        },
-        {
-          "components": [
-            {
-              "internalType": "bytes32",
-              "name": "smtRoot",
-              "type": "bytes32"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "uint64",
-                  "name": "blkNum",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint64",
-                  "name": "receiptIndex",
-                  "type": "uint64"
-                },
-                {
-                  "components": [
-                    {
-                      "components": [
-                        {
-                          "internalType": "uint8",
-                          "name": "valueFromTopic",
-                          "type": "uint8"
-                        },
-                        {
-                          "internalType": "uint64",
-                          "name": "valueIndex",
-                          "type": "uint64"
-                        },
-                        {
-                          "internalType": "address",
-                          "name": "contractAddress",
-                          "type": "address"
-                        },
-                        {
-                          "internalType": "bytes32",
-                          "name": "logTopic0",
-                          "type": "bytes32"
-                        }
-                      ],
-                      "internalType": "struct Brevis.LogExtraInfo",
-                      "name": "logExtraInfo",
-                      "type": "tuple"
-                    },
-                    {
-                      "internalType": "uint64",
-                      "name": "logIndex",
-                      "type": "uint64"
-                    },
-                    {
-                      "internalType": "bytes32",
-                      "name": "value",
-                      "type": "bytes32"
-                    }
-                  ],
-                  "internalType": "struct Brevis.LogInfo[5]",
-                  "name": "logs",
-                  "type": "tuple[5]"
-                }
-              ],
-              "internalType": "struct Brevis.ReceiptInfo[]",
-              "name": "receipts",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "bytes32",
-                  "name": "blockHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "slot",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "slotValue",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "uint64",
-                  "name": "blockNumber",
-                  "type": "uint64"
-                }
-              ],
-              "internalType": "struct Brevis.StorageInfo[]",
-              "name": "stores",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "bytes32",
-                  "name": "leafHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "blockHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "uint64",
-                  "name": "blockNumber",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint64",
-                  "name": "blockTime",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "leafRlpPrefix",
-                  "type": "bytes"
-                }
-              ],
-              "internalType": "struct Brevis.TransactionInfo[]",
-              "name": "txs",
-              "type": "tuple[]"
-            }
-          ],
-          "internalType": "struct Brevis.ExtractInfos",
-          "name": "_extractInfos",
-          "type": "tuple"
-        }
-      ],
-      "name": "validateRequest",
-      "outputs": [],
       "stateMutability": "view",
       "type": "function"
     },
@@ -525,85 +773,81 @@
       "outputs": [
         {
           "internalType": "contract IZkpVerifier",
-          "name": "contractAppZkVerifier",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IZkpVerifier",
-          "name": "circuitAppZkVerifier",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
           "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "name": "vkHashesToBatchSize",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     }
   ],
-  "transactionHash": "0x7ec5cbf21ea9b43fc715ad91861b564c9fec07551300209851a3a3cf59758f15",
+  "transactionHash": "0xe10e213dec97e48ab4be985bfadf293a0eb0a1cbb33f47860bbfd20a3ed5d962",
   "receipt": {
     "to": null,
     "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
-    "contractAddress": "0x4446e0f8417C1db113899929A8F3cEe8e0DcBCDb",
-    "transactionIndex": 58,
-    "gasUsed": "1402229",
-    "logsBloom": "0x00000000000000000000000000200000000000000000000000800000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000802000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001000000000",
-    "blockHash": "0x5798af857de3ad6d2a5c1e5eb7f6f0bef7ac47a4f20f3997d36f56f4bb6f6224",
-    "transactionHash": "0x7ec5cbf21ea9b43fc715ad91861b564c9fec07551300209851a3a3cf59758f15",
+    "contractAddress": "0xea80589a5f3A45554555634525deFF2EcB6CC4FF",
+    "transactionIndex": 32,
+    "gasUsed": "2154588",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000001000000000000000004000000000000802000020000000000000000000800000000020000000000000000000000400000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000010020000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xa9b794a7ee9129b62b1af63bd53f678e0e355198d3a0b4a8b0627f96ff8da431",
+    "transactionHash": "0xe10e213dec97e48ab4be985bfadf293a0eb0a1cbb33f47860bbfd20a3ed5d962",
     "logs": [
       {
-        "transactionIndex": 58,
-        "blockNumber": 5570542,
-        "transactionHash": "0x7ec5cbf21ea9b43fc715ad91861b564c9fec07551300209851a3a3cf59758f15",
-        "address": "0x4446e0f8417C1db113899929A8F3cEe8e0DcBCDb",
+        "transactionIndex": 32,
+        "blockNumber": 6447176,
+        "transactionHash": "0xe10e213dec97e48ab4be985bfadf293a0eb0a1cbb33f47860bbfd20a3ed5d962",
+        "address": "0xea80589a5f3A45554555634525deFF2EcB6CC4FF",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           "0x00000000000000000000000058b529f9084d7eaa598eb3477fe36064c5b7bbc1"
         ],
         "data": "0x",
-        "logIndex": 84,
-        "blockHash": "0x5798af857de3ad6d2a5c1e5eb7f6f0bef7ac47a4f20f3997d36f56f4bb6f6224"
+        "logIndex": 53,
+        "blockHash": "0xa9b794a7ee9129b62b1af63bd53f678e0e355198d3a0b4a8b0627f96ff8da431"
+      },
+      {
+        "transactionIndex": 32,
+        "blockNumber": 6447176,
+        "transactionHash": "0xe10e213dec97e48ab4be985bfadf293a0eb0a1cbb33f47860bbfd20a3ed5d962",
+        "address": "0xea80589a5f3A45554555634525deFF2EcB6CC4FF",
+        "topics": [
+          "0x6719d08c1888103bea251a4ed56406bd0c3e69723c8a1686e017e7bbe159b6f8"
+        ],
+        "data": "0x00000000000000000000000058b529f9084d7eaa598eb3477fe36064c5b7bbc1",
+        "logIndex": 54,
+        "blockHash": "0xa9b794a7ee9129b62b1af63bd53f678e0e355198d3a0b4a8b0627f96ff8da431"
       }
     ],
-    "blockNumber": 5570542,
-    "cumulativeGasUsed": "8743966",
+    "blockNumber": 6447176,
+    "cumulativeGasUsed": "6722615",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x1345c8a6b99536531F1fa3cfe37D8A5B7Fc859aA"
+    "0x2c11c33fE5122Ed698Bb443E769Df367fcb54cbD"
   ],
-  "numDeployments": 4,
-  "solcInputHash": "059985e33863062405783c8a384db273",
-  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"_smtContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32[]\",\"name\":\"vkHashes\",\"type\":\"bytes32[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"sizes\",\"type\":\"uint256[]\"}],\"name\":\"BatchTierVkHashesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"contract ISMT\",\"name\":\"smtContract\",\"type\":\"address\"}],\"name\":\"SmtContractUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64[]\",\"name\":\"chainIds\",\"type\":\"uint64[]\"},{\"components\":[{\"internalType\":\"contract IZkpVerifier\",\"name\":\"contractAppZkVerifier\",\"type\":\"address\"},{\"internalType\":\"contract IZkpVerifier\",\"name\":\"circuitAppZkVerifier\",\"type\":\"address\"}],\"indexed\":false,\"internalType\":\"struct BrevisProof.ChainZKVerifier[]\",\"name\":\"newAddresses\",\"type\":\"tuple[]\"}],\"name\":\"VerifierAddressesUpdated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_requestId\",\"type\":\"bytes32\"}],\"name\":\"getProofAppData\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_requestId\",\"type\":\"bytes32\"}],\"name\":\"getProofData\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"commitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"vkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appVkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct Brevis.ProofData\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_requestId\",\"type\":\"bytes32\"}],\"name\":\"hasProof\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"proofs\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"vkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appVkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"_vkHashes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_sizes\",\"type\":\"uint256[]\"}],\"name\":\"setBatchTierVkHashes\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"smtContract\",\"outputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"_proofWithPubInputs\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"_withAppProof\",\"type\":\"bool\"}],\"name\":\"submitProof\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"_requestId\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"_smtContract\",\"type\":\"address\"}],\"name\":\"updateSmtContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64[]\",\"name\":\"_chainIds\",\"type\":\"uint64[]\"},{\"components\":[{\"internalType\":\"contract IZkpVerifier\",\"name\":\"contractAppZkVerifier\",\"type\":\"address\"},{\"internalType\":\"contract IZkpVerifier\",\"name\":\"circuitAppZkVerifier\",\"type\":\"address\"}],\"internalType\":\"struct BrevisProof.ChainZKVerifier[]\",\"name\":\"_verifierAddresses\",\"type\":\"tuple[]\"}],\"name\":\"updateVerifierAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_requestId\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blkNum\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"receiptIndex\",\"type\":\"uint64\"},{\"components\":[{\"components\":[{\"internalType\":\"uint8\",\"name\":\"valueFromTopic\",\"type\":\"uint8\"},{\"internalType\":\"uint64\",\"name\":\"valueIndex\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"contractAddress\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"logTopic0\",\"type\":\"bytes32\"}],\"internalType\":\"struct Brevis.LogExtraInfo\",\"name\":\"logExtraInfo\",\"type\":\"tuple\"},{\"internalType\":\"uint64\",\"name\":\"logIndex\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"value\",\"type\":\"bytes32\"}],\"internalType\":\"struct Brevis.LogInfo[5]\",\"name\":\"logs\",\"type\":\"tuple[5]\"}],\"internalType\":\"struct Brevis.ReceiptInfo[]\",\"name\":\"receipts\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"slotValue\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"blockNumber\",\"type\":\"uint64\"}],\"internalType\":\"struct Brevis.StorageInfo[]\",\"name\":\"stores\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"leafHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"blockNumber\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockTime\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"leafRlpPrefix\",\"type\":\"bytes\"}],\"internalType\":\"struct Brevis.TransactionInfo[]\",\"name\":\"txs\",\"type\":\"tuple[]\"}],\"internalType\":\"struct Brevis.ExtractInfos\",\"name\":\"_extractInfos\",\"type\":\"tuple\"}],\"name\":\"validateRequest\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"verifierAddresses\",\"outputs\":[{\"internalType\":\"contract IZkpVerifier\",\"name\":\"contractAppZkVerifier\",\"type\":\"address\"},{\"internalType\":\"contract IZkpVerifier\",\"name\":\"circuitAppZkVerifier\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"vkHashesToBatchSize\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/sdk/core/BrevisProof.sol\":\"BrevisProof\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/interfaces/ISMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../verifiers/zk-verifiers/common/IVerifier.sol\\\";\\n\\ninterface ISMT {\\n    struct SmtUpdate {\\n        bytes32 newSmtRoot;\\n        uint64 endBlockNum;\\n        bytes32 endBlockHash;\\n        bytes32 nextChunkMerkleRoot;\\n        IVerifier.Proof proof;\\n        bytes32 commitPub;\\n    }\\n\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external;\\n\\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xbe5081a475cc6225739e919eeb8d7daec930ac0dba3081970892a5d068498434\",\"license\":\"MIT\"},\"contracts/sdk/core/BrevisProof.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"../lib/Lib.sol\\\";\\nimport \\\"../../interfaces/ISMT.sol\\\";\\nimport \\\"../../verifiers/interfaces/IZkpVerifier.sol\\\";\\n\\ncontract BrevisProof is Ownable {\\n    uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)\\n\\n    struct ChainZKVerifier {\\n        IZkpVerifier contractAppZkVerifier;\\n        IZkpVerifier circuitAppZkVerifier;\\n    }\\n    mapping(uint64 => ChainZKVerifier) public verifierAddresses; // chainid => snark verifier contract address\\n\\n    mapping(bytes32 => Brevis.ProofData) public proofs; // TODO: store hash of proof data to save gas cost\\n    mapping(bytes32 => uint256) public vkHashesToBatchSize; // batch tier vk hashes => tier batch size\\n\\n    ISMT public smtContract;\\n\\n    event VerifierAddressesUpdated(uint64[] chainIds, ChainZKVerifier[] newAddresses);\\n    event SmtContractUpdated(ISMT smtContract);\\n    event BatchTierVkHashesUpdated(bytes32[] vkHashes, uint256[] sizes);\\n\\n    constructor(ISMT _smtContract) {\\n        smtContract = _smtContract;\\n    }\\n\\n    function submitProof(\\n        uint64 _chainId,\\n        bytes calldata _proofWithPubInputs,\\n        bool _withAppProof\\n    ) external returns (bytes32 _requestId) {\\n        require(verifyRaw(_chainId, _proofWithPubInputs, _withAppProof), \\\"proof not valid\\\");\\n        Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs, _withAppProof);\\n        require(data.vkHash > 0, \\\"vkHash should be larger than 0\\\");\\n        uint256 batchSize = vkHashesToBatchSize[data.vkHash];\\n        require(batchSize > 0, \\\"vkHash not valid\\\");\\n\\n        _requestId = data.commitHash;\\n        if (_withAppProof) {\\n            require(smtContract.isSmtRootValid(_chainId, data.smtRoot), \\\"smt root not valid\\\");\\n            proofs[_requestId].appCommitHash = data.appCommitHash; // save necessary fields only, to save gas\\n            proofs[_requestId].appVkHash = data.appVkHash;\\n        } else {\\n            proofs[_requestId].commitHash = data.commitHash;\\n        }\\n    }\\n\\n    // used by contract app\\n    function validateRequest(\\n        bytes32 _requestId,\\n        uint64 _chainId,\\n        Brevis.ExtractInfos calldata _extractInfos\\n    ) external view {\\n        Brevis.ProofData memory data = proofs[_requestId];\\n        require(data.commitHash != bytes32(0), \\\"proof not exists\\\");\\n        require(smtContract.isSmtRootValid(_chainId, _extractInfos.smtRoot), \\\"smt root not valid\\\");\\n\\n        uint256 itemsLength = _extractInfos.receipts.length + _extractInfos.stores.length + _extractInfos.txs.length;\\n        require(itemsLength > 0, \\\"empty items\\\");\\n        uint256 batchSize = vkHashesToBatchSize[data.vkHash];\\n        require(itemsLength <= batchSize, \\\"item length exceeds batch size\\\");\\n\\n        bytes memory hashes;\\n\\n        for (uint256 i = 0; i < _extractInfos.receipts.length; i++) {\\n            bytes memory fieldInfos;\\n            for (uint256 j = 0; j < Brevis.NumField; j++) {\\n                fieldInfos = abi.encodePacked(\\n                    fieldInfos,\\n                    _extractInfos.receipts[i].logs[j].logExtraInfo.valueFromTopic,\\n                    _extractInfos.receipts[i].logs[j].logIndex,\\n                    _extractInfos.receipts[i].logs[j].logExtraInfo.valueIndex,\\n                    _extractInfos.receipts[i].logs[j].logExtraInfo.contractAddress,\\n                    _extractInfos.receipts[i].logs[j].logExtraInfo.logTopic0,\\n                    _extractInfos.receipts[i].logs[j].value\\n                );\\n            }\\n\\n            hashes = abi.encodePacked(\\n                hashes,\\n                keccak256(\\n                    abi.encodePacked(\\n                        _extractInfos.smtRoot,\\n                        _extractInfos.receipts[i].blkNum,\\n                        _extractInfos.receipts[i].receiptIndex,\\n                        fieldInfos\\n                    )\\n                )\\n            );\\n        }\\n\\n        for (uint256 i = 0; i < _extractInfos.stores.length; i++) {\\n            hashes = abi.encodePacked(\\n                hashes,\\n                keccak256(\\n                    abi.encodePacked(\\n                        _extractInfos.smtRoot,\\n                        _extractInfos.stores[i].blockHash,\\n                        keccak256(abi.encodePacked(_extractInfos.stores[i].account)),\\n                        _extractInfos.stores[i].slot,\\n                        _extractInfos.stores[i].slotValue,\\n                        _extractInfos.stores[i].blockNumber\\n                    )\\n                )\\n            );\\n        }\\n        for (uint256 i = 0; i < _extractInfos.txs.length; i++) {\\n            hashes = abi.encodePacked(\\n                hashes,\\n                keccak256(\\n                    abi.encodePacked(\\n                        _extractInfos.smtRoot,\\n                        _extractInfos.txs[i].leafHash,\\n                        _extractInfos.txs[i].blockHash,\\n                        _extractInfos.txs[i].blockNumber,\\n                        _extractInfos.txs[i].blockTime\\n                    )\\n                )\\n            );\\n        }\\n\\n        if (itemsLength < batchSize) {\\n            bytes32 emptyHash = bytes32(0x0000000000000000000000000000000100000000000000000000000000000001);\\n            for (uint256 i = itemsLength; i < batchSize; i++) {\\n                hashes = abi.encodePacked(hashes, emptyHash);\\n            }\\n        }\\n        require(keccak256(hashes) == data.commitHash, \\\"commitHash and info not match\\\");\\n    }\\n\\n    function hasProof(bytes32 _requestId) external view returns (bool) {\\n        return proofs[_requestId].commitHash != bytes32(0) || proofs[_requestId].appCommitHash != bytes32(0);\\n    }\\n\\n    function getProofData(bytes32 _requestId) external view returns (Brevis.ProofData memory) {\\n        return proofs[_requestId];\\n    }\\n\\n    function getProofAppData(bytes32 _requestId) external view returns (bytes32, bytes32) {\\n        return (proofs[_requestId].appCommitHash, proofs[_requestId].appVkHash);\\n    }\\n\\n    function verifyRaw(\\n        uint64 _chainId,\\n        bytes calldata _proofWithPubInputs,\\n        bool _withAppProof\\n    ) private view returns (bool) {\\n        IZkpVerifier verifier;\\n        if (!_withAppProof) {\\n            verifier = verifierAddresses[_chainId].contractAppZkVerifier;\\n        } else {\\n            verifier = verifierAddresses[_chainId].circuitAppZkVerifier;\\n        }\\n        require(address(verifier) != address(0), \\\"chain verifier not set\\\");\\n        return verifier.verifyRaw(_proofWithPubInputs);\\n    }\\n\\n    function unpackProofData(\\n        bytes calldata _proofWithPubInputs,\\n        bool _withAppProof\\n    ) internal pure returns (Brevis.ProofData memory data) {\\n        if (_withAppProof) {\\n            data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);\\n            data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);\\n            data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);\\n            data.appCommitHash = bytes32(\\n                _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]\\n            );\\n            data.appVkHash = bytes32(\\n                _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]\\n            );\\n        } else {\\n            data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);\\n            // data length field in between no need to be unpacked\\n            data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);\\n        }\\n    }\\n\\n    function updateVerifierAddress(\\n        uint64[] calldata _chainIds,\\n        ChainZKVerifier[] calldata _verifierAddresses\\n    ) public onlyOwner {\\n        require(_chainIds.length == _verifierAddresses.length, \\\"length not match\\\");\\n        for (uint256 i = 0; i < _chainIds.length; i++) {\\n            verifierAddresses[_chainIds[i]] = _verifierAddresses[i];\\n        }\\n        emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);\\n    }\\n\\n    function updateSmtContract(ISMT _smtContract) public onlyOwner {\\n        smtContract = _smtContract;\\n        emit SmtContractUpdated(smtContract);\\n    }\\n\\n    function setBatchTierVkHashes(bytes32[] calldata _vkHashes, uint256[] calldata _sizes) public onlyOwner {\\n        require(_vkHashes.length == _sizes.length, \\\"length not match\\\");\\n        for (uint256 i = 0; i < _vkHashes.length; i++) {\\n            vkHashesToBatchSize[_vkHashes[i]] = _sizes[i];\\n        }\\n\\n        emit BatchTierVkHashesUpdated(_vkHashes, _sizes);\\n    }\\n}\\n\",\"keccak256\":\"0x10ce579536a4c5e36169670b8ddeab16278d86a0325c7266161360453f2cb9b0\",\"license\":\"MIT\"},\"contracts/sdk/lib/Lib.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"solidity-rlp/contracts/RLPReader.sol\\\";\\n\\nlibrary Brevis {\\n    uint256 constant NumField = 5; // supports at most 5 fields per receipt log\\n\\n    struct ReceiptInfo {\\n        uint64 blkNum;\\n        uint64 receiptIndex; // ReceiptIndex in the block\\n        LogInfo[NumField] logs;\\n    }\\n\\n    struct LogInfo {\\n        LogExtraInfo logExtraInfo;\\n        uint64 logIndex; // LogIndex of the field\\n        bytes32 value;\\n    }\\n\\n    struct LogExtraInfo {\\n        uint8 valueFromTopic;\\n        uint64 valueIndex; // index of the fields in topic or data\\n        address contractAddress;\\n        bytes32 logTopic0;\\n    }\\n\\n    struct StorageInfo {\\n        bytes32 blockHash;\\n        address account;\\n        bytes32 slot;\\n        bytes32 slotValue;\\n        uint64 blockNumber;\\n    }\\n\\n    struct TransactionInfo {\\n        bytes32 leafHash;\\n        bytes32 blockHash;\\n        uint64 blockNumber;\\n        uint64 blockTime;\\n        bytes leafRlpPrefix;\\n    }\\n\\n    struct ExtractInfos {\\n        bytes32 smtRoot;\\n        ReceiptInfo[] receipts;\\n        StorageInfo[] stores;\\n        TransactionInfo[] txs;\\n    }\\n\\n    // retrieved from proofData, to align the logs with circuit...\\n    struct ProofData {\\n        bytes32 commitHash;\\n        bytes32 vkHash;\\n        bytes32 appCommitHash; // zk-program computing circuit commit hash\\n        bytes32 appVkHash; // zk-program computing circuit Verify Key hash\\n        bytes32 smtRoot; // for zk-program computing proof only\\n    }\\n}\\n\\nlibrary Tx {\\n    using RLPReader for bytes;\\n    using RLPReader for uint;\\n    using RLPReader for RLPReader.RLPItem;\\n\\n    struct TxInfo {\\n        uint64 chainId;\\n        uint64 nonce;\\n        uint256 gasTipCap;\\n        uint256 gasFeeCap;\\n        uint256 gas;\\n        address to;\\n        uint256 value;\\n        bytes data;\\n        address from; // calculate from V R S\\n    }\\n\\n    // support DynamicFeeTxType for now\\n    function decodeTx(bytes calldata txRaw) public pure returns (TxInfo memory info) {\\n        uint8 txType = uint8(txRaw[0]);\\n        require(txType == 2, \\\"not a DynamicFeeTxType\\\");\\n\\n        bytes memory rlpData = txRaw[1:];\\n        RLPReader.RLPItem[] memory values = rlpData.toRlpItem().toList();\\n        info.chainId = uint64(values[0].toUint());\\n        info.nonce = uint64(values[1].toUint());\\n        info.gasTipCap = values[2].toUint();\\n        info.gasFeeCap = values[3].toUint();\\n        info.gas = values[4].toUint();\\n        info.to = values[5].toAddress();\\n        info.value = values[6].toUint();\\n        info.data = values[7].toBytes();\\n\\n        (uint8 v, bytes32 r, bytes32 s) = (\\n            uint8(values[9].toUint()),\\n            bytes32(values[10].toBytes()),\\n            bytes32(values[11].toBytes())\\n        );\\n        // remove r,s,v and adjust length field\\n        bytes memory unsignedTxRaw;\\n        uint16 unsignedTxRawDataLength;\\n        uint8 prefix = uint8(txRaw[1]);\\n        uint8 lenBytes = prefix - 0xf7; // assume lenBytes won't larger than 2, means the tx rlp data size won't exceed 2^16\\n        if (lenBytes == 1) {\\n            unsignedTxRawDataLength = uint8(bytes1(txRaw[2:3])) - 67; //67 is the bytes of r,s,v\\n        } else {\\n            unsignedTxRawDataLength = uint16(bytes2(txRaw[2:2 + lenBytes])) - 67;\\n        }\\n        if (unsignedTxRawDataLength <= 55) {\\n            unsignedTxRaw = abi.encodePacked(txRaw[:2], txRaw[3:txRaw.length - 67]);\\n            unsignedTxRaw[1] = bytes1(0xc0 + uint8(unsignedTxRawDataLength));\\n        } else {\\n            if (unsignedTxRawDataLength <= 255) {\\n                unsignedTxRaw = abi.encodePacked(\\n                    txRaw[0],\\n                    bytes1(0xf8),\\n                    bytes1(uint8(unsignedTxRawDataLength)),\\n                    txRaw[2 + lenBytes:txRaw.length - 67]\\n                );\\n            } else {\\n                unsignedTxRaw = abi.encodePacked(\\n                    txRaw[0],\\n                    bytes1(0xf9),\\n                    bytes2(unsignedTxRawDataLength),\\n                    txRaw[2 + lenBytes:txRaw.length - 67]\\n                );\\n            }\\n        }\\n        info.from = recover(keccak256(unsignedTxRaw), r, s, v);\\n    }\\n\\n    function recover(bytes32 message, bytes32 r, bytes32 s, uint8 v) internal pure returns (address) {\\n        if (v < 27) {\\n            v += 27;\\n        }\\n        return ecrecover(message, v, r, s);\\n    }\\n}\\n\",\"keccak256\":\"0x86a85c2e49d0b867dac8bbad39ae87d80e77e673c077daf0c76c7eaed98ae925\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IZkpVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IZkpVerifier {\\n    function verifyRaw(bytes calldata proofData) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0xe5497c1800b1907820f57db5cbbb09ca63c0b2cacc3223639a1e53502d5caa53\",\"license\":\"MIT\"},\"contracts/verifiers/zk-verifiers/common/IVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IVerifier {\\n    struct Proof {\\n        uint256[2] a;\\n        uint256[2][2] b;\\n        uint256[2] c;\\n        uint256[2] commitment;\\n    }\\n\\n    function verifyProof(\\n        uint256[2] memory a,\\n        uint256[2][2] memory b,\\n        uint256[2] memory c,\\n        uint256[2] memory commit,\\n        uint256[10] calldata input\\n    ) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0x9aabe521d13ef8b8e149c1ac4d5676692560b312e0a18fb4034ef97c5b737e58\",\"license\":\"MIT\"},\"solidity-rlp/contracts/RLPReader.sol\":{\"content\":\"// SPDX-License-Identifier: Apache-2.0\\n\\n/*\\n * @author Hamdi Allam hamdi.allam97@gmail.com\\n * Please reach out with any questions or concerns\\n */\\npragma solidity >=0.5.10 <0.9.0;\\n\\nlibrary RLPReader {\\n    uint8 constant STRING_SHORT_START = 0x80;\\n    uint8 constant STRING_LONG_START = 0xb8;\\n    uint8 constant LIST_SHORT_START = 0xc0;\\n    uint8 constant LIST_LONG_START = 0xf8;\\n    uint8 constant WORD_SIZE = 32;\\n\\n    struct RLPItem {\\n        uint256 len;\\n        uint256 memPtr;\\n    }\\n\\n    struct Iterator {\\n        RLPItem item; // Item that's being iterated over.\\n        uint256 nextPtr; // Position of the next item in the list.\\n    }\\n\\n    /*\\n     * @dev Returns the next element in the iteration. Reverts if it has not next element.\\n     * @param self The iterator.\\n     * @return The next element in the iteration.\\n     */\\n    function next(Iterator memory self) internal pure returns (RLPItem memory) {\\n        require(hasNext(self));\\n\\n        uint256 ptr = self.nextPtr;\\n        uint256 itemLength = _itemLength(ptr);\\n        self.nextPtr = ptr + itemLength;\\n\\n        return RLPItem(itemLength, ptr);\\n    }\\n\\n    /*\\n     * @dev Returns true if the iteration has more elements.\\n     * @param self The iterator.\\n     * @return true if the iteration has more elements.\\n     */\\n    function hasNext(Iterator memory self) internal pure returns (bool) {\\n        RLPItem memory item = self.item;\\n        return self.nextPtr < item.memPtr + item.len;\\n    }\\n\\n    /*\\n     * @param item RLP encoded bytes\\n     */\\n    function toRlpItem(bytes memory item) internal pure returns (RLPItem memory) {\\n        uint256 memPtr;\\n        assembly {\\n            memPtr := add(item, 0x20)\\n        }\\n\\n        return RLPItem(item.length, memPtr);\\n    }\\n\\n    /*\\n     * @dev Create an iterator. Reverts if item is not a list.\\n     * @param self The RLP item.\\n     * @return An 'Iterator' over the item.\\n     */\\n    function iterator(RLPItem memory self) internal pure returns (Iterator memory) {\\n        require(isList(self));\\n\\n        uint256 ptr = self.memPtr + _payloadOffset(self.memPtr);\\n        return Iterator(self, ptr);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function rlpLen(RLPItem memory item) internal pure returns (uint256) {\\n        return item.len;\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     * @return (memPtr, len) pair: location of the item's payload in memory.\\n     */\\n    function payloadLocation(RLPItem memory item) internal pure returns (uint256, uint256) {\\n        uint256 offset = _payloadOffset(item.memPtr);\\n        uint256 memPtr = item.memPtr + offset;\\n        uint256 len = item.len - offset; // data length\\n        return (memPtr, len);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function payloadLen(RLPItem memory item) internal pure returns (uint256) {\\n        (, uint256 len) = payloadLocation(item);\\n        return len;\\n    }\\n\\n    /*\\n     * @param the RLP item containing the encoded list.\\n     */\\n    function toList(RLPItem memory item) internal pure returns (RLPItem[] memory) {\\n        require(isList(item));\\n\\n        uint256 items = numItems(item);\\n        RLPItem[] memory result = new RLPItem[](items);\\n\\n        uint256 memPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 dataLen;\\n        for (uint256 i = 0; i < items; i++) {\\n            dataLen = _itemLength(memPtr);\\n            result[i] = RLPItem(dataLen, memPtr);\\n            memPtr = memPtr + dataLen;\\n        }\\n\\n        return result;\\n    }\\n\\n    // @return indicator whether encoded payload is a list. negate this function call for isData.\\n    function isList(RLPItem memory item) internal pure returns (bool) {\\n        if (item.len == 0) return false;\\n\\n        uint8 byte0;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < LIST_SHORT_START) return false;\\n        return true;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toRlpBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of RLP encoded bytes.\\n     */\\n    function rlpBytesKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        uint256 ptr = item.memPtr;\\n        uint256 len = item.len;\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(ptr, len)\\n        }\\n        return result;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of the item payload.\\n     */\\n    function payloadKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(memPtr, len)\\n        }\\n        return result;\\n    }\\n\\n    /** RLPItem conversions into data types **/\\n\\n    // @returns raw rlp encoding in bytes\\n    function toRlpBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        bytes memory result = new bytes(item.len);\\n        if (result.length == 0) return result;\\n\\n        uint256 ptr;\\n        assembly {\\n            ptr := add(0x20, result)\\n        }\\n\\n        copy(item.memPtr, ptr, item.len);\\n        return result;\\n    }\\n\\n    // any non-zero byte except \\\"0x80\\\" is considered true\\n    function toBoolean(RLPItem memory item) internal pure returns (bool) {\\n        require(item.len == 1);\\n        uint256 result;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            result := byte(0, mload(memPtr))\\n        }\\n\\n        // SEE Github Issue #5.\\n        // Summary: Most commonly used RLP libraries (i.e Geth) will encode\\n        // \\\"0\\\" as \\\"0x80\\\" instead of as \\\"0\\\". We handle this edge case explicitly\\n        // here.\\n        if (result == 0 || result == STRING_SHORT_START) {\\n            return false;\\n        } else {\\n            return true;\\n        }\\n    }\\n\\n    function toAddress(RLPItem memory item) internal pure returns (address) {\\n        // 1 byte for the length prefix\\n        require(item.len == 21);\\n\\n        return address(uint160(toUint(item)));\\n    }\\n\\n    function toUint(RLPItem memory item) internal pure returns (uint256) {\\n        require(item.len > 0 && item.len <= 33);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n\\n        uint256 result;\\n        assembly {\\n            result := mload(memPtr)\\n\\n            // shift to the correct location if neccesary\\n            if lt(len, 32) {\\n                result := div(result, exp(256, sub(32, len)))\\n            }\\n        }\\n\\n        return result;\\n    }\\n\\n    // enforces 32 byte length\\n    function toUintStrict(RLPItem memory item) internal pure returns (uint256) {\\n        // one byte prefix\\n        require(item.len == 33);\\n\\n        uint256 result;\\n        uint256 memPtr = item.memPtr + 1;\\n        assembly {\\n            result := mload(memPtr)\\n        }\\n\\n        return result;\\n    }\\n\\n    function toBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        require(item.len > 0);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes memory result = new bytes(len);\\n\\n        uint256 destPtr;\\n        assembly {\\n            destPtr := add(0x20, result)\\n        }\\n\\n        copy(memPtr, destPtr, len);\\n        return result;\\n    }\\n\\n    /*\\n     * Private Helpers\\n     */\\n\\n    // @return number of payload items inside an encoded list.\\n    function numItems(RLPItem memory item) private pure returns (uint256) {\\n        if (item.len == 0) return 0;\\n\\n        uint256 count = 0;\\n        uint256 currPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 endPtr = item.memPtr + item.len;\\n        while (currPtr < endPtr) {\\n            currPtr = currPtr + _itemLength(currPtr); // skip over an item\\n            count++;\\n        }\\n\\n        return count;\\n    }\\n\\n    // @return entire rlp item byte length\\n    function _itemLength(uint256 memPtr) private pure returns (uint256) {\\n        uint256 itemLen;\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            itemLen = 1;\\n        } else if (byte0 < STRING_LONG_START) {\\n            itemLen = byte0 - STRING_SHORT_START + 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            assembly {\\n                let byteLen := sub(byte0, 0xb7) // # of bytes the actual length is\\n                memPtr := add(memPtr, 1) // skip over the first byte\\n\\n                /* 32 byte word size */\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to get the len\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        } else if (byte0 < LIST_LONG_START) {\\n            itemLen = byte0 - LIST_SHORT_START + 1;\\n        } else {\\n            assembly {\\n                let byteLen := sub(byte0, 0xf7)\\n                memPtr := add(memPtr, 1)\\n\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to the correct length\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        }\\n\\n        return itemLen;\\n    }\\n\\n    // @return number of bytes until the data\\n    function _payloadOffset(uint256 memPtr) private pure returns (uint256) {\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            return 0;\\n        } else if (byte0 < STRING_LONG_START || (byte0 >= LIST_SHORT_START && byte0 < LIST_LONG_START)) {\\n            return 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            // being explicit\\n            return byte0 - (STRING_LONG_START - 1) + 1;\\n        } else {\\n            return byte0 - (LIST_LONG_START - 1) + 1;\\n        }\\n    }\\n\\n    /*\\n     * @param src Pointer to source\\n     * @param dest Pointer to destination\\n     * @param len Amount of memory to copy from the source\\n     */\\n    function copy(uint256 src, uint256 dest, uint256 len) private pure {\\n        if (len == 0) return;\\n\\n        // copy as many word sizes as possible\\n        for (; len >= WORD_SIZE; len -= WORD_SIZE) {\\n            assembly {\\n                mstore(dest, mload(src))\\n            }\\n\\n            src += WORD_SIZE;\\n            dest += WORD_SIZE;\\n        }\\n\\n        if (len > 0) {\\n            // left over bytes. Mask is used to remove unwanted bytes from the word\\n            uint256 mask = 256**(WORD_SIZE - len) - 1;\\n            assembly {\\n                let srcpart := and(mload(src), not(mask)) // zero out src\\n                let destpart := and(mload(dest), mask) // retrieve the bytes\\n                mstore(dest, or(destpart, srcpart))\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x3a44f2de3c752fa4f926f3fd4cad8338dab742484150c0d7d2f785409ed8db4d\",\"license\":\"Apache-2.0\"}},\"version\":1}",
-  "bytecode": "0x6080346100a757601f61184b38819003918201601f19168301916001600160401b038311848410176100ac578084926020946040528339810103126100a757516001600160a01b0390818116908190036100a75760005460018060a01b0319903382821617600055604051933391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3600454161760045561178890816100c38239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080604052600436101561001257600080fd5b60003560e01c80631396511e146112fd5780631be746b1146112d15780631e4971bb146111d357806325e4903414610e285780633221aec614610e01578063444d95b014610da95780635984fb9214610d71578063715018a614610d145780637c08aa74146104ee5780638da5cb5b146104c75780639546bf0014610438578063b201326e1461023d578063e3d1e6d6146101f5578063f2fde38b146101155763f5cec6af146100c157600080fd5b346101105760203660031901126101105767ffffffffffffffff6100e36113a2565b1660005260016020526040806000206001600160a01b036001818354169201541682519182526020820152f35b600080fd5b34610110576020366003190112610110576004356001600160a01b03808216809203610110576000549081169061014d3383146113b9565b821561018a576001600160a01b0319839116176000557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b34610110576020366003190112610110576004356000526002602052602060406000208054159081159161022f575b506040519015158152f35b600291500154151582610224565b346101105760403660031901126101105767ffffffffffffffff6004358181116101105761026f903690600401611371565b909160249081359381851161011057366023860112156101105784600401359282841161011057600692368286861b8901011161011057946001600160a01b0394939294926102c3846000541633146113b9565b6102ce8583146116a5565b60005b8281106103a1575050604051958160408801604089525260608701959160005b81811061037757505050506020848682960382880152848152019501926000915b838310610341577fc343b5bb763b4b0cdbd72c4b7a9627ce33d7eaff0cecca036b0af41ce9ca55a886880387a1005b9091929395604080600192846103568b611701565b16815284610365878c01611701565b16818701520197019493019190610312565b909192949596853590848216809203610110579081526020908101979695019291906001016102f1565b8581989398979596971015610423578061041791831b8a01846103cd6103c8848d8b6116f1565b6115b1565b166000526001806020528861040a6044604060002093836103ef8c88016115c6565b16946001600160a01b031995868254161781550194016115c6565b169082541617905561156b565b969196959493956102d1565b83634e487b7160e01b60005260326004526000fd5b3461011057602036600319011261011057610451611637565b50600435600052600260205260a0604060002060405161047081611404565b81549182825260018101546020830190815260028201549060408401918252608060046003850154946060870195865201549401938452604051948552516020850152516040840152516060830152516080820152f35b346101105760003660031901126101105760206001600160a01b0360005416604051908152f35b3461011057600319606036820112610110576024359067ffffffffffffffff821682036101105767ffffffffffffffff6044351161011057608090604435360301126101105760043560005260026020526040600020906040519161055283611404565b60048154918285526001810154602086015260028101546040860152600381015460608601520154608084015215610ccf576004805460405163080cdb0b60e11b815267ffffffffffffffff939093168383015260448035909201356024840152602091839182906001600160a01b03165afa8015610cc3576105dd91600091610c94575b5061145a565b6106286106146105f76024604435016044356004016114a6565b905061060c60448035016044356004016114dc565b919050611512565b61060c606460443501604435600401611535565b908115610c4f5760208101516000526003602052604060002054808311610c0a5760009260605b6106636024604435016044356004016114a6565b90508510156108b55784606060005b6005811061074757506020610741938361073b9361071b6106cf856106c96106b46103c861072d9b6106ae6024604435016044356004016114a6565b9061157a565b956106ae6024604435016044356004016114a6565b016115b1565b9261070d604051938492888401966044356004013588526001600160c01b0319918260c091821b1660408701521b16604884015260508301906115da565b03601f198101835282611420565b519020604051948592848401906115da565b908152038084520182611420565b9461156b565b9361064f565b9182604061076661076c936106ae6024604435016044356004016114a6565b016115a0565b359060ff82168203610110576108a760656108ad9361084c936107a960806106c9898f6107666040916106ae6024604435016044356004016114a6565b918c6107ce60206106c98b6040610766866106ae6024604435016044356004016114a6565b936107f760406107f18c82610766876106ae6024604435016044356004016114a6565b016115c6565b9060a06108398c6040610766606061082284846107668c6106ae6024604435016044356004016114a6565b0135976106ae6024604435016044356004016114a6565b013595604051998a9660208801906115da565b9460ff60f81b9060f81b1685526001600160c01b0319918260c091821b1660018701521b1660098401526bffffffffffffffffffffffff199060601b1660118301526025820152604592838201520390810184520182611420565b9161156b565b908691610672565b926000935b6108cd60448035016044356004016114dc565b9050851015610a63576108f3856108ed60448035016044356004016114dc565b90611605565b359061091160206107f1886108ed60448035016044356004016114dc565b604051906bffffffffffffffffffffffff199060601b1660208201526014815280604081011067ffffffffffffffff604083011117610a4d5760408101604052602081519101206040610971886108ed60448035016044356004016114dc565b0135606061098c896108ed60448035016044356004016114dc565b0135906109ab60806106c98b6108ed60448035016044356004016114dc565b926040519560443560040135602088015260408701526060860152608085015260a08401526001600160c01b031960c091821b169083015260a882528160e081011067ffffffffffffffff60e084011117610a4d5781610a408160e09384610a479601604052610a2782516020840120916101008401906115da565b9081520360df1981018484015260bf1901838301611420565b019461156b565b936108ba565b634e487b7160e01b600052604160045260246000fd5b91926000925b610a7d606460443501604435600401611535565b9050841015610b575761072d610b4b6020610b5193610ab088610aaa606460443501604435600401611535565b90611615565b3582610aca8a610aaa606460443501604435600401611535565b0135610ae960406106c98c610aaa606460443501604435600401611535565b610b0660606106c98d610aaa606460443501604435600401611535565b6040519286840194604435600401358652604085015260608401526001600160c01b0319918260c091821b1660808501521b1660888201526070815261071b81611404565b9361156b565b92610a69565b9084818110610bb8575b505060208151910120905103610b7357005b60405162461bcd60e51b815260206004820152601d60248201527f636f6d6d69744861736820616e6420696e666f206e6f74206d617463680000006044820152606490fd5b905b80821015610b61579091610bdf610bfe6020610c0493604051938491838301906115da565b7001000000000000000000000000000000018152038084520182611420565b9261156b565b90610bba565b60405162461bcd60e51b815260206004820152601e60248201527f6974656d206c656e67746820657863656564732062617463682073697a6500006044820152606490fd5b60405162461bcd60e51b815260206004820152600b60248201527f656d707479206974656d730000000000000000000000000000000000000000006044820152606490fd5b610cb6915060203d602011610cbc575b610cae8183611420565b810190611442565b836105d7565b503d610ca4565b6040513d6000823e3d90fd5b60405162461bcd60e51b815260206004820152601060248201527f70726f6f66206e6f7420657869737473000000000000000000000000000000006044820152606490fd5b3461011057600036600319011261011057600080546001600160a01b03196001600160a01b03821691610d483384146113b9565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101105760203660031901126101105760043560005260026020526040806000206003600282015491015482519182526020820152f35b3461011057602036600319011261011057600435600052600260205260a06040600020805490600181015490600281015460046003830154920154926040519485526020850152604084015260608301526080820152f35b346101105760003660031901126101105760206001600160a01b0360045416604051908152f35b3461011057606036600319011261011057610e416113a2565b67ffffffffffffffff602480358281116101105736602382011215610110578060040135938385116101105782820192368187850101116101105760449081359586158015880361011057156111b157831660005260016020526001600160a01b0360406000205416935b6001600160a01b0380951697881561116e5760405180996322bb937360e11b825260209a8b918260048301528487830152848b898401376000888684010152818881601f19601f89011681010301915afa908115610cc357600091611151575b501561110e57610f1a611637565b9688156110e757610f34610f2e8383611662565b90611688565b8852816101c01161011057610f2e82610f57926101c486013560808c0152611675565b8988015280610200116101105761020482013560408801526102201161011057610224013560608601525b8685018051156110a457516000526003875260406000205415611062575050849083519460001461104a5760048054608086015160405163080cdb0b60e11b815267ffffffffffffffff94909416928401929092526024830191909152909283916044918391165afa8015610cc3576110029160009161102d575061145a565b600360606040830151928460005260028652604060002093600285015501519101555b604051908152f35b6110449150853d8711610cbc57610cae8183611420565b856105d7565b50505050806000526002825280604060002055611025565b7f766b48617368206e6f742076616c696400000000000000000000000000000000606492601089936040519462461bcd60e51b86526004860152840152820152fd5b60405162461bcd60e51b815260048101899052601e818401527f766b486173682073686f756c64206265206c6172676572207468616e2030000081850152606490fd5b611105925090816110fe610f2e83610f2e95611662565b8952611675565b87860152610f82565b60405162461bcd60e51b8152600481018a9052600f818501527f70726f6f66206e6f742076616c6964000000000000000000000000000000000081860152606490fd5b61116891508a3d8c11610cbc57610cae8183611420565b8a610f0c565b60405162461bcd60e51b8152602060048201526016818501527f636861696e207665726966696572206e6f74207365740000000000000000000081860152606490fd5b831660005260016020526001600160a01b036001604060002001541693610eac565b346101105760403660031901126101105767ffffffffffffffff60043581811161011057611205903690600401611371565b916024359081116101105761121e903690600401611371565b6112376001600160a01b036000959395541633146113b9565b6112428183146116a5565b60005b82811061129d57507f011d93b74200525baf6adf5cba27a9d8f45c6aec5f9862889711c9f1630879ac936112989161128a604051958695604087526040870191611715565b918483036020860152611715565b0390a1005b806112ac6112cc9284886116f1565b356112b88286886116f1565b35600052600360205260406000205561156b565b611245565b346101105760203660031901126101105760043560005260036020526020604060002054604051908152f35b34610110576020366003190112610110576004356001600160a01b03808216809203610110577f674c535cde998bcb47d0688f644df545597c7d6edb95643cb21c82c2d490ff7f916113566020926000541633146113b9565b806001600160a01b03196004541617600455604051908152a1005b9181601f840112156101105782359167ffffffffffffffff8311610110576020808501948460051b01011161011057565b6004359067ffffffffffffffff8216820361011057565b156113c057565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b60a0810190811067ffffffffffffffff821117610a4d57604052565b90601f8019910116810190811067ffffffffffffffff821117610a4d57604052565b90816020910312610110575180151581036101105790565b1561146157565b60405162461bcd60e51b815260206004820152601260248201527f736d7420726f6f74206e6f742076616c696400000000000000000000000000006044820152606490fd5b903590601e1981360301821215610110570180359067ffffffffffffffff8211610110576020019181600a1b3603831361011057565b903590601e1981360301821215610110570180359067ffffffffffffffff8211610110576020019160a082023603831361011057565b9190820180921161151f57565b634e487b7160e01b600052601160045260246000fd5b903590601e1981360301821215610110570180359067ffffffffffffffff821161011057602001918160051b3603831361011057565b600019811461151f5760010190565b919081101561158a57600a1b0190565b634e487b7160e01b600052603260045260246000fd5b90600581101561158a5760c0020190565b3567ffffffffffffffff811681036101105790565b356001600160a01b03811681036101105790565b9081519160005b8381106115f2575050016000815290565b80602080928401015181850152016115e1565b919081101561158a5760a0020190565b919081101561158a5760051b81013590609e1981360301821215610110570190565b6040519061164482611404565b60006080838281528260208201528260408201528260608201520152565b906101a011610110576101800190602090565b906101e011610110576101c00190602090565b359060208110611696575090565b6000199060200360031b1b1690565b156116ac57565b60405162461bcd60e51b815260206004820152601060248201527f6c656e677468206e6f74206d61746368000000000000000000000000000000006044820152606490fd5b919081101561158a5760051b0190565b35906001600160a01b038216820361011057565b90918281527f07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff83116101105760209260051b80928483013701019056fea26469706673582212201c682fbea4b933aad6e128e616de466bbfef9453830c04cda17c5228d82c3b0264736f6c63430008140033",
-  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c80631396511e146112fd5780631be746b1146112d15780631e4971bb146111d357806325e4903414610e285780633221aec614610e01578063444d95b014610da95780635984fb9214610d71578063715018a614610d145780637c08aa74146104ee5780638da5cb5b146104c75780639546bf0014610438578063b201326e1461023d578063e3d1e6d6146101f5578063f2fde38b146101155763f5cec6af146100c157600080fd5b346101105760203660031901126101105767ffffffffffffffff6100e36113a2565b1660005260016020526040806000206001600160a01b036001818354169201541682519182526020820152f35b600080fd5b34610110576020366003190112610110576004356001600160a01b03808216809203610110576000549081169061014d3383146113b9565b821561018a576001600160a01b0319839116176000557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b60405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608490fd5b34610110576020366003190112610110576004356000526002602052602060406000208054159081159161022f575b506040519015158152f35b600291500154151582610224565b346101105760403660031901126101105767ffffffffffffffff6004358181116101105761026f903690600401611371565b909160249081359381851161011057366023860112156101105784600401359282841161011057600692368286861b8901011161011057946001600160a01b0394939294926102c3846000541633146113b9565b6102ce8583146116a5565b60005b8281106103a1575050604051958160408801604089525260608701959160005b81811061037757505050506020848682960382880152848152019501926000915b838310610341577fc343b5bb763b4b0cdbd72c4b7a9627ce33d7eaff0cecca036b0af41ce9ca55a886880387a1005b9091929395604080600192846103568b611701565b16815284610365878c01611701565b16818701520197019493019190610312565b909192949596853590848216809203610110579081526020908101979695019291906001016102f1565b8581989398979596971015610423578061041791831b8a01846103cd6103c8848d8b6116f1565b6115b1565b166000526001806020528861040a6044604060002093836103ef8c88016115c6565b16946001600160a01b031995868254161781550194016115c6565b169082541617905561156b565b969196959493956102d1565b83634e487b7160e01b60005260326004526000fd5b3461011057602036600319011261011057610451611637565b50600435600052600260205260a0604060002060405161047081611404565b81549182825260018101546020830190815260028201549060408401918252608060046003850154946060870195865201549401938452604051948552516020850152516040840152516060830152516080820152f35b346101105760003660031901126101105760206001600160a01b0360005416604051908152f35b3461011057600319606036820112610110576024359067ffffffffffffffff821682036101105767ffffffffffffffff6044351161011057608090604435360301126101105760043560005260026020526040600020906040519161055283611404565b60048154918285526001810154602086015260028101546040860152600381015460608601520154608084015215610ccf576004805460405163080cdb0b60e11b815267ffffffffffffffff939093168383015260448035909201356024840152602091839182906001600160a01b03165afa8015610cc3576105dd91600091610c94575b5061145a565b6106286106146105f76024604435016044356004016114a6565b905061060c60448035016044356004016114dc565b919050611512565b61060c606460443501604435600401611535565b908115610c4f5760208101516000526003602052604060002054808311610c0a5760009260605b6106636024604435016044356004016114a6565b90508510156108b55784606060005b6005811061074757506020610741938361073b9361071b6106cf856106c96106b46103c861072d9b6106ae6024604435016044356004016114a6565b9061157a565b956106ae6024604435016044356004016114a6565b016115b1565b9261070d604051938492888401966044356004013588526001600160c01b0319918260c091821b1660408701521b16604884015260508301906115da565b03601f198101835282611420565b519020604051948592848401906115da565b908152038084520182611420565b9461156b565b9361064f565b9182604061076661076c936106ae6024604435016044356004016114a6565b016115a0565b359060ff82168203610110576108a760656108ad9361084c936107a960806106c9898f6107666040916106ae6024604435016044356004016114a6565b918c6107ce60206106c98b6040610766866106ae6024604435016044356004016114a6565b936107f760406107f18c82610766876106ae6024604435016044356004016114a6565b016115c6565b9060a06108398c6040610766606061082284846107668c6106ae6024604435016044356004016114a6565b0135976106ae6024604435016044356004016114a6565b013595604051998a9660208801906115da565b9460ff60f81b9060f81b1685526001600160c01b0319918260c091821b1660018701521b1660098401526bffffffffffffffffffffffff199060601b1660118301526025820152604592838201520390810184520182611420565b9161156b565b908691610672565b926000935b6108cd60448035016044356004016114dc565b9050851015610a63576108f3856108ed60448035016044356004016114dc565b90611605565b359061091160206107f1886108ed60448035016044356004016114dc565b604051906bffffffffffffffffffffffff199060601b1660208201526014815280604081011067ffffffffffffffff604083011117610a4d5760408101604052602081519101206040610971886108ed60448035016044356004016114dc565b0135606061098c896108ed60448035016044356004016114dc565b0135906109ab60806106c98b6108ed60448035016044356004016114dc565b926040519560443560040135602088015260408701526060860152608085015260a08401526001600160c01b031960c091821b169083015260a882528160e081011067ffffffffffffffff60e084011117610a4d5781610a408160e09384610a479601604052610a2782516020840120916101008401906115da565b9081520360df1981018484015260bf1901838301611420565b019461156b565b936108ba565b634e487b7160e01b600052604160045260246000fd5b91926000925b610a7d606460443501604435600401611535565b9050841015610b575761072d610b4b6020610b5193610ab088610aaa606460443501604435600401611535565b90611615565b3582610aca8a610aaa606460443501604435600401611535565b0135610ae960406106c98c610aaa606460443501604435600401611535565b610b0660606106c98d610aaa606460443501604435600401611535565b6040519286840194604435600401358652604085015260608401526001600160c01b0319918260c091821b1660808501521b1660888201526070815261071b81611404565b9361156b565b92610a69565b9084818110610bb8575b505060208151910120905103610b7357005b60405162461bcd60e51b815260206004820152601d60248201527f636f6d6d69744861736820616e6420696e666f206e6f74206d617463680000006044820152606490fd5b905b80821015610b61579091610bdf610bfe6020610c0493604051938491838301906115da565b7001000000000000000000000000000000018152038084520182611420565b9261156b565b90610bba565b60405162461bcd60e51b815260206004820152601e60248201527f6974656d206c656e67746820657863656564732062617463682073697a6500006044820152606490fd5b60405162461bcd60e51b815260206004820152600b60248201527f656d707479206974656d730000000000000000000000000000000000000000006044820152606490fd5b610cb6915060203d602011610cbc575b610cae8183611420565b810190611442565b836105d7565b503d610ca4565b6040513d6000823e3d90fd5b60405162461bcd60e51b815260206004820152601060248201527f70726f6f66206e6f7420657869737473000000000000000000000000000000006044820152606490fd5b3461011057600036600319011261011057600080546001600160a01b03196001600160a01b03821691610d483384146113b9565b1682557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101105760203660031901126101105760043560005260026020526040806000206003600282015491015482519182526020820152f35b3461011057602036600319011261011057600435600052600260205260a06040600020805490600181015490600281015460046003830154920154926040519485526020850152604084015260608301526080820152f35b346101105760003660031901126101105760206001600160a01b0360045416604051908152f35b3461011057606036600319011261011057610e416113a2565b67ffffffffffffffff602480358281116101105736602382011215610110578060040135938385116101105782820192368187850101116101105760449081359586158015880361011057156111b157831660005260016020526001600160a01b0360406000205416935b6001600160a01b0380951697881561116e5760405180996322bb937360e11b825260209a8b918260048301528487830152848b898401376000888684010152818881601f19601f89011681010301915afa908115610cc357600091611151575b501561110e57610f1a611637565b9688156110e757610f34610f2e8383611662565b90611688565b8852816101c01161011057610f2e82610f57926101c486013560808c0152611675565b8988015280610200116101105761020482013560408801526102201161011057610224013560608601525b8685018051156110a457516000526003875260406000205415611062575050849083519460001461104a5760048054608086015160405163080cdb0b60e11b815267ffffffffffffffff94909416928401929092526024830191909152909283916044918391165afa8015610cc3576110029160009161102d575061145a565b600360606040830151928460005260028652604060002093600285015501519101555b604051908152f35b6110449150853d8711610cbc57610cae8183611420565b856105d7565b50505050806000526002825280604060002055611025565b7f766b48617368206e6f742076616c696400000000000000000000000000000000606492601089936040519462461bcd60e51b86526004860152840152820152fd5b60405162461bcd60e51b815260048101899052601e818401527f766b486173682073686f756c64206265206c6172676572207468616e2030000081850152606490fd5b611105925090816110fe610f2e83610f2e95611662565b8952611675565b87860152610f82565b60405162461bcd60e51b8152600481018a9052600f818501527f70726f6f66206e6f742076616c6964000000000000000000000000000000000081860152606490fd5b61116891508a3d8c11610cbc57610cae8183611420565b8a610f0c565b60405162461bcd60e51b8152602060048201526016818501527f636861696e207665726966696572206e6f74207365740000000000000000000081860152606490fd5b831660005260016020526001600160a01b036001604060002001541693610eac565b346101105760403660031901126101105767ffffffffffffffff60043581811161011057611205903690600401611371565b916024359081116101105761121e903690600401611371565b6112376001600160a01b036000959395541633146113b9565b6112428183146116a5565b60005b82811061129d57507f011d93b74200525baf6adf5cba27a9d8f45c6aec5f9862889711c9f1630879ac936112989161128a604051958695604087526040870191611715565b918483036020860152611715565b0390a1005b806112ac6112cc9284886116f1565b356112b88286886116f1565b35600052600360205260406000205561156b565b611245565b346101105760203660031901126101105760043560005260036020526020604060002054604051908152f35b34610110576020366003190112610110576004356001600160a01b03808216809203610110577f674c535cde998bcb47d0688f644df545597c7d6edb95643cb21c82c2d490ff7f916113566020926000541633146113b9565b806001600160a01b03196004541617600455604051908152a1005b9181601f840112156101105782359167ffffffffffffffff8311610110576020808501948460051b01011161011057565b6004359067ffffffffffffffff8216820361011057565b156113c057565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b60a0810190811067ffffffffffffffff821117610a4d57604052565b90601f8019910116810190811067ffffffffffffffff821117610a4d57604052565b90816020910312610110575180151581036101105790565b1561146157565b60405162461bcd60e51b815260206004820152601260248201527f736d7420726f6f74206e6f742076616c696400000000000000000000000000006044820152606490fd5b903590601e1981360301821215610110570180359067ffffffffffffffff8211610110576020019181600a1b3603831361011057565b903590601e1981360301821215610110570180359067ffffffffffffffff8211610110576020019160a082023603831361011057565b9190820180921161151f57565b634e487b7160e01b600052601160045260246000fd5b903590601e1981360301821215610110570180359067ffffffffffffffff821161011057602001918160051b3603831361011057565b600019811461151f5760010190565b919081101561158a57600a1b0190565b634e487b7160e01b600052603260045260246000fd5b90600581101561158a5760c0020190565b3567ffffffffffffffff811681036101105790565b356001600160a01b03811681036101105790565b9081519160005b8381106115f2575050016000815290565b80602080928401015181850152016115e1565b919081101561158a5760a0020190565b919081101561158a5760051b81013590609e1981360301821215610110570190565b6040519061164482611404565b60006080838281528260208201528260408201528260608201520152565b906101a011610110576101800190602090565b906101e011610110576101c00190602090565b359060208110611696575090565b6000199060200360031b1b1690565b156116ac57565b60405162461bcd60e51b815260206004820152601060248201527f6c656e677468206e6f74206d61746368000000000000000000000000000000006044820152606490fd5b919081101561158a5760051b0190565b35906001600160a01b038216820361011057565b90918281527f07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff83116101105760209260051b80928483013701019056fea26469706673582212201c682fbea4b933aad6e128e616de466bbfef9453830c04cda17c5228d82c3b0264736f6c63430008140033",
+  "numDeployments": 6,
+  "solcInputHash": "7380f0284cf41b139dfbe80c4123c50e",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"_smtContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64[]\",\"name\":\"chainIds\",\"type\":\"uint64[]\"},{\"indexed\":false,\"internalType\":\"contract IZkpVerifier[]\",\"name\":\"newAddresses\",\"type\":\"address[]\"}],\"name\":\"AggProofVerifierAddressesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"PauserAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"PauserRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ProverAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ProverRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"smtContract\",\"type\":\"address\"}],\"name\":\"SmtContractUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64[]\",\"name\":\"chainIds\",\"type\":\"uint64[]\"},{\"indexed\":false,\"internalType\":\"contract IZkpVerifier[]\",\"name\":\"newAddresses\",\"type\":\"address[]\"}],\"name\":\"VerifierAddressesUpdated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"addPauser\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"addPausers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_accounts\",\"type\":\"address[]\"}],\"name\":\"addProvers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"aggProofVerifierAddress\",\"outputs\":[{\"internalType\":\"contract IZkpVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"_smtContract\",\"type\":\"address\"}],\"name\":\"init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isActiveProver\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isPauser\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"merkleRoots\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"numPausers\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"numProvers\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"pauserList\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"pausers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"proofs\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"proverStates\",\"outputs\":[{\"internalType\":\"enum BrevisAccess.ProverState\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"provers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"removePauser\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"removePausers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_accounts\",\"type\":\"address[]\"}],\"name\":\"removeProvers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renouncePauser\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"smtContract\",\"outputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes32[]\",\"name\":\"_proofIds\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes\",\"name\":\"_proofWithPubInputs\",\"type\":\"bytes\"}],\"name\":\"submitAggProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"internalType\":\"bytes\",\"name\":\"_proofWithPubInputs\",\"type\":\"bytes\"}],\"name\":\"submitProof\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"proofId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appVkHash\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64[]\",\"name\":\"_chainIds\",\"type\":\"uint64[]\"},{\"internalType\":\"contract IZkpVerifier[]\",\"name\":\"_verifierAddresses\",\"type\":\"address[]\"}],\"name\":\"updateAggProofVerifierAddresses\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ISMT\",\"name\":\"_smtContract\",\"type\":\"address\"}],\"name\":\"updateSmtContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64[]\",\"name\":\"_chainIds\",\"type\":\"uint64[]\"},{\"internalType\":\"contract IZkpVerifier[]\",\"name\":\"_verifierAddresses\",\"type\":\"address[]\"}],\"name\":\"updateVerifierAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"commitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"vkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appVkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct Brevis.ProofData[]\",\"name\":\"_proofDataArray\",\"type\":\"tuple[]\"}],\"name\":\"validateAggProofData\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_chainId\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"commitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"vkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"appVkHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"smtRoot\",\"type\":\"bytes32\"}],\"internalType\":\"struct Brevis.ProofData\",\"name\":\"_proofData\",\"type\":\"tuple\"},{\"internalType\":\"bytes32\",\"name\":\"_merkleRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"_merkleProof\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint8\",\"name\":\"_nodeIndex\",\"type\":\"uint8\"}],\"name\":\"validateAggProofData\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_proofId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_appCommitHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_appVkHash\",\"type\":\"bytes32\"}],\"name\":\"validateProofAppData\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"verifierAddresses\",\"outputs\":[{\"internalType\":\"contract IZkpVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"Paused(address)\":{\"details\":\"Emitted when the pause is triggered by `account`.\"},\"Unpaused(address)\":{\"details\":\"Emitted when the pause is lifted by `account`.\"}},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"paused()\":{\"details\":\"Returns true if the contract is paused, and false otherwise.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/sdk/core/BrevisProof.sol\":\"BrevisProof\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/security/Pausable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (security/Pausable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which allows children to implement an emergency stop\\n * mechanism that can be triggered by an authorized account.\\n *\\n * This module is used through inheritance. It will make available the\\n * modifiers `whenNotPaused` and `whenPaused`, which can be applied to\\n * the functions of your contract. Note that they will not be pausable by\\n * simply including this module, only once the modifiers are put in place.\\n */\\nabstract contract Pausable is Context {\\n    /**\\n     * @dev Emitted when the pause is triggered by `account`.\\n     */\\n    event Paused(address account);\\n\\n    /**\\n     * @dev Emitted when the pause is lifted by `account`.\\n     */\\n    event Unpaused(address account);\\n\\n    bool private _paused;\\n\\n    /**\\n     * @dev Initializes the contract in unpaused state.\\n     */\\n    constructor() {\\n        _paused = false;\\n    }\\n\\n    /**\\n     * @dev Returns true if the contract is paused, and false otherwise.\\n     */\\n    function paused() public view virtual returns (bool) {\\n        return _paused;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is not paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    modifier whenNotPaused() {\\n        require(!paused(), \\\"Pausable: paused\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    modifier whenPaused() {\\n        require(paused(), \\\"Pausable: not paused\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Triggers stopped state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    function _pause() internal virtual whenNotPaused {\\n        _paused = true;\\n        emit Paused(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns to normal state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    function _unpause() internal virtual whenPaused {\\n        _paused = false;\\n        emit Unpaused(_msgSender());\\n    }\\n}\\n\",\"keccak256\":\"0xe68ed7fb8766ed1e888291f881e36b616037f852b37d96877045319ad298ba87\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/interfaces/ISMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../verifiers/zk-verifiers/common/IVerifier.sol\\\";\\n\\ninterface ISMT {\\n    struct SmtUpdate {\\n        bytes32 newSmtRoot;\\n        uint64 endBlockNum;\\n        bytes32 endBlockHash;\\n        bytes32 nextChunkMerkleRoot;\\n        uint256[8] proof;\\n        uint256[2] commit;\\n        uint256[2] knowledgeProof;\\n    }\\n\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external;\\n\\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xbbfb7cb72413235f93fa1c96081cfe0c3873fc31b9bf276572c780c82281378a\",\"license\":\"MIT\"},\"contracts/lib/RLPReader.sol\":{\"content\":\"// SPDX-License-Identifier: Apache-2.0\\n\\n/*\\n * @author Hamdi Allam hamdi.allam97@gmail.com\\n * Please reach out with any questions or concerns\\n */\\npragma solidity >=0.5.10 <0.9.0;\\n\\nlibrary RLPReader {\\n    uint8 constant STRING_SHORT_START = 0x80;\\n    uint8 constant STRING_LONG_START = 0xb8;\\n    uint8 constant LIST_SHORT_START = 0xc0;\\n    uint8 constant LIST_LONG_START = 0xf8;\\n    uint8 constant WORD_SIZE = 32;\\n\\n    struct RLPItem {\\n        uint256 len;\\n        uint256 memPtr;\\n    }\\n\\n    struct Iterator {\\n        RLPItem item; // Item that's being iterated over.\\n        uint256 nextPtr; // Position of the next item in the list.\\n    }\\n\\n    /*\\n     * @dev Returns the next element in the iteration. Reverts if it has not next element.\\n     * @param self The iterator.\\n     * @return The next element in the iteration.\\n     */\\n    function next(Iterator memory self) internal pure returns (RLPItem memory) {\\n        require(hasNext(self));\\n\\n        uint256 ptr = self.nextPtr;\\n        uint256 itemLength = _itemLength(ptr);\\n        self.nextPtr = ptr + itemLength;\\n\\n        return RLPItem(itemLength, ptr);\\n    }\\n\\n    /*\\n     * @dev Returns true if the iteration has more elements.\\n     * @param self The iterator.\\n     * @return true if the iteration has more elements.\\n     */\\n    function hasNext(Iterator memory self) internal pure returns (bool) {\\n        RLPItem memory item = self.item;\\n        return self.nextPtr < item.memPtr + item.len;\\n    }\\n\\n    /*\\n     * @param item RLP encoded bytes\\n     */\\n    function toRlpItem(bytes memory item) internal pure returns (RLPItem memory) {\\n        uint256 memPtr;\\n        assembly {\\n            memPtr := add(item, 0x20)\\n        }\\n\\n        return RLPItem(item.length, memPtr);\\n    }\\n\\n    /*\\n     * @dev Create an iterator. Reverts if item is not a list.\\n     * @param self The RLP item.\\n     * @return An 'Iterator' over the item.\\n     */\\n    function iterator(RLPItem memory self) internal pure returns (Iterator memory) {\\n        require(isList(self));\\n\\n        uint256 ptr = self.memPtr + _payloadOffset(self.memPtr);\\n        return Iterator(self, ptr);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function rlpLen(RLPItem memory item) internal pure returns (uint256) {\\n        return item.len;\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     * @return (memPtr, len) pair: location of the item's payload in memory.\\n     */\\n    function payloadLocation(RLPItem memory item) internal pure returns (uint256, uint256) {\\n        uint256 offset = _payloadOffset(item.memPtr);\\n        uint256 memPtr = item.memPtr + offset;\\n        uint256 len = item.len - offset; // data length\\n        return (memPtr, len);\\n    }\\n\\n    /*\\n     * @param the RLP item.\\n     */\\n    function payloadLen(RLPItem memory item) internal pure returns (uint256) {\\n        (, uint256 len) = payloadLocation(item);\\n        return len;\\n    }\\n\\n    /*\\n     * @param the RLP item containing the encoded list.\\n     */\\n    function toList(RLPItem memory item) internal pure returns (RLPItem[] memory) {\\n        require(isList(item));\\n\\n        uint256 items = numItems(item);\\n        RLPItem[] memory result = new RLPItem[](items);\\n\\n        uint256 memPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 dataLen;\\n        for (uint256 i = 0; i < items; i++) {\\n            dataLen = _itemLength(memPtr);\\n            result[i] = RLPItem(dataLen, memPtr);\\n            memPtr = memPtr + dataLen;\\n        }\\n\\n        return result;\\n    }\\n\\n    // @return indicator whether encoded payload is a list. negate this function call for isData.\\n    function isList(RLPItem memory item) internal pure returns (bool) {\\n        if (item.len == 0) return false;\\n\\n        uint8 byte0;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < LIST_SHORT_START) return false;\\n        return true;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toRlpBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of RLP encoded bytes.\\n     */\\n    function rlpBytesKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        uint256 ptr = item.memPtr;\\n        uint256 len = item.len;\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(ptr, len)\\n        }\\n        return result;\\n    }\\n\\n    /*\\n     * @dev A cheaper version of keccak256(toBytes(item)) that avoids copying memory.\\n     * @return keccak256 hash of the item payload.\\n     */\\n    function payloadKeccak256(RLPItem memory item) internal pure returns (bytes32) {\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes32 result;\\n        assembly {\\n            result := keccak256(memPtr, len)\\n        }\\n        return result;\\n    }\\n\\n    /** RLPItem conversions into data types **/\\n\\n    // @returns raw rlp encoding in bytes\\n    function toRlpBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        bytes memory result = new bytes(item.len);\\n        if (result.length == 0) return result;\\n\\n        uint256 ptr;\\n        assembly {\\n            ptr := add(0x20, result)\\n        }\\n\\n        copy(item.memPtr, ptr, item.len);\\n        return result;\\n    }\\n\\n    // any non-zero byte except \\\"0x80\\\" is considered true\\n    function toBoolean(RLPItem memory item) internal pure returns (bool) {\\n        require(item.len == 1);\\n        uint256 result;\\n        uint256 memPtr = item.memPtr;\\n        assembly {\\n            result := byte(0, mload(memPtr))\\n        }\\n\\n        // SEE Github Issue #5.\\n        // Summary: Most commonly used RLP libraries (i.e Geth) will encode\\n        // \\\"0\\\" as \\\"0x80\\\" instead of as \\\"0\\\". We handle this edge case explicitly\\n        // here.\\n        if (result == 0 || result == STRING_SHORT_START) {\\n            return false;\\n        } else {\\n            return true;\\n        }\\n    }\\n\\n    function toAddress(RLPItem memory item) internal pure returns (address) {\\n        // 1 byte for the length prefix\\n        require(item.len == 21);\\n\\n        return address(uint160(toUint(item)));\\n    }\\n\\n    function toUint(RLPItem memory item) internal pure returns (uint256) {\\n        require(item.len > 0 && item.len <= 33);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n\\n        uint256 result;\\n        assembly {\\n            result := mload(memPtr)\\n\\n            // shift to the correct location if neccesary\\n            if lt(len, 32) {\\n                result := div(result, exp(256, sub(32, len)))\\n            }\\n        }\\n\\n        return result;\\n    }\\n\\n    // enforces 32 byte length\\n    function toUintStrict(RLPItem memory item) internal pure returns (uint256) {\\n        // one byte prefix\\n        require(item.len == 33);\\n\\n        uint256 result;\\n        uint256 memPtr = item.memPtr + 1;\\n        assembly {\\n            result := mload(memPtr)\\n        }\\n\\n        return result;\\n    }\\n\\n    function toBytes(RLPItem memory item) internal pure returns (bytes memory) {\\n        require(item.len > 0);\\n\\n        (uint256 memPtr, uint256 len) = payloadLocation(item);\\n        bytes memory result = new bytes(len);\\n\\n        uint256 destPtr;\\n        assembly {\\n            destPtr := add(0x20, result)\\n        }\\n\\n        copy(memPtr, destPtr, len);\\n        return result;\\n    }\\n\\n    /*\\n     * Private Helpers\\n     */\\n\\n    // @return number of payload items inside an encoded list.\\n    function numItems(RLPItem memory item) private pure returns (uint256) {\\n        if (item.len == 0) return 0;\\n\\n        uint256 count = 0;\\n        uint256 currPtr = item.memPtr + _payloadOffset(item.memPtr);\\n        uint256 endPtr = item.memPtr + item.len;\\n        while (currPtr < endPtr) {\\n            currPtr = currPtr + _itemLength(currPtr); // skip over an item\\n            count++;\\n        }\\n\\n        return count;\\n    }\\n\\n    // @return entire rlp item byte length\\n    function _itemLength(uint256 memPtr) private pure returns (uint256) {\\n        uint256 itemLen;\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            itemLen = 1;\\n        } else if (byte0 < STRING_LONG_START) {\\n            itemLen = byte0 - STRING_SHORT_START + 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            assembly {\\n                let byteLen := sub(byte0, 0xb7) // # of bytes the actual length is\\n                memPtr := add(memPtr, 1) // skip over the first byte\\n\\n                /* 32 byte word size */\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to get the len\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        } else if (byte0 < LIST_LONG_START) {\\n            itemLen = byte0 - LIST_SHORT_START + 1;\\n        } else {\\n            assembly {\\n                let byteLen := sub(byte0, 0xf7)\\n                memPtr := add(memPtr, 1)\\n\\n                let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to the correct length\\n                itemLen := add(dataLen, add(byteLen, 1))\\n            }\\n        }\\n\\n        return itemLen;\\n    }\\n\\n    // @return number of bytes until the data\\n    function _payloadOffset(uint256 memPtr) private pure returns (uint256) {\\n        uint256 byte0;\\n        assembly {\\n            byte0 := byte(0, mload(memPtr))\\n        }\\n\\n        if (byte0 < STRING_SHORT_START) {\\n            return 0;\\n        } else if (byte0 < STRING_LONG_START || (byte0 >= LIST_SHORT_START && byte0 < LIST_LONG_START)) {\\n            return 1;\\n        } else if (byte0 < LIST_SHORT_START) {\\n            // being explicit\\n            return byte0 - (STRING_LONG_START - 1) + 1;\\n        } else {\\n            return byte0 - (LIST_LONG_START - 1) + 1;\\n        }\\n    }\\n\\n    /*\\n     * @param src Pointer to source\\n     * @param dest Pointer to destination\\n     * @param len Amount of memory to copy from the source\\n     */\\n    function copy(uint256 src, uint256 dest, uint256 len) private pure {\\n        if (len == 0) return;\\n\\n        // copy as many word sizes as possible\\n        for (; len >= WORD_SIZE; len -= WORD_SIZE) {\\n            assembly {\\n                mstore(dest, mload(src))\\n            }\\n\\n            src += WORD_SIZE;\\n            dest += WORD_SIZE;\\n        }\\n\\n        if (len > 0) {\\n            // left over bytes. Mask is used to remove unwanted bytes from the word\\n            uint256 mask = 256 ** (WORD_SIZE - len) - 1;\\n            assembly {\\n                let srcpart := and(mload(src), not(mask)) // zero out src\\n                let destpart := and(mload(dest), mask) // retrieve the bytes\\n                mstore(dest, or(destpart, srcpart))\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x7f97d4cac1e1d26e4e00ae578dc05c05e6c3c0876c61c62260796f4be217653b\",\"license\":\"Apache-2.0\"},\"contracts/safeguard/BrevisAccess.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-only\\n\\npragma solidity ^0.8.18;\\n\\nimport \\\"./Pauser.sol\\\";\\n\\n// prover and pauser access control using a single map lookup\\nabstract contract BrevisAccess is Pauser {\\n    enum ProverState {\\n        Null,\\n        Active,\\n        Paused\\n    }\\n    mapping(address => ProverState) public proverStates;\\n    address[] public provers;\\n\\n    event ProverAdded(address account);\\n    event ProverRemoved(address account);\\n\\n    modifier onlyProver() {\\n        require(proverStates[msg.sender] != ProverState.Null, \\\"invalid prover\\\");\\n        _;\\n    }\\n\\n    modifier onlyActiveProver() {\\n        require(proverStates[msg.sender] == ProverState.Active, \\\"invalid prover\\\");\\n        _;\\n    }\\n\\n    function addProvers(address[] memory _accounts) public onlyOwner {\\n        ProverState state = paused() ? ProverState.Paused : ProverState.Active;\\n        for (uint256 i = 0; i < _accounts.length; i++) {\\n            _addProver(_accounts[i], state);\\n        }\\n    }\\n\\n    function removeProvers(address[] memory _accounts) public onlyOwner {\\n        for (uint256 i = 0; i < _accounts.length; i++) {\\n            _removeProver(_accounts[i]);\\n        }\\n    }\\n\\n    function pause() public override onlyPauser {\\n        _pause();\\n        for (uint256 i = 0; i < provers.length; i++) {\\n            proverStates[provers[i]] = ProverState.Paused;\\n        }\\n    }\\n\\n    function unpause() public override onlyPauser {\\n        _unpause();\\n        for (uint256 i = 0; i < provers.length; i++) {\\n            proverStates[provers[i]] = ProverState.Active;\\n        }\\n    }\\n\\n    function numProvers() public view returns (uint256) {\\n        return provers.length;\\n    }\\n\\n    function isActiveProver(address _account) public view returns (bool) {\\n        return proverStates[_account] == ProverState.Active;\\n    }\\n\\n    function _addProver(address _account, ProverState _state) private {\\n        require(proverStates[_account] == ProverState.Null, \\\"account is prover\\\");\\n        provers.push(_account);\\n        proverStates[_account] = _state;\\n        emit ProverAdded(_account);\\n    }\\n\\n    function _removeProver(address _account) private {\\n        require(proverStates[_account] != ProverState.Null, \\\"account is not prover\\\");\\n        uint256 lastIndex = provers.length - 1;\\n        for (uint256 i = 0; i < provers.length; i++) {\\n            if (provers[i] == _account) {\\n                if (i < lastIndex) {\\n                    provers[i] = provers[lastIndex];\\n                }\\n                provers.pop();\\n                delete proverStates[_account];\\n                emit ProverRemoved(_account);\\n                return;\\n            }\\n        }\\n        revert(\\\"prover not found\\\"); // this should never happen\\n    }\\n}\\n\",\"keccak256\":\"0x411b73836bffcbf25f4ee5ed974006b77b9b5241bb8f15239df6516126e39dec\",\"license\":\"GPL-3.0-only\"},\"contracts/safeguard/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-only\\n\\npragma solidity ^0.8.18;\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n *\\n * This adds a normal func that setOwner if _owner is address(0). So we can't allow\\n * renounceOwnership. So we can support Proxy based upgradable contract\\n */\\nabstract contract Ownable {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _setOwner(msg.sender);\\n    }\\n\\n    /**\\n     * @dev Only to be called by inherit contracts, in their init func called by Proxy\\n     * we require _owner == address(0), which is only possible when it's a delegateCall\\n     * because constructor sets _owner in contract state.\\n     */\\n    function initOwner() internal {\\n        require(_owner == address(0), \\\"owner already set\\\");\\n        _setOwner(msg.sender);\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == msg.sender, \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _setOwner(newOwner);\\n    }\\n\\n    function _setOwner(address newOwner) private {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x1e4163b2b1845766261562e5784f21cc74dd4eab16e6d05737477ea70e056ba1\",\"license\":\"GPL-3.0-only\"},\"contracts/safeguard/Pauser.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-only\\n\\npragma solidity ^0.8.18;\\n\\nimport \\\"@openzeppelin/contracts/security/Pausable.sol\\\";\\nimport \\\"./Ownable.sol\\\";\\n\\nabstract contract Pauser is Ownable, Pausable {\\n    mapping(address => bool) public pausers;\\n    address[] public pauserList;\\n\\n    event PauserAdded(address account);\\n    event PauserRemoved(address account);\\n\\n    constructor() {\\n        _addPauser(msg.sender);\\n    }\\n\\n    modifier onlyPauser() {\\n        require(isPauser(msg.sender), \\\"Caller is not pauser\\\");\\n        _;\\n    }\\n\\n    function pause() public virtual onlyPauser {\\n        _pause();\\n    }\\n\\n    function unpause() public virtual onlyPauser {\\n        _unpause();\\n    }\\n\\n    function isPauser(address account) public view returns (bool) {\\n        return pausers[account];\\n    }\\n\\n    function addPauser(address account) public onlyOwner {\\n        _addPauser(account);\\n    }\\n\\n    function addPausers(address[] memory accounts) public onlyOwner {\\n        for (uint256 i = 0; i < accounts.length; i++) {\\n            _addPauser(accounts[i]);\\n        }\\n    }\\n\\n    function removePauser(address account) public onlyOwner {\\n        _removePauser(account);\\n    }\\n\\n    function removePausers(address[] memory accounts) public onlyOwner {\\n        for (uint256 i = 0; i < accounts.length; i++) {\\n            _removePauser(accounts[i]);\\n        }\\n    }\\n\\n    function renouncePauser() public {\\n        _removePauser(msg.sender);\\n    }\\n\\n    function numPausers() public view returns (uint256) {\\n        return pauserList.length;\\n    }\\n\\n    function _addPauser(address account) private {\\n        require(!isPauser(account), \\\"Account is already pauser\\\");\\n        pauserList.push(account);\\n        pausers[account] = true;\\n        emit PauserAdded(account);\\n    }\\n\\n    function _removePauser(address account) private {\\n        require(isPauser(account), \\\"Account is not pauser\\\");\\n        uint256 lastIndex = pauserList.length - 1;\\n        for (uint256 i = 0; i < pauserList.length; i++) {\\n            if (pauserList[i] == account) {\\n                if (i < lastIndex) {\\n                    pauserList[i] = pauserList[lastIndex];\\n                }\\n                pauserList.pop();\\n                pausers[account] = false;\\n                emit PauserRemoved(account);\\n                return;\\n            }\\n        }\\n        revert(\\\"pauser not found\\\"); // this should never happen\\n    }\\n}\\n\",\"keccak256\":\"0xa8863b69e8c3b212ea9c9fae9cf8809e47b05ed4abd5168b8bc5156637bc4db0\",\"license\":\"GPL-3.0-only\"},\"contracts/sdk/core/BrevisAggProof.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../lib/Lib.sol\\\";\\nimport \\\"../../interfaces/ISMT.sol\\\";\\nimport \\\"../../verifiers/interfaces/IZkpVerifier.sol\\\";\\nimport \\\"../../safeguard/BrevisAccess.sol\\\";\\n\\ncontract BrevisAggProof is BrevisAccess {\\n    uint32 constant PUBLIC_BYTES_START_IDX = 12 * 32; // the first 12 32bytes are groth16 proof (A/B/C/Commitment/CommitmentPOK)\\n    uint8 constant TREE_DEPTH = 4;\\n    uint256 constant LEAF_NODES_LEN = 2 ** TREE_DEPTH;\\n\\n    ISMT public smtContract;\\n\\n    mapping(bytes32 => bool) public merkleRoots;\\n    mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;\\n    event SmtContractUpdated(address smtContract);\\n    event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);\\n\\n    constructor(ISMT _smtContract) {\\n        smtContract = _smtContract;\\n    }\\n\\n    /*********************************\\n     * External and Public Functions *\\n     *********************************/\\n\\n    function submitAggProof(\\n        uint64 _chainId,\\n        bytes32[] calldata _proofIds,\\n        bytes calldata _proofWithPubInputs\\n    ) external onlyActiveProver {\\n        IZkpVerifier verifier = aggProofVerifierAddress[_chainId];\\n        require(address(verifier) != address(0), \\\"chain agg proof verifier not set\\\");\\n        require(verifier.verifyRaw(_proofWithPubInputs), \\\"proof not valid\\\");\\n\\n        (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);\\n\\n        uint dataLen = _proofIds.length;\\n        bytes32[LEAF_NODES_LEN] memory rIds;\\n        for (uint i = 0; i < dataLen; i++) {\\n            rIds[i] = _proofIds[i];\\n        }\\n        // note, to align with circuit, rIds[dataLen] to rIds[LEAF_NODES_LEN - 1] filled with last real one\\n        if (dataLen < LEAF_NODES_LEN) {\\n            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {\\n                rIds[i] = rIds[dataLen - 1];\\n            }\\n        }\\n        require(keccak256(abi.encodePacked(rIds)) == commitHash, \\\"proofIds not right\\\");\\n        merkleRoots[root] = true;\\n    }\\n\\n    // validate all leaf nodes in the agg proof data\\n    function validateAggProofData(uint64 _chainId, Brevis.ProofData[] calldata _proofDataArray) external view {\\n        uint dataLen = _proofDataArray.length;\\n        require(dataLen <= LEAF_NODES_LEN, \\\"size exceeds\\\");\\n        bytes32[2 * LEAF_NODES_LEN - 1] memory hashes;\\n        for (uint i = 0; i < dataLen; i++) {\\n            require(smtContract.isSmtRootValid(_chainId, _proofDataArray[i].smtRoot), \\\"invalid smt root\\\");\\n            hashes[i] = keccak256(\\n                abi.encodePacked(\\n                    _proofDataArray[i].commitHash,\\n                    _proofDataArray[i].smtRoot,\\n                    _proofDataArray[i].vkHash,\\n                    _proofDataArray[i].appCommitHash,\\n                    _proofDataArray[i].appVkHash\\n                )\\n            );\\n        }\\n        // note, hashes[dataLen] to hashes[LEAF_NODES_LEN - 1] filled with last real one\\n        if (dataLen < LEAF_NODES_LEN) {\\n            for (uint i = dataLen; i < LEAF_NODES_LEN; i++) {\\n                hashes[i] = hashes[dataLen - 1];\\n            }\\n        }\\n\\n        uint shift = 0;\\n        uint counter = LEAF_NODES_LEN;\\n        while (counter > 0) {\\n            for (uint i = 0; i < counter - 1; i += 2) {\\n                hashes[shift + counter + i / 2] = keccak256(abi.encodePacked(hashes[shift + i], hashes[shift + i + 1]));\\n            }\\n            shift += counter;\\n            counter /= 2;\\n        }\\n\\n        require(merkleRoots[hashes[hashes.length - 1]], \\\"merkle root not exists\\\");\\n    }\\n\\n    // validate a single leaf node in the agg proof data\\n    function validateAggProofData(\\n        uint64 _chainId,\\n        Brevis.ProofData calldata _proofData,\\n        bytes32 _merkleRoot,\\n        bytes32[] calldata _merkleProof,\\n        uint8 _nodeIndex\\n    ) external view {\\n        require(merkleRoots[_merkleRoot], \\\"merkle root not exists\\\");\\n        require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), \\\"invalid smt root\\\");\\n\\n        bytes32 proofDataHash = keccak256(\\n            abi.encodePacked(\\n                _proofData.commitHash,\\n                _proofData.smtRoot,\\n                _proofData.vkHash,\\n                _proofData.appCommitHash,\\n                _proofData.appVkHash\\n            )\\n        );\\n        bytes32 root = proofDataHash;\\n        for (uint8 depth = 0; depth < TREE_DEPTH; depth++) {\\n            if ((_nodeIndex >> depth) & 1 == 0) {\\n                root = keccak256(abi.encodePacked(root, _merkleProof[depth]));\\n            } else {\\n                root = keccak256(abi.encodePacked(_merkleProof[depth], root));\\n            }\\n        }\\n        require(_merkleRoot == root, \\\"invalid data\\\");\\n    }\\n\\n    // -------- owner functions --------\\n\\n    function updateSmtContract(ISMT _smtContract) public onlyOwner {\\n        smtContract = _smtContract;\\n        emit SmtContractUpdated(address(smtContract));\\n    }\\n\\n    function updateAggProofVerifierAddresses(\\n        uint64[] calldata _chainIds,\\n        IZkpVerifier[] calldata _verifierAddresses\\n    ) public onlyOwner {\\n        require(_chainIds.length == _verifierAddresses.length, \\\"length not match\\\");\\n        for (uint256 i = 0; i < _chainIds.length; i++) {\\n            aggProofVerifierAddress[_chainIds[i]] = _verifierAddresses[i];\\n        }\\n        emit AggProofVerifierAddressesUpdated(_chainIds, _verifierAddresses);\\n    }\\n\\n    /**********************************\\n     * Internal and Private Functions *\\n     **********************************/\\n\\n    function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {\\n        merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);\\n        commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);\\n    }\\n}\\n\",\"keccak256\":\"0x2b6aeb61d78e4551dbe7673dd2cdf4647efb01c7f330e21bef8ca8d8192b5af8\",\"license\":\"MIT\"},\"contracts/sdk/core/BrevisProof.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"./BrevisAggProof.sol\\\";\\nimport \\\"../lib/Lib.sol\\\";\\nimport \\\"../../interfaces/ISMT.sol\\\";\\nimport \\\"../../verifiers/interfaces/IZkpVerifier.sol\\\";\\n\\ncontract BrevisProof is BrevisAggProof {\\n    mapping(uint64 => IZkpVerifier) public verifierAddresses; // chainid => snark verifier contract address\\n    mapping(bytes32 => bytes32) public proofs; // proofId => keccak256(abi.encodePacked(appCommitHash, appVkHash));\\n    event VerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);\\n\\n    constructor(ISMT _smtContract) BrevisAggProof(_smtContract) {}\\n\\n    // To support upgradable deployment.\\n    // Can only be called once by Proxy via delegateCall, as initOwner will require _owner is 0.\\n    function init(ISMT _smtContract) external {\\n        initOwner();\\n        smtContract = _smtContract;\\n    }\\n\\n    /*********************************\\n     * External and Public Functions *\\n     *********************************/\\n\\n    function submitProof(\\n        uint64 _chainId,\\n        bytes calldata _proofWithPubInputs\\n    ) external onlyActiveProver returns (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) {\\n        require(verifyRaw(_chainId, _proofWithPubInputs), \\\"proof not valid\\\");\\n        Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs);\\n\\n        proofId = data.commitHash;\\n        appCommitHash = data.appCommitHash;\\n        appVkHash = data.appVkHash;\\n        require(smtContract.isSmtRootValid(_chainId, data.smtRoot), \\\"smt root not valid\\\");\\n        proofs[proofId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));\\n    }\\n\\n    function validateProofAppData(\\n        bytes32 _proofId,\\n        bytes32 _appCommitHash,\\n        bytes32 _appVkHash\\n    ) external view returns (bool) {\\n        require(proofs[_proofId] == keccak256(abi.encodePacked(_appCommitHash, _appVkHash)), \\\"invalid data\\\");\\n        return true;\\n    }\\n\\n    // -------- owner functions --------\\n\\n    function updateVerifierAddress(\\n        uint64[] calldata _chainIds,\\n        IZkpVerifier[] calldata _verifierAddresses\\n    ) public onlyOwner {\\n        require(_chainIds.length == _verifierAddresses.length, \\\"length not match\\\");\\n        for (uint256 i = 0; i < _chainIds.length; i++) {\\n            verifierAddresses[_chainIds[i]] = _verifierAddresses[i];\\n        }\\n        emit VerifierAddressesUpdated(_chainIds, _verifierAddresses);\\n    }\\n\\n    /**********************************\\n     * Internal and Private Functions *\\n     **********************************/\\n\\n    function unpackProofData(bytes calldata _proofWithPubInputs) internal pure returns (Brevis.ProofData memory data) {\\n        data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);\\n        data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);\\n        //data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);\\n        data.appCommitHash = bytes32(\\n            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]\\n        );\\n        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);\\n    }\\n\\n    function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {\\n        IZkpVerifier verifier = verifierAddresses[_chainId];\\n        require(address(verifier) != address(0), \\\"chain verifier not set\\\");\\n        return verifier.verifyRaw(_proofWithPubInputs);\\n    }\\n}\\n\",\"keccak256\":\"0x0c2121a75bed4e9c528ed524514833fb2d38f7a46305c6fcfe3b25cd7cfb261a\",\"license\":\"MIT\"},\"contracts/sdk/lib/Lib.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../../lib/RLPReader.sol\\\";\\n\\nlibrary Brevis {\\n    // retrieved from proofData, to align the logs with circuit...\\n    struct ProofData {\\n        bytes32 commitHash;\\n        bytes32 vkHash;\\n        bytes32 appCommitHash; // zk-program computing circuit commit hash\\n        bytes32 appVkHash; // zk-program computing circuit Verify Key hash\\n        bytes32 smtRoot;\\n    }\\n\\n    struct ProofAppData {\\n        bytes32 appCommitHash;\\n        bytes32 appVkHash;\\n    }\\n}\\n\\nlibrary Tx {\\n    using RLPReader for bytes;\\n    using RLPReader for uint;\\n    using RLPReader for RLPReader.RLPItem;\\n\\n    struct TxInfo {\\n        uint64 chainId;\\n        uint64 nonce;\\n        uint256 gasTipCap;\\n        uint256 gasFeeCap;\\n        uint256 gas;\\n        address to;\\n        uint256 value;\\n        bytes data;\\n        address from; // calculate from V R S\\n    }\\n\\n    // support DynamicFeeTxType for now\\n    function decodeTx(bytes calldata txRaw) public pure returns (TxInfo memory info) {\\n        uint8 txType = uint8(txRaw[0]);\\n        require(txType == 2, \\\"not a DynamicFeeTxType\\\");\\n\\n        bytes memory rlpData = txRaw[1:];\\n        RLPReader.RLPItem[] memory values = rlpData.toRlpItem().toList();\\n        info.chainId = uint64(values[0].toUint());\\n        info.nonce = uint64(values[1].toUint());\\n        info.gasTipCap = values[2].toUint();\\n        info.gasFeeCap = values[3].toUint();\\n        info.gas = values[4].toUint();\\n        info.to = values[5].toAddress();\\n        info.value = values[6].toUint();\\n        info.data = values[7].toBytes();\\n\\n        (uint8 v, bytes32 r, bytes32 s) = (\\n            uint8(values[9].toUint()),\\n            bytes32(values[10].toBytes()),\\n            bytes32(values[11].toBytes())\\n        );\\n        // remove r,s,v and adjust length field\\n        bytes memory unsignedTxRaw;\\n        uint16 unsignedTxRawDataLength;\\n        uint8 prefix = uint8(txRaw[1]);\\n        uint8 lenBytes = prefix - 0xf7; // assume lenBytes won't larger than 2, means the tx rlp data size won't exceed 2^16\\n        if (lenBytes == 1) {\\n            unsignedTxRawDataLength = uint8(bytes1(txRaw[2:3])) - 67; //67 is the bytes of r,s,v\\n        } else {\\n            unsignedTxRawDataLength = uint16(bytes2(txRaw[2:2 + lenBytes])) - 67;\\n        }\\n        if (unsignedTxRawDataLength <= 55) {\\n            unsignedTxRaw = abi.encodePacked(txRaw[:2], txRaw[3:txRaw.length - 67]);\\n            unsignedTxRaw[1] = bytes1(0xc0 + uint8(unsignedTxRawDataLength));\\n        } else {\\n            if (unsignedTxRawDataLength <= 255) {\\n                unsignedTxRaw = abi.encodePacked(\\n                    txRaw[0],\\n                    bytes1(0xf8),\\n                    bytes1(uint8(unsignedTxRawDataLength)),\\n                    txRaw[2 + lenBytes:txRaw.length - 67]\\n                );\\n            } else {\\n                unsignedTxRaw = abi.encodePacked(\\n                    txRaw[0],\\n                    bytes1(0xf9),\\n                    bytes2(unsignedTxRawDataLength),\\n                    txRaw[2 + lenBytes:txRaw.length - 67]\\n                );\\n            }\\n        }\\n        info.from = recover(keccak256(unsignedTxRaw), r, s, v);\\n    }\\n\\n    function recover(bytes32 message, bytes32 r, bytes32 s, uint8 v) internal pure returns (address) {\\n        if (v < 27) {\\n            v += 27;\\n        }\\n        return ecrecover(message, v, r, s);\\n    }\\n}\\n\",\"keccak256\":\"0x2fcf2bf8e987052c3c8bfb8c13c9f8d339aa99ee233e683d78bbdce82502f0b5\",\"license\":\"MIT\"},\"contracts/verifiers/interfaces/IZkpVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IZkpVerifier {\\n    function verifyRaw(bytes calldata proofData) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0xe5497c1800b1907820f57db5cbbb09ca63c0b2cacc3223639a1e53502d5caa53\",\"license\":\"MIT\"},\"contracts/verifiers/zk-verifiers/common/IVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IVerifier {\\n    function verifyProof(\\n        uint256[8] calldata proof,\\n        uint256[2] calldata commit,\\n        uint256[2] calldata knowledgeProof,\\n        uint256[9] calldata input\\n    ) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0x856e6f88e5a1384f9a2460347b42bf44423ec28500bc7c82c43ac38a6b423082\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608034620001b457601f620025aa38819003918201601f1916830192916001600160401b03841183851017620001b95780839260409586528339602092839181010312620001b457516001600160a01b03808216929091839003620001b4576000918254855191339082167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08680a36001600160a81b0319163360ff60a01b1981169190911784558352600182528483205460ff1662000174575060025468010000000000000000811015620001605760018101806002558110156200014c5790847f6719d08c1888103bea251a4ed56406bd0c3e69723c8a1686e017e7bbe159b6f89260028552828520019360018060a01b03199433868254161790553381526001835220600160ff198254161790558451338152a16005541617600555516123da9081620001d08239f35b634e487b7160e01b83526032600452602483fd5b634e487b7160e01b83526041600452602483fd5b60649162461bcd60e51b82526004820152601960248201527f4163636f756e7420697320616c726561647920706175736572000000000000006044820152fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe6040608081526004908136101561001557600080fd5b600091823560e01c80631396511e146117f5578063158535ff146117c357806319ab453c1461172f5780633221aec6146117075780633bda38a3146113915780633f4ba83a14611290578063444d95b01461126957806346fbf68e14610c6f5780634f4fef181461124c57806350d410631461118c57806358a16b441461116d5780635c975abb14611148578063677625f214610fb75780636b2c0f5514610f805780636ef8d66d14610f665780637b1cc45014610d7b5780637dbafb1114610cab57806380f51c1214610c6f57806382dc1ec414610c385780638456cb5914610b1f5780638da5cb5b14610af95780639017837014610aa8578063a036e79914610a58578063b4f7a72714610776578063ceae339014610735578063e04409531461045c578063e6c6fcec1461040c578063e79b7a51146103b3578063ec64842e14610357578063f2fde38b146102a9578063f5cec6af14610268578063fabc74f51461020a578063fd1190ea146101c65763fe5a53771461019757600080fd5b346101c25760203660031901126101c2578160209360ff923581526006855220541690519015158152f35b8280fd5b509134610207576020366003190112610207578235925483101561020757506001600160a01b036101f86020936118b8565b92905490519260031b1c168152f35b80fd5b50919034610264576020366003190112610264576001600160a01b0361022e61190b565b168252600360205260ff8183205416905191600382101561025157602083838152f35b634e487b7160e01b815260218452602490fd5b5080fd5b505034610264576020366003190112610264576001600160a01b038160209367ffffffffffffffff6102986118ef565b168152600885522054169051908152f35b50346101c25760203660031901126101c2576102c361190b565b916001600160a01b036102da818654163314611ab0565b8316156102ee57836102eb84611d58565b80f35b906020608492519162461bcd60e51b8352820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152fd5b508234610207576020366003190112610207576001600160a01b0361037a61190b565b168152600360205260ff83822054169160038310156103a0576020836001865191148152f35b634e487b7160e01b825260219052602490fd5b8334610207576103c2366119f1565b906001600160a01b03916103da838354163314611ab0565b815b815181101561040857806103fe856103f76104039486611b20565b5116611da0565b611afb565b6103dc565b8280f35b83346102075761041b366119f1565b906001600160a01b0391610433838354163314611ab0565b815b815181101561040857806103fe856104506104579486611b20565b5116611b80565b610435565b5090346101c257806003193601126101c2576104766118ef565b906024359267ffffffffffffffff93848111610731576104999036908301611a82565b90913387526020916003835260ff8589205416600381101561071e5760016104c19114612044565b8686168852600883526001600160a01b039384868a20541680156106db5784875180926322bb937360e11b825281806104fd88888b84016120a8565b03915afa9081156106d1579061051a918b916106b4575b506120d0565b85519760a08901908111898210176106a157865288885288848901528588019489865260608901978a895260808a01918b835261056061055a8686612361565b90612387565b809b5261057061055a8686612374565b8093526102009480861161069d576101e085013580995261022011610699576105d09487940135809a526005541690885180958194829363080cdb0b60e11b84528984016020909392919367ffffffffffffffff60408201951681520152565b03915afa90811561068f578891610662575b501561062157506060958380518381019085825287838201528281526106078161199d565b519020918781526009845220558251948552840152820152f35b60649184519162461bcd60e51b8352820152601260248201527f736d7420726f6f74206e6f742076616c696400000000000000000000000000006044820152fd5b6106829150833d8511610688575b61067a81836119cf565b810190612090565b386105e2565b503d610670565b85513d8a823e3d90fd5b8b80fd5b8c80fd5b634e487b7160e01b8a526041845260248afd5b6106cb9150863d88116106885761067a81836119cf565b38610514565b87513d8c823e3d90fd5b865162461bcd60e51b8152808501869052601660248201527f636861696e207665726966696572206e6f7420736574000000000000000000006044820152606490fd5b634e487b7160e01b895260218352602489fd5b8580fd5b505034610264576020366003190112610264576001600160a01b038160209367ffffffffffffffff6107656118ef565b168152600785522054169051908152f35b5090346101c25760603660031901126101c2576107916118ef565b91602467ffffffffffffffff8135818111610a54576107b39036908501611921565b9093604435838111610a50576107cc9036908301611a82565b959094338a526020966003885260ff898c2054169960038b1015610a3e5786906107f96001809d14612044565b168b52600788526001600160a01b03898c20541680156109fe5789516322bb937360e11b815290899082908180610833878e8c84016120a8565b03915afa908c82156109f35761055a9261086a949261085792916109dc57506120d0565b61086461055a828b612361565b98612374565b9288519261020090818501858110898211176109ca578b52813686378c5b8781106109ab57505060109586811061095a575b50895195898701948d908d8c885b8585106109455750505050505085526102208501958587109087111761093457505083875282519020036108f05750508452600690528220805460ff1916909117905580f35b907f70726f6f66496473206e6f7420726967687400000000000000000000000000006102646064938662461bcd60e51b855261022482015260126102448201520152fd5b634e487b7160e01b8b526041905289fd5b819084518152019201920191908c8f916108aa565b805b878110610969575061089c565b60001982018281116109995790610983610994928861212c565b5161098e828961212c565b52611afb565b61095c565b634e487b7160e01b8f5260118552858ffd5b806109ba6109c5928a8561211c565b3561098e828961212c565b610888565b634e487b7160e01b8e5260418452848efd5b6106cb91508c8d3d106106885761067a81836119cf565b8b51903d90823e3d90fd5b6064858a85818e519362461bcd60e51b85528401528201527f636861696e206167672070726f6f66207665726966696572206e6f74207365746044820152fd5b634e487b7160e01b8c5260218552828cfd5b8880fd5b8680fd5b833461020757610a67366119f1565b906001600160a01b0391610a7f838354163314611ab0565b815b815181101561040857806103fe85610a9c610aa39486611b20565b5116611e86565b610a81565b50346101c25760603660031901126101c25781602093610af292358152600985522054825184810190602435825260443585820152848152610ae98161199d565b51902014612203565b5160018152f35b5050346102645781600319360112610264576001600160a01b0360209254169051908152f35b5090346101c257826003193601126101c257338352600191602090838252610b4c60ff8487205416611b34565b845460ff8160a01c16610bf65760ff60a01b197401000000000000000000000000000000000000000091161785557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258828451338152a184845b610bad578580f35b8154811015610bf257806001600160a01b03610bcb610bec936118b8565b919054600392831b1c1688528452848720600260ff19825416179055611afb565b84610ba5565b8580f35b50915162461bcd60e51b815291820152601060248201527f5061757361626c653a20706175736564000000000000000000000000000000006044820152606490fd5b8334610207576020366003190112610207576102eb610c5561190b565b610c6a6001600160a01b038454163314611ab0565b611da0565b5050346102645760203660031901126102645760ff816020936001600160a01b03610c9861190b565b1681526001855220541690519015158152f35b50503461026457610cbb36611952565b91936001600160a01b03610cd3818854163314611ab0565b610cde84871461224f565b865b868110610d2157877f4a5f8b4623084de3ef4b23e6c713416b50a966a1914aaf21175d206015e59d4e8888610d1b89898951948594856122c4565b0390a180f35b80610d38610d33610d7693888861211c565b61229b565b67ffffffffffffffff610d54610d4f848c8c61211c565b6122af565b168a52600760205283858b2091166001600160a01b0319825416179055611afb565b610ce0565b509190346102645761012036600319011261026457610d986118ef565b9160a03660231901126102075760c4359360e43567ffffffffffffffff81116101c257610dc89036908301611921565b9095610104359660ff958689168099036107315782865260209160068352610df48883892054166121b7565b600554825163080cdb0b60e11b815267ffffffffffffffff909a168a880190815260a435602082018190529a91859183916001600160a01b0316908290819060400103915afa908115610f5c5790610e53918991610f3f575b5061214d565b815160248035858301908152602081019b909b5260443560408c015260643560608c015260843560808c01529990610e988160a084015b03601f1981018352826119cf565b5190209387945b89861688811015610f33578a91908d811c600116610f0457610ec290898661211c565b3585519087820192835286820152858152610edc8161199d565b519020955b16898114610ef25760010194610e9f565b634e487b7160e01b8952601188528a89fd5b610f0f90898661211c565b359085519087820192835286820152858152610f2a8161199d565b51902095610ee1565b896102eb838514612203565b610f569150853d87116106885761067a81836119cf565b38610e4d565b83513d8a823e3d90fd5b83346102075780600319360112610207576102eb33611e86565b8334610207576020366003190112610207576102eb610f9d61190b565b610fb26001600160a01b038454163314611ab0565b611e86565b50913461020757610fc7366119f1565b918154906001600160a01b0391610fe13384831614611ab0565b60ff9060a01c811615611140576002925b845b8651811015610bf257816110088289611b20565b511680875260039060209180835285878a2054168181101561112d576110ea578a54680100000000000000008110156110d7578261104f828e600161106f950190556118b8565b90919082549060031b916001600160a01b03809116831b921b1916179055565b818952808352868920908810156110c457917fef1fa0a4d797341645c201a742cf59be633da0589e0e3cda511cfc90cd039684916110bf949360ff19815416888b161790558751908152a1611afb565b610ff4565b634e487b7160e01b895260218b52602489fd5b634e487b7160e01b8a5260418c5260248afd5b865162461bcd60e51b8152808c01849052601160248201527f6163636f756e742069732070726f7665720000000000000000000000000000006044820152606490fd5b634e487b7160e01b8a5260218c5260248afd5b600192610ff2565b50503461026457816003193601126102645760ff6020925460a01c1690519015158152f35b5050346102645781600319360112610264576020906002549051908152f35b5050346102645761119c36611952565b91936001600160a01b036111b4818854163314611ab0565b6111bf84871461224f565b865b8681106111fc57877f10ec8ad6a03997446c98d9aabf3ad339cc9621ec7cd4b47b04fe1ba8f75b42238888610d1b89898951948594856122c4565b8061120e610d3361124793888861211c565b67ffffffffffffffff611225610d4f848c8c61211c565b168a52600860205283858b2091166001600160a01b0319825416179055611afb565b6111c1565b50346101c257826003193601126101c25760209250549051908152f35b50346101c25760203660031901126101c25760209282913581526009845220549051908152f35b5091903461026457816003193601126102645733825260019060208281526112bd60ff8386205416611b34565b83549460ff8660a01c16156113505760ff60a01b198495961686557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa828451338152a185935b61130b578580f35b8054841015610bf25761134a846001600160a01b0361132a88976118b8565b919054600392831b1c16895284528488208660ff19825416179055611afb565b93611303565b915162461bcd60e51b815291820152601460248201527f5061757361626c653a206e6f74207061757365640000000000000000000000006044820152606490fd5b50346101c257816003193601126101c2576113aa6118ef565b90602480359167ffffffffffffffff93848411610a545736602385011215610a54578382013590858211611703578385019484369160a08502010111611703576010948583116116c1578751966103e090818901908111898210176116af5789939293523688376005546001600160a01b03169089805b85811061159857505050505083811061154a575b5085835b61145a57866102eb60ff886103c089015184526006602052832054166121b7565b919486949193965b60001988018881116115385781101561151b5761148861148282866121aa565b84612199565b5161149382866121aa565b90600191828101809111611509576114ea916114b26114e49288612199565b5186519060208201928352878201528681526114cd8161199d565b51902092846114dc8d8a6121aa565b911c906121aa565b85612199565b52600281018091111561146257634e487b7160e01b8652601185528686fd5b634e487b7160e01b8952601188528989fd5b5094918661152d9197949295976121aa565b9260011c9283611439565b634e487b7160e01b8752601186528787fd5b600019810190808211905b858110611563575050611435565b8161158657611581906115768489612199565b5161098e828a612199565b611555565b634e487b7160e01b8952601184528489fd5b60808b6115e1858a846115ac878d8d61213d565b013584518094819263080cdb0b60e11b8352602095869584016020909392919367ffffffffffffffff60408201951681520152565b03818b5afa9586156116a4576116869661167993611604929161168d575061214d565b610e8a611612868c8c61213d565b359461161f878d8d61213d565b0135938a8c606061164d8a8761163682868861213d565b0135938661164583838961213d565b01359561213d565b0135925196879586019889939160a0959391855260208501526040840152606083015260808201520190565b51902061098e828c612199565b8a90611421565b610f569150833d85116106885761067a81836119cf565b8351903d90823e3d90fd5b634e487b7160e01b8b5260418652868bfd5b875162461bcd60e51b8152602081860152600c818701527f73697a65206578636565647300000000000000000000000000000000000000006044820152606490fd5b8780fd5b5050346102645781600319360112610264576020906001600160a01b03600554169051908152f35b50346101c25760203660031901126101c2578035916001600160a01b038084168094036117bf5784541661177c57505061176833611d58565b6001600160a01b0319600554161760055580f35b906020606492519162461bcd60e51b8352820152601160248201527f6f776e657220616c7265616479207365740000000000000000000000000000006044820152fd5b8480fd5b50346101c25760203660031901126101c257359160025483101561020757506001600160a01b036101f860209361186b565b50346101c25760203660031901126101c257356001600160a01b0390818116809103611867577f674c535cde998bcb47d0688f644df545597c7d6edb95643cb21c82c2d490ff7f9261184d6020938654163314611ab0565b816001600160a01b0319600554161760055551908152a180f35b8380fd5b6002548110156118a25760026000527f405787fa12a823e0f2b7631cc41b3ba8828b3321ca811111fa75cd3aa3bb5ace0190600090565b634e487b7160e01b600052603260045260246000fd5b6004548110156118a25760046000527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0190600090565b6004359067ffffffffffffffff8216820361190657565b600080fd5b600435906001600160a01b038216820361190657565b9181601f840112156119065782359167ffffffffffffffff8311611906576020808501948460051b01011161190657565b60406003198201126119065767ffffffffffffffff91600435838111611906578261197f91600401611921565b939093926024359182116119065761199991600401611921565b9091565b6060810190811067ffffffffffffffff8211176119b957604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff8211176119b957604052565b6020806003198301126119065767ffffffffffffffff9160043583811161190657816023820112156119065780600401359384116119b9578360051b9060405194611a3e858401876119cf565b855260248486019282010192831161190657602401905b828210611a63575050505090565b81356001600160a01b0381168103611906578152908301908301611a55565b9181601f840112156119065782359167ffffffffffffffff8311611906576020838186019501011161190657565b15611ab757565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b6000198114611b0a5760010190565b634e487b7160e01b600052601160045260246000fd5b80518210156118a25760209160051b010190565b15611b3b57565b60405162461bcd60e51b815260206004820152601460248201527f43616c6c6572206973206e6f74207061757365720000000000000000000000006044820152606490fd5b6001600160a01b0380911691600083815260039360209185835260409060ff828220541687811015611d445715611d005760049687549660001990818901988911611ced57835b8a54811015611caa578682611bdb836118b8565b905490871b1c1614611bf557611bf090611afb565b611bc7565b909192939495969798808210611c85575b50505087548015611c725797849392917fd64d11086d859b73cf85a91ca06cbc484398acabe3d9a1b26d4366dff377d98598990190611c5c611c47836118b8565b6001600160a01b0382549160031b1b19169055565b55848252855220805460ff1916905551908152a1565b634e487b7160e01b845260318952602484fd5b611ca292611c9561104f926118b8565b905490871b1c16916118b8565b388080611c06565b855162461bcd60e51b8152808c01899052601060248201527f70726f766572206e6f7420666f756e64000000000000000000000000000000006044820152606490fd5b634e487b7160e01b845260118a52602484fd5b815162461bcd60e51b815260048101859052601560248201527f6163636f756e74206973206e6f742070726f76657200000000000000000000006044820152606490fd5b634e487b7160e01b82526021600452602482fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b6001600160a01b03811690600090828252600160205260ff604083205416611e415760025468010000000000000000811015611e2d57602092611e117f6719d08c1888103bea251a4ed56406bd0c3e69723c8a1686e017e7bbe159b6f8959361104f8460016040960160025561186b565b8281526001845220600160ff19825416179055604051908152a1565b634e487b7160e01b83526041600452602483fd5b60405162461bcd60e51b815260206004820152601960248201527f4163636f756e7420697320616c726561647920706175736572000000000000006044820152606490fd5b6001600160a01b038091169060009282845260019060209382855260409360ff8588205416156120005760028054909160001991828101908111611fec57908695949392918a975b611f17575b885162461bcd60e51b8152600481018b9052601060248201527f706175736572206e6f7420666f756e64000000000000000000000000000000006044820152606490fd5b8399989799548a1015611fe3578185611f2f8c61186b565b929054600393841b1c1614611f585750611f4f8798999a97959697611afb565b97969594611ece565b9293949796959991818310611fbe575b5050505081548015611faa57918493917fcd265ebaf09df2871cc7bd4133404a235ba12eff2041bb89d9c714a2621c7c7e9899930190611c5c611c478361186b565b634e487b7160e01b89526031600452602489fd5b611fda93611fce61104f9361186b565b9054911b1c169161186b565b38808080611f68565b87989950611ed3565b634e487b7160e01b8a52601160045260248afd5b845162461bcd60e51b815260048101879052601560248201527f4163636f756e74206973206e6f742070617573657200000000000000000000006044820152606490fd5b1561204b57565b60405162461bcd60e51b815260206004820152600e60248201527f696e76616c69642070726f7665720000000000000000000000000000000000006044820152606490fd5b90816020910312611906575180151581036119065790565b90918060409360208452816020850152848401376000828201840152601f01601f1916010190565b156120d757565b60405162461bcd60e51b815260206004820152600f60248201527f70726f6f66206e6f742076616c696400000000000000000000000000000000006044820152606490fd5b91908110156118a25760051b0190565b9060108110156118a25760051b0190565b91908110156118a25760a0020190565b1561215457565b60405162461bcd60e51b815260206004820152601060248201527f696e76616c696420736d7420726f6f74000000000000000000000000000000006044820152606490fd5b90601f8110156118a25760051b0190565b91908201809211611b0a57565b156121be57565b60405162461bcd60e51b815260206004820152601660248201527f6d65726b6c6520726f6f74206e6f7420657869737473000000000000000000006044820152606490fd5b1561220a57565b60405162461bcd60e51b815260206004820152600c60248201527f696e76616c6964206461746100000000000000000000000000000000000000006044820152606490fd5b1561225657565b60405162461bcd60e51b815260206004820152601060248201527f6c656e677468206e6f74206d61746368000000000000000000000000000000006044820152606490fd5b356001600160a01b03811681036119065790565b3567ffffffffffffffff811681036119065790565b90929391806040830160408452526060820193906000905b80821061233357505050808303602091820152818352918201929160005b828110612308575050505090565b909192938435906001600160a01b0382168092036119065790815282019382019291906001016122fa565b9091939484359067ffffffffffffffff821680920361190657908152602090810195940191600101906122dc565b906101a011611906576101800190602090565b906101c011611906576101a00190602090565b359060208110612395575090565b6000199060200360031b1b169056fea264697066735822122065221b732af902727779a1d2a2c2d2700113f7f586baeefa1fdcec7d014742ff64736f6c63430008140033",
+  "deployedBytecode": "0x6040608081526004908136101561001557600080fd5b600091823560e01c80631396511e146117f5578063158535ff146117c357806319ab453c1461172f5780633221aec6146117075780633bda38a3146113915780633f4ba83a14611290578063444d95b01461126957806346fbf68e14610c6f5780634f4fef181461124c57806350d410631461118c57806358a16b441461116d5780635c975abb14611148578063677625f214610fb75780636b2c0f5514610f805780636ef8d66d14610f665780637b1cc45014610d7b5780637dbafb1114610cab57806380f51c1214610c6f57806382dc1ec414610c385780638456cb5914610b1f5780638da5cb5b14610af95780639017837014610aa8578063a036e79914610a58578063b4f7a72714610776578063ceae339014610735578063e04409531461045c578063e6c6fcec1461040c578063e79b7a51146103b3578063ec64842e14610357578063f2fde38b146102a9578063f5cec6af14610268578063fabc74f51461020a578063fd1190ea146101c65763fe5a53771461019757600080fd5b346101c25760203660031901126101c2578160209360ff923581526006855220541690519015158152f35b8280fd5b509134610207576020366003190112610207578235925483101561020757506001600160a01b036101f86020936118b8565b92905490519260031b1c168152f35b80fd5b50919034610264576020366003190112610264576001600160a01b0361022e61190b565b168252600360205260ff8183205416905191600382101561025157602083838152f35b634e487b7160e01b815260218452602490fd5b5080fd5b505034610264576020366003190112610264576001600160a01b038160209367ffffffffffffffff6102986118ef565b168152600885522054169051908152f35b50346101c25760203660031901126101c2576102c361190b565b916001600160a01b036102da818654163314611ab0565b8316156102ee57836102eb84611d58565b80f35b906020608492519162461bcd60e51b8352820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152fd5b508234610207576020366003190112610207576001600160a01b0361037a61190b565b168152600360205260ff83822054169160038310156103a0576020836001865191148152f35b634e487b7160e01b825260219052602490fd5b8334610207576103c2366119f1565b906001600160a01b03916103da838354163314611ab0565b815b815181101561040857806103fe856103f76104039486611b20565b5116611da0565b611afb565b6103dc565b8280f35b83346102075761041b366119f1565b906001600160a01b0391610433838354163314611ab0565b815b815181101561040857806103fe856104506104579486611b20565b5116611b80565b610435565b5090346101c257806003193601126101c2576104766118ef565b906024359267ffffffffffffffff93848111610731576104999036908301611a82565b90913387526020916003835260ff8589205416600381101561071e5760016104c19114612044565b8686168852600883526001600160a01b039384868a20541680156106db5784875180926322bb937360e11b825281806104fd88888b84016120a8565b03915afa9081156106d1579061051a918b916106b4575b506120d0565b85519760a08901908111898210176106a157865288885288848901528588019489865260608901978a895260808a01918b835261056061055a8686612361565b90612387565b809b5261057061055a8686612374565b8093526102009480861161069d576101e085013580995261022011610699576105d09487940135809a526005541690885180958194829363080cdb0b60e11b84528984016020909392919367ffffffffffffffff60408201951681520152565b03915afa90811561068f578891610662575b501561062157506060958380518381019085825287838201528281526106078161199d565b519020918781526009845220558251948552840152820152f35b60649184519162461bcd60e51b8352820152601260248201527f736d7420726f6f74206e6f742076616c696400000000000000000000000000006044820152fd5b6106829150833d8511610688575b61067a81836119cf565b810190612090565b386105e2565b503d610670565b85513d8a823e3d90fd5b8b80fd5b8c80fd5b634e487b7160e01b8a526041845260248afd5b6106cb9150863d88116106885761067a81836119cf565b38610514565b87513d8c823e3d90fd5b865162461bcd60e51b8152808501869052601660248201527f636861696e207665726966696572206e6f7420736574000000000000000000006044820152606490fd5b634e487b7160e01b895260218352602489fd5b8580fd5b505034610264576020366003190112610264576001600160a01b038160209367ffffffffffffffff6107656118ef565b168152600785522054169051908152f35b5090346101c25760603660031901126101c2576107916118ef565b91602467ffffffffffffffff8135818111610a54576107b39036908501611921565b9093604435838111610a50576107cc9036908301611a82565b959094338a526020966003885260ff898c2054169960038b1015610a3e5786906107f96001809d14612044565b168b52600788526001600160a01b03898c20541680156109fe5789516322bb937360e11b815290899082908180610833878e8c84016120a8565b03915afa908c82156109f35761055a9261086a949261085792916109dc57506120d0565b61086461055a828b612361565b98612374565b9288519261020090818501858110898211176109ca578b52813686378c5b8781106109ab57505060109586811061095a575b50895195898701948d908d8c885b8585106109455750505050505085526102208501958587109087111761093457505083875282519020036108f05750508452600690528220805460ff1916909117905580f35b907f70726f6f66496473206e6f7420726967687400000000000000000000000000006102646064938662461bcd60e51b855261022482015260126102448201520152fd5b634e487b7160e01b8b526041905289fd5b819084518152019201920191908c8f916108aa565b805b878110610969575061089c565b60001982018281116109995790610983610994928861212c565b5161098e828961212c565b52611afb565b61095c565b634e487b7160e01b8f5260118552858ffd5b806109ba6109c5928a8561211c565b3561098e828961212c565b610888565b634e487b7160e01b8e5260418452848efd5b6106cb91508c8d3d106106885761067a81836119cf565b8b51903d90823e3d90fd5b6064858a85818e519362461bcd60e51b85528401528201527f636861696e206167672070726f6f66207665726966696572206e6f74207365746044820152fd5b634e487b7160e01b8c5260218552828cfd5b8880fd5b8680fd5b833461020757610a67366119f1565b906001600160a01b0391610a7f838354163314611ab0565b815b815181101561040857806103fe85610a9c610aa39486611b20565b5116611e86565b610a81565b50346101c25760603660031901126101c25781602093610af292358152600985522054825184810190602435825260443585820152848152610ae98161199d565b51902014612203565b5160018152f35b5050346102645781600319360112610264576001600160a01b0360209254169051908152f35b5090346101c257826003193601126101c257338352600191602090838252610b4c60ff8487205416611b34565b845460ff8160a01c16610bf65760ff60a01b197401000000000000000000000000000000000000000091161785557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258828451338152a184845b610bad578580f35b8154811015610bf257806001600160a01b03610bcb610bec936118b8565b919054600392831b1c1688528452848720600260ff19825416179055611afb565b84610ba5565b8580f35b50915162461bcd60e51b815291820152601060248201527f5061757361626c653a20706175736564000000000000000000000000000000006044820152606490fd5b8334610207576020366003190112610207576102eb610c5561190b565b610c6a6001600160a01b038454163314611ab0565b611da0565b5050346102645760203660031901126102645760ff816020936001600160a01b03610c9861190b565b1681526001855220541690519015158152f35b50503461026457610cbb36611952565b91936001600160a01b03610cd3818854163314611ab0565b610cde84871461224f565b865b868110610d2157877f4a5f8b4623084de3ef4b23e6c713416b50a966a1914aaf21175d206015e59d4e8888610d1b89898951948594856122c4565b0390a180f35b80610d38610d33610d7693888861211c565b61229b565b67ffffffffffffffff610d54610d4f848c8c61211c565b6122af565b168a52600760205283858b2091166001600160a01b0319825416179055611afb565b610ce0565b509190346102645761012036600319011261026457610d986118ef565b9160a03660231901126102075760c4359360e43567ffffffffffffffff81116101c257610dc89036908301611921565b9095610104359660ff958689168099036107315782865260209160068352610df48883892054166121b7565b600554825163080cdb0b60e11b815267ffffffffffffffff909a168a880190815260a435602082018190529a91859183916001600160a01b0316908290819060400103915afa908115610f5c5790610e53918991610f3f575b5061214d565b815160248035858301908152602081019b909b5260443560408c015260643560608c015260843560808c01529990610e988160a084015b03601f1981018352826119cf565b5190209387945b89861688811015610f33578a91908d811c600116610f0457610ec290898661211c565b3585519087820192835286820152858152610edc8161199d565b519020955b16898114610ef25760010194610e9f565b634e487b7160e01b8952601188528a89fd5b610f0f90898661211c565b359085519087820192835286820152858152610f2a8161199d565b51902095610ee1565b896102eb838514612203565b610f569150853d87116106885761067a81836119cf565b38610e4d565b83513d8a823e3d90fd5b83346102075780600319360112610207576102eb33611e86565b8334610207576020366003190112610207576102eb610f9d61190b565b610fb26001600160a01b038454163314611ab0565b611e86565b50913461020757610fc7366119f1565b918154906001600160a01b0391610fe13384831614611ab0565b60ff9060a01c811615611140576002925b845b8651811015610bf257816110088289611b20565b511680875260039060209180835285878a2054168181101561112d576110ea578a54680100000000000000008110156110d7578261104f828e600161106f950190556118b8565b90919082549060031b916001600160a01b03809116831b921b1916179055565b818952808352868920908810156110c457917fef1fa0a4d797341645c201a742cf59be633da0589e0e3cda511cfc90cd039684916110bf949360ff19815416888b161790558751908152a1611afb565b610ff4565b634e487b7160e01b895260218b52602489fd5b634e487b7160e01b8a5260418c5260248afd5b865162461bcd60e51b8152808c01849052601160248201527f6163636f756e742069732070726f7665720000000000000000000000000000006044820152606490fd5b634e487b7160e01b8a5260218c5260248afd5b600192610ff2565b50503461026457816003193601126102645760ff6020925460a01c1690519015158152f35b5050346102645781600319360112610264576020906002549051908152f35b5050346102645761119c36611952565b91936001600160a01b036111b4818854163314611ab0565b6111bf84871461224f565b865b8681106111fc57877f10ec8ad6a03997446c98d9aabf3ad339cc9621ec7cd4b47b04fe1ba8f75b42238888610d1b89898951948594856122c4565b8061120e610d3361124793888861211c565b67ffffffffffffffff611225610d4f848c8c61211c565b168a52600860205283858b2091166001600160a01b0319825416179055611afb565b6111c1565b50346101c257826003193601126101c25760209250549051908152f35b50346101c25760203660031901126101c25760209282913581526009845220549051908152f35b5091903461026457816003193601126102645733825260019060208281526112bd60ff8386205416611b34565b83549460ff8660a01c16156113505760ff60a01b198495961686557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa828451338152a185935b61130b578580f35b8054841015610bf25761134a846001600160a01b0361132a88976118b8565b919054600392831b1c16895284528488208660ff19825416179055611afb565b93611303565b915162461bcd60e51b815291820152601460248201527f5061757361626c653a206e6f74207061757365640000000000000000000000006044820152606490fd5b50346101c257816003193601126101c2576113aa6118ef565b90602480359167ffffffffffffffff93848411610a545736602385011215610a54578382013590858211611703578385019484369160a08502010111611703576010948583116116c1578751966103e090818901908111898210176116af5789939293523688376005546001600160a01b03169089805b85811061159857505050505083811061154a575b5085835b61145a57866102eb60ff886103c089015184526006602052832054166121b7565b919486949193965b60001988018881116115385781101561151b5761148861148282866121aa565b84612199565b5161149382866121aa565b90600191828101809111611509576114ea916114b26114e49288612199565b5186519060208201928352878201528681526114cd8161199d565b51902092846114dc8d8a6121aa565b911c906121aa565b85612199565b52600281018091111561146257634e487b7160e01b8652601185528686fd5b634e487b7160e01b8952601188528989fd5b5094918661152d9197949295976121aa565b9260011c9283611439565b634e487b7160e01b8752601186528787fd5b600019810190808211905b858110611563575050611435565b8161158657611581906115768489612199565b5161098e828a612199565b611555565b634e487b7160e01b8952601184528489fd5b60808b6115e1858a846115ac878d8d61213d565b013584518094819263080cdb0b60e11b8352602095869584016020909392919367ffffffffffffffff60408201951681520152565b03818b5afa9586156116a4576116869661167993611604929161168d575061214d565b610e8a611612868c8c61213d565b359461161f878d8d61213d565b0135938a8c606061164d8a8761163682868861213d565b0135938661164583838961213d565b01359561213d565b0135925196879586019889939160a0959391855260208501526040840152606083015260808201520190565b51902061098e828c612199565b8a90611421565b610f569150833d85116106885761067a81836119cf565b8351903d90823e3d90fd5b634e487b7160e01b8b5260418652868bfd5b875162461bcd60e51b8152602081860152600c818701527f73697a65206578636565647300000000000000000000000000000000000000006044820152606490fd5b8780fd5b5050346102645781600319360112610264576020906001600160a01b03600554169051908152f35b50346101c25760203660031901126101c2578035916001600160a01b038084168094036117bf5784541661177c57505061176833611d58565b6001600160a01b0319600554161760055580f35b906020606492519162461bcd60e51b8352820152601160248201527f6f776e657220616c7265616479207365740000000000000000000000000000006044820152fd5b8480fd5b50346101c25760203660031901126101c257359160025483101561020757506001600160a01b036101f860209361186b565b50346101c25760203660031901126101c257356001600160a01b0390818116809103611867577f674c535cde998bcb47d0688f644df545597c7d6edb95643cb21c82c2d490ff7f9261184d6020938654163314611ab0565b816001600160a01b0319600554161760055551908152a180f35b8380fd5b6002548110156118a25760026000527f405787fa12a823e0f2b7631cc41b3ba8828b3321ca811111fa75cd3aa3bb5ace0190600090565b634e487b7160e01b600052603260045260246000fd5b6004548110156118a25760046000527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0190600090565b6004359067ffffffffffffffff8216820361190657565b600080fd5b600435906001600160a01b038216820361190657565b9181601f840112156119065782359167ffffffffffffffff8311611906576020808501948460051b01011161190657565b60406003198201126119065767ffffffffffffffff91600435838111611906578261197f91600401611921565b939093926024359182116119065761199991600401611921565b9091565b6060810190811067ffffffffffffffff8211176119b957604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff8211176119b957604052565b6020806003198301126119065767ffffffffffffffff9160043583811161190657816023820112156119065780600401359384116119b9578360051b9060405194611a3e858401876119cf565b855260248486019282010192831161190657602401905b828210611a63575050505090565b81356001600160a01b0381168103611906578152908301908301611a55565b9181601f840112156119065782359167ffffffffffffffff8311611906576020838186019501011161190657565b15611ab757565b606460405162461bcd60e51b815260206004820152602060248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152fd5b6000198114611b0a5760010190565b634e487b7160e01b600052601160045260246000fd5b80518210156118a25760209160051b010190565b15611b3b57565b60405162461bcd60e51b815260206004820152601460248201527f43616c6c6572206973206e6f74207061757365720000000000000000000000006044820152606490fd5b6001600160a01b0380911691600083815260039360209185835260409060ff828220541687811015611d445715611d005760049687549660001990818901988911611ced57835b8a54811015611caa578682611bdb836118b8565b905490871b1c1614611bf557611bf090611afb565b611bc7565b909192939495969798808210611c85575b50505087548015611c725797849392917fd64d11086d859b73cf85a91ca06cbc484398acabe3d9a1b26d4366dff377d98598990190611c5c611c47836118b8565b6001600160a01b0382549160031b1b19169055565b55848252855220805460ff1916905551908152a1565b634e487b7160e01b845260318952602484fd5b611ca292611c9561104f926118b8565b905490871b1c16916118b8565b388080611c06565b855162461bcd60e51b8152808c01899052601060248201527f70726f766572206e6f7420666f756e64000000000000000000000000000000006044820152606490fd5b634e487b7160e01b845260118a52602484fd5b815162461bcd60e51b815260048101859052601560248201527f6163636f756e74206973206e6f742070726f76657200000000000000000000006044820152606490fd5b634e487b7160e01b82526021600452602482fd5b600054906001600160a01b0380911691826001600160a01b0319821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3565b6001600160a01b03811690600090828252600160205260ff604083205416611e415760025468010000000000000000811015611e2d57602092611e117f6719d08c1888103bea251a4ed56406bd0c3e69723c8a1686e017e7bbe159b6f8959361104f8460016040960160025561186b565b8281526001845220600160ff19825416179055604051908152a1565b634e487b7160e01b83526041600452602483fd5b60405162461bcd60e51b815260206004820152601960248201527f4163636f756e7420697320616c726561647920706175736572000000000000006044820152606490fd5b6001600160a01b038091169060009282845260019060209382855260409360ff8588205416156120005760028054909160001991828101908111611fec57908695949392918a975b611f17575b885162461bcd60e51b8152600481018b9052601060248201527f706175736572206e6f7420666f756e64000000000000000000000000000000006044820152606490fd5b8399989799548a1015611fe3578185611f2f8c61186b565b929054600393841b1c1614611f585750611f4f8798999a97959697611afb565b97969594611ece565b9293949796959991818310611fbe575b5050505081548015611faa57918493917fcd265ebaf09df2871cc7bd4133404a235ba12eff2041bb89d9c714a2621c7c7e9899930190611c5c611c478361186b565b634e487b7160e01b89526031600452602489fd5b611fda93611fce61104f9361186b565b9054911b1c169161186b565b38808080611f68565b87989950611ed3565b634e487b7160e01b8a52601160045260248afd5b845162461bcd60e51b815260048101879052601560248201527f4163636f756e74206973206e6f742070617573657200000000000000000000006044820152606490fd5b1561204b57565b60405162461bcd60e51b815260206004820152600e60248201527f696e76616c69642070726f7665720000000000000000000000000000000000006044820152606490fd5b90816020910312611906575180151581036119065790565b90918060409360208452816020850152848401376000828201840152601f01601f1916010190565b156120d757565b60405162461bcd60e51b815260206004820152600f60248201527f70726f6f66206e6f742076616c696400000000000000000000000000000000006044820152606490fd5b91908110156118a25760051b0190565b9060108110156118a25760051b0190565b91908110156118a25760a0020190565b1561215457565b60405162461bcd60e51b815260206004820152601060248201527f696e76616c696420736d7420726f6f74000000000000000000000000000000006044820152606490fd5b90601f8110156118a25760051b0190565b91908201809211611b0a57565b156121be57565b60405162461bcd60e51b815260206004820152601660248201527f6d65726b6c6520726f6f74206e6f7420657869737473000000000000000000006044820152606490fd5b1561220a57565b60405162461bcd60e51b815260206004820152600c60248201527f696e76616c6964206461746100000000000000000000000000000000000000006044820152606490fd5b1561225657565b60405162461bcd60e51b815260206004820152601060248201527f6c656e677468206e6f74206d61746368000000000000000000000000000000006044820152606490fd5b356001600160a01b03811681036119065790565b3567ffffffffffffffff811681036119065790565b90929391806040830160408452526060820193906000905b80821061233357505050808303602091820152818352918201929160005b828110612308575050505090565b909192938435906001600160a01b0382168092036119065790815282019382019291906001016122fa565b9091939484359067ffffffffffffffff821680920361190657908152602090810195940191600101906122dc565b906101a011611906576101800190602090565b906101c011611906576101a00190602090565b359060208110612395575090565b6000199060200360031b1b169056fea264697066735822122065221b732af902727779a1d2a2c2d2700113f7f586baeefa1fdcec7d014742ff64736f6c63430008140033",
   "devdoc": {
+    "events": {
+      "Paused(address)": {
+        "details": "Emitted when the pause is triggered by `account`."
+      },
+      "Unpaused(address)": {
+        "details": "Emitted when the pause is lifted by `account`."
+      }
+    },
     "kind": "dev",
     "methods": {
       "owner()": {
         "details": "Returns the address of the current owner."
       },
-      "renounceOwnership()": {
-        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      "paused()": {
+        "details": "Returns true if the contract is paused, and false otherwise."
       },
       "transferOwnership(address)": {
         "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
@@ -619,7 +863,7 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 7,
+        "astId": 15099,
         "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
         "label": "_owner",
         "offset": 0,
@@ -627,36 +871,84 @@
         "type": "t_address"
       },
       {
-        "astId": 186,
+        "astId": 122,
         "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-        "label": "verifierAddresses",
+        "label": "_paused",
+        "offset": 20,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 15213,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "pausers",
         "offset": 0,
         "slot": "1",
-        "type": "t_mapping(t_uint64,t_struct(ChainZKVerifier)181_storage)"
+        "type": "t_mapping(t_address,t_bool)"
       },
       {
-        "astId": 191,
+        "astId": 15216,
         "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-        "label": "proofs",
+        "label": "pauserList",
         "offset": 0,
         "slot": "2",
-        "type": "t_mapping(t_bytes32,t_struct(ProofData)1121_storage)"
+        "type": "t_array(t_address)dyn_storage"
       },
       {
-        "astId": 195,
+        "astId": 14786,
         "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-        "label": "vkHashesToBatchSize",
+        "label": "proverStates",
         "offset": 0,
         "slot": "3",
-        "type": "t_mapping(t_bytes32,t_uint256)"
+        "type": "t_mapping(t_address,t_enum(ProverState)14781)"
       },
       {
-        "astId": 198,
+        "astId": 14789,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "provers",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 16339,
         "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
         "label": "smtContract",
         "offset": 0,
-        "slot": "4",
-        "type": "t_contract(ISMT)161"
+        "slot": "5",
+        "type": "t_contract(ISMT)11465"
+      },
+      {
+        "astId": 16343,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "merkleRoots",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      },
+      {
+        "astId": 16348,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "aggProofVerifierAddress",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_uint64,t_contract(IZkpVerifier)24072)"
+      },
+      {
+        "astId": 17726,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "verifierAddresses",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_uint64,t_contract(IZkpVerifier)24072)"
+      },
+      {
+        "astId": 17730,
+        "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
+        "label": "proofs",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_mapping(t_bytes32,t_bytes32)"
       }
     ],
     "types": {
@@ -665,116 +957,71 @@
         "label": "address",
         "numberOfBytes": "20"
       },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
       "t_bytes32": {
         "encoding": "inplace",
         "label": "bytes32",
         "numberOfBytes": "32"
       },
-      "t_contract(ISMT)161": {
+      "t_contract(ISMT)11465": {
         "encoding": "inplace",
         "label": "contract ISMT",
         "numberOfBytes": "20"
       },
-      "t_contract(IZkpVerifier)1522": {
+      "t_contract(IZkpVerifier)24072": {
         "encoding": "inplace",
         "label": "contract IZkpVerifier",
         "numberOfBytes": "20"
       },
-      "t_mapping(t_bytes32,t_struct(ProofData)1121_storage)": {
+      "t_enum(ProverState)14781": {
+        "encoding": "inplace",
+        "label": "enum BrevisAccess.ProverState",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_enum(ProverState)14781)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => enum BrevisAccess.ProverState)",
+        "numberOfBytes": "32",
+        "value": "t_enum(ProverState)14781"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
         "encoding": "mapping",
         "key": "t_bytes32",
-        "label": "mapping(bytes32 => struct Brevis.ProofData)",
+        "label": "mapping(bytes32 => bool)",
         "numberOfBytes": "32",
-        "value": "t_struct(ProofData)1121_storage"
+        "value": "t_bool"
       },
-      "t_mapping(t_bytes32,t_uint256)": {
+      "t_mapping(t_bytes32,t_bytes32)": {
         "encoding": "mapping",
         "key": "t_bytes32",
-        "label": "mapping(bytes32 => uint256)",
+        "label": "mapping(bytes32 => bytes32)",
         "numberOfBytes": "32",
-        "value": "t_uint256"
+        "value": "t_bytes32"
       },
-      "t_mapping(t_uint64,t_struct(ChainZKVerifier)181_storage)": {
+      "t_mapping(t_uint64,t_contract(IZkpVerifier)24072)": {
         "encoding": "mapping",
         "key": "t_uint64",
-        "label": "mapping(uint64 => struct BrevisProof.ChainZKVerifier)",
+        "label": "mapping(uint64 => contract IZkpVerifier)",
         "numberOfBytes": "32",
-        "value": "t_struct(ChainZKVerifier)181_storage"
-      },
-      "t_struct(ChainZKVerifier)181_storage": {
-        "encoding": "inplace",
-        "label": "struct BrevisProof.ChainZKVerifier",
-        "members": [
-          {
-            "astId": 177,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "contractAppZkVerifier",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_contract(IZkpVerifier)1522"
-          },
-          {
-            "astId": 180,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "circuitAppZkVerifier",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_contract(IZkpVerifier)1522"
-          }
-        ],
-        "numberOfBytes": "64"
-      },
-      "t_struct(ProofData)1121_storage": {
-        "encoding": "inplace",
-        "label": "struct Brevis.ProofData",
-        "members": [
-          {
-            "astId": 1112,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "commitHash",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_bytes32"
-          },
-          {
-            "astId": 1114,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "vkHash",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_bytes32"
-          },
-          {
-            "astId": 1116,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "appCommitHash",
-            "offset": 0,
-            "slot": "2",
-            "type": "t_bytes32"
-          },
-          {
-            "astId": 1118,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "appVkHash",
-            "offset": 0,
-            "slot": "3",
-            "type": "t_bytes32"
-          },
-          {
-            "astId": 1120,
-            "contract": "contracts/sdk/core/BrevisProof.sol:BrevisProof",
-            "label": "smtRoot",
-            "offset": 0,
-            "slot": "4",
-            "type": "t_bytes32"
-          }
-        ],
-        "numberOfBytes": "160"
-      },
-      "t_uint256": {
-        "encoding": "inplace",
-        "label": "uint256",
-        "numberOfBytes": "32"
+        "value": "t_contract(IZkpVerifier)24072"
       },
       "t_uint64": {
         "encoding": "inplace",
