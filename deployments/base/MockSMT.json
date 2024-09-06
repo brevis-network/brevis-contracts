@@ -1,0 +1,120 @@
+{
+  "address": "0x8d7c2588c365b9e98Ea464b63DBCCDf13ECd9809",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isSmtRootValid",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainId",
+          "type": "uint64"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "newSmtRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "endBlockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "endBlockHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "nextChunkMerkleRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256[8]",
+              "name": "proof",
+              "type": "uint256[8]"
+            },
+            {
+              "internalType": "uint256[2]",
+              "name": "commit",
+              "type": "uint256[2]"
+            },
+            {
+              "internalType": "uint256[2]",
+              "name": "knowledgeProof",
+              "type": "uint256[2]"
+            }
+          ],
+          "internalType": "struct ISMT.SmtUpdate",
+          "name": "u",
+          "type": "tuple"
+        }
+      ],
+      "name": "updateRoot",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x5b01f145e35a4500784ee9f36e871e5da389342183cc635fada5b9d450572ab8",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0x8d7c2588c365b9e98Ea464b63DBCCDf13ECd9809",
+    "transactionIndex": 74,
+    "gasUsed": "181964",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x1dff72be711a1fa58cffc1d55160921f848e25a996537f9b6f008609ca78e271",
+    "transactionHash": "0x5b01f145e35a4500784ee9f36e871e5da389342183cc635fada5b9d450572ab8",
+    "logs": [],
+    "blockNumber": 19406693,
+    "cumulativeGasUsed": "15852652",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "fc6c505b4e4c814a86385cd81dc5cecf",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"isSmtRootValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"newSmtRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"endBlockNum\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"endBlockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"nextChunkMerkleRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[8]\",\"name\":\"proof\",\"type\":\"uint256[8]\"},{\"internalType\":\"uint256[2]\",\"name\":\"commit\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"knowledgeProof\",\"type\":\"uint256[2]\"}],\"internalType\":\"struct ISMT.SmtUpdate\",\"name\":\"u\",\"type\":\"tuple\"}],\"name\":\"updateRoot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/test-helper/MockSMT.sol\":\"MockSMT\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/ISMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../verifiers/zk-verifiers/common/IVerifier.sol\\\";\\n\\ninterface ISMT {\\n    struct SmtUpdate {\\n        bytes32 newSmtRoot;\\n        uint64 endBlockNum;\\n        bytes32 endBlockHash;\\n        bytes32 nextChunkMerkleRoot;\\n        uint256[8] proof;\\n        uint256[2] commit;\\n        uint256[2] knowledgeProof;\\n    }\\n\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external;\\n\\n    function isSmtRootValid(uint64 chainId, bytes32 smtRoot) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xbbfb7cb72413235f93fa1c96081cfe0c3873fc31b9bf276572c780c82281378a\",\"license\":\"MIT\"},\"contracts/test-helper/MockSMT.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../interfaces/ISMT.sol\\\";\\n\\ncontract MockSMT is ISMT {\\n    function updateRoot(uint64 chainId, SmtUpdate memory u) external {}\\n\\n    function isSmtRootValid(uint64, bytes32) external pure returns (bool) {\\n        return true;\\n    }\\n}\\n\",\"keccak256\":\"0x6f0d60d5d4344dfacb60dacdd058dc6cfd57c84a204b8b957bfd443d07e2e618\",\"license\":\"MIT\"},\"contracts/verifiers/zk-verifiers/common/IVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IVerifier {\\n    function verifyProof(\\n        uint256[8] calldata proof,\\n        uint256[2] calldata commit,\\n        uint256[2] calldata knowledgeProof,\\n        uint256[9] calldata input\\n    ) external view returns (bool r);\\n}\\n\",\"keccak256\":\"0x856e6f88e5a1384f9a2460347b42bf44423ec28500bc7c82c43ac38a6b423082\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461001657610253908161001c8239f35b600080fdfe6080604090808252600436101561001557600080fd5b600090813560e01c9081631019b616146101a757506397c7c3091461003957600080fd5b346101a4576102203660031901126101a4576100536101cb565b506102003660231901126101a457815167ffffffffffffffff929060e0810184811182821017610190578252602435815260443593808516850361014a57602094858301526064358383015260843560608301523660c3121561014a5782519261010084019182118483101761017c5752816101a492368411610178578560a4915b858310610169575050506080820152366101c31215610165576100f66101e7565b90816101e493368511610161578690915b8583106101525750505060a0015236610203121561014e576101276101e7565b6102249136831161014a57905b82821061013f578380f35b908401908401610134565b8380fd5b5080fd5b82358152918101918101610107565b8580fd5b8280fd5b823581529181019181016100d5565b8480fd5b634e487b7160e01b85526041600452602485fd5b634e487b7160e01b84526041600452602484fd5b80fd5b905082346101655736600319011261014e576020906101c46101cb565b5060018152f35b6004359067ffffffffffffffff821682036101e257565b600080fd5b604051906040820182811067ffffffffffffffff82111761020757604052565b634e487b7160e01b600052604160045260246000fdfea264697066735822122080da0144913492b8ef4b738aa08583f55935aa1d1db5a779d63d02e65e04f73e64736f6c63430008140033",
+  "deployedBytecode": "0x6080604090808252600436101561001557600080fd5b600090813560e01c9081631019b616146101a757506397c7c3091461003957600080fd5b346101a4576102203660031901126101a4576100536101cb565b506102003660231901126101a457815167ffffffffffffffff929060e0810184811182821017610190578252602435815260443593808516850361014a57602094858301526064358383015260843560608301523660c3121561014a5782519261010084019182118483101761017c5752816101a492368411610178578560a4915b858310610169575050506080820152366101c31215610165576100f66101e7565b90816101e493368511610161578690915b8583106101525750505060a0015236610203121561014e576101276101e7565b6102249136831161014a57905b82821061013f578380f35b908401908401610134565b8380fd5b5080fd5b82358152918101918101610107565b8580fd5b8280fd5b823581529181019181016100d5565b8480fd5b634e487b7160e01b85526041600452602485fd5b634e487b7160e01b84526041600452602484fd5b80fd5b905082346101655736600319011261014e576020906101c46101cb565b5060018152f35b6004359067ffffffffffffffff821682036101e257565b600080fd5b604051906040820182811067ffffffffffffffff82111761020757604052565b634e487b7160e01b600052604160045260246000fdfea264697066735822122080da0144913492b8ef4b738aa08583f55935aa1d1db5a779d63d02e65e04f73e64736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
