@@ -6,7 +6,7 @@ import "../interfaces/ISMT.sol";
 import "../safeguard/BrevisAccess.sol";
 
 contract SMT is ISMT, BrevisAccess {
-    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
+    event SmtRootUpdated(bytes32 smtRoot, bytes32 endBlockHash, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
 
@@ -48,8 +48,8 @@ contract SMT is ISMT, BrevisAccess {
         if (u.nextChunkMerkleRoot == 0) {
             IAnchorBlocks anchorProvider = anchorProviders[chainId];
             require(address(anchorProvider) != address(0), "unknown anchor provider");
-            bytes32 anchorHash = anchorProvider.blocks(u.endBlockNum);
-            require(anchorHash == u.endBlockHash, "anchor check failed");
+            uint256 blockNum = anchorProvider.blockNums(u.endBlockHash);
+            require(blockNum != 0, "anchor check failed");
         }
         bytes32 root = latestRoots[chainId];
         bool success = verifyProof(chainId, root, u);
@@ -57,14 +57,14 @@ contract SMT is ISMT, BrevisAccess {
 
         smtRoots[chainId][u.newSmtRoot] = true;
         latestRoots[chainId] = u.newSmtRoot;
-        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, chainId);
+        emit SmtRootUpdated(u.newSmtRoot, u.endBlockHash, chainId);
     }
 
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
 
-        uint256[9] memory input;
+        uint256[8] memory input;
         uint256 m = 1 << 128;
         input[0] = uint256(oldSmtRoot) >> 128;
         input[1] = uint256(oldSmtRoot) % m;
@@ -72,9 +72,8 @@ contract SMT is ISMT, BrevisAccess {
         input[3] = uint256(u.newSmtRoot) % m;
         input[4] = uint256(u.endBlockHash) >> 128;
         input[5] = uint256(u.endBlockHash) % m;
-        input[6] = u.endBlockNum;
-        input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
-        input[8] = uint256(u.nextChunkMerkleRoot) % m;
+        input[6] = uint256(u.nextChunkMerkleRoot) >> 128;
+        input[7] = uint256(u.nextChunkMerkleRoot) % m;
 
         return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }

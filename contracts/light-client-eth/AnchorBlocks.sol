@@ -21,7 +21,9 @@ contract AnchorBlocks is IAnchorBlocks, BrevisAccess {
 
     IEthereumLightClient public lightClient;
     // execution block number => execution block hash
-    mapping(uint256 => bytes32) public blocks;
+    mapping(uint256 => bytes32) public blockHashs;
+    // execution block hash => execution block number
+    mapping(bytes32 => uint256) public blockNums;
     uint256 public latestBlockNum;
 
     constructor(address _lightClient) {
@@ -30,9 +32,9 @@ contract AnchorBlocks is IAnchorBlocks, BrevisAccess {
 
     /// @notice Updates an "anchor block" of a specific block number to the contract state
     function processUpdate(LightClientOptimisticUpdate memory hb) external {
-        (uint256 blockNum, bytes32 blockHash) = verifyHeadBlock(hb);
+        (uint256 bn, bytes32 blockHash) = verifyHeadBlock(hb);
         require(blockHash != bytes32(0), "empty blockHash");
-        doUpdate(blockNum, blockHash);
+        doUpdate(bn, blockHash);
     }
 
     /// @notice Updates an "anchor block" of a specific block number to the contract state
@@ -68,8 +70,9 @@ contract AnchorBlocks is IAnchorBlocks, BrevisAccess {
     }
 
     function doUpdate(uint256 blockNum, bytes32 blockHash) private {
-        require(blocks[blockNum] == bytes32(0), "block hash already exists");
-        blocks[blockNum] = blockHash;
+        require(blockHashs[blockNum] == bytes32(0), "block hash already exists");
+        blockHashs[blockNum] = blockHash;
+        blockNums[blockHash] = blockNum;
         if (blockNum > latestBlockNum) {
             latestBlockNum = blockNum;
         }

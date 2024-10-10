@@ -6,7 +6,6 @@ import "../verifiers/zk-verifiers/common/IVerifier.sol";
 interface ISMT {
     struct SmtUpdate {
         bytes32 newSmtRoot;
-        uint64 endBlockNum;
         bytes32 endBlockHash;
         bytes32 nextChunkMerkleRoot;
         uint256[8] proof;
