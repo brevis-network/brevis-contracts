@@ -56,10 +56,10 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
         BigNumber.from('0x2f7bff88baa27888fc2770d4c708c5e73524858f3af0aa0b1470dd71fe6b0465'), // Query Hash
         BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'), // SMT Root 0
         BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root 1
-        BigNumber.from('0x0000000000000000000000000000000071712a0c5ec82685a9c47466e00386a7'), // Aggregation VK Hash
-        BigNumber.from('0x00000000000000000000000000000000190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment 0
-        BigNumber.from('0x140390b7ddcb67336f3cc7269b552519940d8dbc54b5e24d4d7b772b0cb9b53b'), // App Circuit Output Commitment 1
-        BigNumber.from('0x017a4240393a0eeffb0c2f9be5620a8d9080f8079c7df8064174b09341dbfe2b') // App Circuit VK Hash
+        BigNumber.from('0x0000000000000000000000000000000071712a0c5ec82685a9c47466e00386a7'), // App Circuit Output Commitment 0
+        BigNumber.from('0x00000000000000000000000000000000190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment 1
+        BigNumber.from('0x140390b7ddcb67336f3cc7269b552519940d8dbc54b5e24d4d7b772b0cb9b53b'), // CircuitDigest
+        BigNumber.from('0x017a4240393a0eeffb0c2f9be5620a8d9080f8079c7df8064174b09341dbfe2b') // DummyCommitment
       ]
     );
     assert.equal(result, true);
