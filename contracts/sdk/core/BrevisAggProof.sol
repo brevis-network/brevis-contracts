@@ -15,9 +15,10 @@ contract BrevisAggProof is BrevisAccess {
 
     mapping(bytes32 => bool) public merkleRoots;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
-    mapping(uint64 => bytes32) public dummyInputCommitment;
+    mapping(uint64 => bytes32) public dummyInputCommitments;
     event SmtContractUpdated(address smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
+    event DummyInputCommitmentsUpdated(uint64[] chainIds, bytes32[] updatedDummyInputCommitments);
 
     constructor(ISMT _smtContract) {
         smtContract = _smtContract;
@@ -60,14 +61,14 @@ contract BrevisAggProof is BrevisAccess {
         bytes32[2 * LEAF_NODES_LEN - 1] memory hashes;
         for (uint i = 0; i < dataLen; i++) {
             require(smtContract.isSmtRootValid(_chainId, _proofDataArray[i].smtRoot), "invalid smt root");
-            require(dummyInputCommitment[_chainId] == _proofDataArray[i].dummyCircuitInputCommitment, "invalid dummy input");
+            require(dummyInputCommitments[_chainId] == _proofDataArray[i].dummyInputCommitment, "invalid dummy input");
             hashes[i] = keccak256(
                 abi.encodePacked(
                     _proofDataArray[i].commitHash,
                     _proofDataArray[i].smtRoot,
                     _proofDataArray[i].appCommitHash,
                     _proofDataArray[i].appVkHash,
-                    _proofDataArray[i].dummyCircuitInputCommitment
+                    _proofDataArray[i].dummyInputCommitment
                 )
             );
         }
@@ -101,7 +102,7 @@ contract BrevisAggProof is BrevisAccess {
     ) external view {
         require(merkleRoots[_merkleRoot], "merkle root not exists");
         require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), "invalid smt root");
-        require(dummyInputCommitment[_chainId] == _proofData.dummyCircuitInputCommitment, "invalid dummy input");
+        require(dummyInputCommitments[_chainId] == _proofData.dummyInputCommitment, "invalid dummy input");
 
         bytes32 proofDataHash = keccak256(
             abi.encodePacked(
@@ -109,7 +110,7 @@ contract BrevisAggProof is BrevisAccess {
                 _proofData.smtRoot,
                 _proofData.appCommitHash,
                 _proofData.appVkHash,
-                _proofData.dummyCircuitInputCommitment
+                _proofData.dummyInputCommitment
             )
         );
         bytes32 root = proofDataHash;
@@ -139,6 +140,17 @@ contract BrevisAggProof is BrevisAccess {
             aggProofVerifierAddress[_chainIds[i]] = _verifierAddresses[i];
         }
         emit AggProofVerifierAddressesUpdated(_chainIds, _verifierAddresses);
+    }
+
+    function setDummyInputCommitments(
+        uint64[] calldata _chainIds,
+        bytes32[] calldata _dummyInputCommitments
+    ) public onlyOwner {
+        require(_chainIds.length == _dummyInputCommitments.length, "length not match");
+        for (uint256 i = 0; i < _chainIds.length; i++) {
+            dummyInputCommitments[_chainIds[i]] = _dummyInputCommitments[i];
+        }
+        emit DummyInputCommitmentsUpdated(_chainIds, _dummyInputCommitments);
     }
 
     /**********************************

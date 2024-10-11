@@ -28,8 +28,8 @@ async function deployContracts(admin: Wallet) {
 const updateNew: ISMT.SmtUpdateStruct = {
   newSmtRoot: '0x0290e108b334135857000cc4c6254c1d7c07f93eadd59fd35f99fb8048c468a9',
   endBlockHash: '0x33a40e4d31779e49311267cedd746360b3ef5eacfd6a7078b135929d5d338b6d',
-  endBlockNum: 121850623,
   nextChunkMerkleRoot: '0x0000000000000000000000000000000000000000000000000000000000000000',
+  circuitDigest: "0x00000",
   proof: [
     '5807806351967397868418351699921116242922085858185123616047887050820884996471',
     '19444718462238971532514390638804520037672715311516313809615819236604649104438',
@@ -54,7 +54,7 @@ const updateNew: ISMT.SmtUpdateStruct = {
 const updateOld: ISMT.SmtUpdateStruct = {
   newSmtRoot: '0x074d7ca9a23757ee1699ebd69467aef8113cac39f9cc01c30aaf92ebb33bf95b',
   endBlockHash: '0x3cb6f635c0359c49293bf4617f0f77adeaa5a5cfb7c193a6c8fdefdce41a5563',
-  endBlockNum: 121850495,
+  circuitDigest: "0x00000",
   nextChunkMerkleRoot: '0x0dffe9d9691142bd5df5afcb30c12625198fc7cde364215b92622cce224ad330',
   proof: [
     '11531063991101025000926165418085717051737547065070261499961709449198962642048',
@@ -100,12 +100,12 @@ describe('SMT', async () => {
   it('update passes on true proofs', async () => {
     let tx: Promise<ContractTransaction>;
     tx = contract.updateRoot(1, updateNew);
-    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateNew.newSmtRoot, updateNew.endBlockNum, 1);
+    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateNew.newSmtRoot, updateNew.endBlockHash, 1);
     let valid = await contract.isSmtRootValid(1, updateNew.newSmtRoot);
     expect(valid).true;
 
     tx = contract.updateRoot(1, updateOld);
-    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateOld.newSmtRoot, updateOld.endBlockNum, 1);
+    await expect(tx).to.emit(contract, 'SmtRootUpdated').withArgs(updateOld.newSmtRoot, updateOld.endBlockHash, 1);
     valid = await contract.isSmtRootValid(1, updateOld.newSmtRoot);
     expect(valid).true;
   });
