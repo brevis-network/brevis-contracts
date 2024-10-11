@@ -60,7 +60,7 @@ contract SMT is ISMT, BrevisAccess {
         emit SmtRootUpdated(u.newSmtRoot, u.endBlockHash, chainId);
     }
 
-    function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u, bytes32 circuitDigest) private view returns (bool) {
+    function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
 
@@ -74,7 +74,7 @@ contract SMT is ISMT, BrevisAccess {
         input[5] = uint256(oldSmtRoot) % m;
         input[6] = uint256(u.nextChunkMerkleRoot) >> 128;
         input[7] = uint256(u.nextChunkMerkleRoot) % m;
-        input[8] = uint256(circuitDigest);
+        input[8] = uint256(u.circuitDigest);
 
         return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }

@@ -35,6 +35,7 @@ contract BrevisProof is BrevisAggProof {
         appCommitHash = data.appCommitHash;
         appVkHash = data.appVkHash;
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
+        require(dummyInputCommitment[_chainId] == data.dummyCircuitInputCommitment, "invalid dummy input");
         proofs[proofId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
     }
 
@@ -67,11 +68,11 @@ contract BrevisProof is BrevisAggProof {
     function unpackProofData(bytes calldata _proofWithPubInputs) internal pure returns (Brevis.ProofData memory data) {
         data.commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
         data.smtRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
-        //data.vkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
         data.appCommitHash = bytes32(
-            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]
+            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]
         );
-        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);
+        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]);
+        data.dummyCircuitInputCommitment = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);
     }
 
     function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {

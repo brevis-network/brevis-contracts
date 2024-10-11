@@ -309,4 +309,35 @@ contract BrevisPlonky2AggAllVerifier {
         return success;
     }
 
+    function verifyRaw(bytes calldata proofData) external view returns (bool) {
+        uint256[8] memory proof;
+        proof[0] = uint256(bytes32(proofData[:32]));
+        proof[1] = uint256(bytes32(proofData[32:64]));
+        proof[2] = uint256(bytes32(proofData[64:96]));
+        proof[3] = uint256(bytes32(proofData[96:128]));
+        proof[4] = uint256(bytes32(proofData[128:160]));
+        proof[5] = uint256(bytes32(proofData[160:192]));
+        proof[6] = uint256(bytes32(proofData[192:224]));
+        proof[7] = uint256(bytes32(proofData[224:256]));
+
+        uint256[2] memory commitment;
+        commitment[0] = uint256(bytes32(proofData[256:288]));
+        commitment[1] = uint256(bytes32(proofData[288:320]));
+
+        uint256[2] memory commitmentPOK;
+        commitmentPOK[0] = uint256(bytes32(proofData[320:352]));
+        commitmentPOK[1] = uint256(bytes32(proofData[352:384]));
+
+        uint256[7] memory input;
+        input[0] = uint256(bytes32(proofData[384:416])); // commit hash
+        input[1] = uint256(uint128(bytes16(proofData[416:432]))); // smt root 0
+        input[2] = uint256(uint128(bytes16(proofData[432:448]))); // smt root 1
+        input[3] = uint256(uint128(bytes16(proofData[448:464]))); // output commitment 0
+        input[4] = uint256(uint128(bytes16(proofData[464:480]))); // output commitment 1
+        input[5] = uint256(bytes32(proofData[480:512])); // app vk hash
+        input[6] = uint256(bytes32(proofData[512:544])); // dummy commitment
+
+        return this.verifyProof(proof, commitment, commitmentPOK, input);
+    }
+
 }

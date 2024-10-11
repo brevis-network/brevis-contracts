@@ -89,7 +89,7 @@ contract BlockChunks is IBlockChunks, BrevisAccess {
         require(startBlockNum % NUM_LEAVES == 0, "need start from 128x");
 
         require(anchorBlockProviders[chainId] != address(0), "chain anchor provider not set");
-        require(IAnchorBlocks(anchorBlockProviders[chainId]).blocks(endBlockNum) == endHash, "endHash not correct");
+        require(IAnchorBlocks(anchorBlockProviders[chainId]).blockHashs(endBlockNum) == endHash, "endHash not correct");
 
         require(verifyRaw(chainId, proofData), "proof not valid");
 

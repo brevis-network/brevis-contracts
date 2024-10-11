@@ -15,6 +15,7 @@ contract BrevisAggProof is BrevisAccess {
 
     mapping(bytes32 => bool) public merkleRoots;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
+    mapping(uint64 => bytes32) public dummyInputCommitment;
     event SmtContractUpdated(address smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
 
@@ -59,13 +60,14 @@ contract BrevisAggProof is BrevisAccess {
         bytes32[2 * LEAF_NODES_LEN - 1] memory hashes;
         for (uint i = 0; i < dataLen; i++) {
             require(smtContract.isSmtRootValid(_chainId, _proofDataArray[i].smtRoot), "invalid smt root");
+            require(dummyInputCommitment[_chainId] == _proofDataArray[i].dummyCircuitInputCommitment, "invalid dummy input");
             hashes[i] = keccak256(
                 abi.encodePacked(
                     _proofDataArray[i].commitHash,
                     _proofDataArray[i].smtRoot,
-                    _proofDataArray[i].vkHash,
                     _proofDataArray[i].appCommitHash,
-                    _proofDataArray[i].appVkHash
+                    _proofDataArray[i].appVkHash,
+                    _proofDataArray[i].dummyCircuitInputCommitment
                 )
             );
         }
@@ -99,14 +101,15 @@ contract BrevisAggProof is BrevisAccess {
     ) external view {
         require(merkleRoots[_merkleRoot], "merkle root not exists");
         require(smtContract.isSmtRootValid(_chainId, _proofData.smtRoot), "invalid smt root");
+        require(dummyInputCommitment[_chainId] == _proofData.dummyCircuitInputCommitment, "invalid dummy input");
 
         bytes32 proofDataHash = keccak256(
             abi.encodePacked(
                 _proofData.commitHash,
                 _proofData.smtRoot,
-                _proofData.vkHash,
                 _proofData.appCommitHash,
-                _proofData.appVkHash
+                _proofData.appVkHash,
+                _proofData.dummyCircuitInputCommitment
             )
         );
         bytes32 root = proofDataHash;
