@@ -53,15 +53,15 @@ describe('BrevisPlonky2SmtVerifier test', async () => {
           BigNumber.from('0x26bb05e4dc8886c8e45ef26bff932bcaf63ed561a95c6b9708251cc2642666a8') // Commitment POK1
         ],
         [
-          BigNumber.from('0x00000000000000000000000000000000409f3590dcd221e5786a20423cfc8305'),
-          BigNumber.from('0x00000000000000000000000000000000738a88d3efaa6210428de2024f75aceb'),
-          BigNumber.from('0x0000000000000000000000000000000045187e590779d8dfca61be4ea6c9e888'),
-          BigNumber.from('0x0000000000000000000000000000000031b07e7bfefbda1cdb66921cb0d63b86'),
-          BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'),
-          BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'),
-          BigNumber.from('0x0000000000000000000000000000000082fc73fc57007f802f958f4b18d7fb6f'),
-          BigNumber.from('0x000000000000000000000000000000009f01498afa81edea7ee5404bdb09a283'),
-          BigNumber.from('0x06f5391a3225d0639697ec95a506c8b762239a8d1cfed24e9fb83d773ec43717')
+          BigNumber.from('0x00000000000000000000000000000000409f3590dcd221e5786a20423cfc8305'), // EndBlkHash 0
+          BigNumber.from('0x00000000000000000000000000000000738a88d3efaa6210428de2024f75aceb'), // EndBlkHash 1
+          BigNumber.from('0x0000000000000000000000000000000045187e590779d8dfca61be4ea6c9e888'), // NewSmtRoot 0
+          BigNumber.from('0x0000000000000000000000000000000031b07e7bfefbda1cdb66921cb0d63b86'), // NewSmtRoot 1
+          BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'), // OldSmtRoot 0
+          BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // OldSmtRoot 1
+          BigNumber.from('0x0000000000000000000000000000000082fc73fc57007f802f958f4b18d7fb6f'), // NextChunkMerkleRoot 0
+          BigNumber.from('0x000000000000000000000000000000009f01498afa81edea7ee5404bdb09a283'), // NextChunkMerkleRoot 1
+          BigNumber.from('0x06f5391a3225d0639697ec95a506c8b762239a8d1cfed24e9fb83d773ec43717')  // CircuitDigest
         ]
     );
     assert.equal(result, true);
