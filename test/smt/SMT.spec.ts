@@ -28,6 +28,7 @@ async function deployContracts(admin: Wallet) {
 const updateNew: ISMT.SmtUpdateStruct = {
   newSmtRoot: '0x0290e108b334135857000cc4c6254c1d7c07f93eadd59fd35f99fb8048c468a9',
   endBlockHash: '0x33a40e4d31779e49311267cedd746360b3ef5eacfd6a7078b135929d5d338b6d',
+  endBlockNum: 121850623,
   nextChunkMerkleRoot: '0x0000000000000000000000000000000000000000000000000000000000000000',
   circuitDigest: "0x00000",
   proof: [
