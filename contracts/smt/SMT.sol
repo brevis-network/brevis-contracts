@@ -6,7 +6,7 @@ import "../interfaces/ISMT.sol";
 import "../safeguard/BrevisAccess.sol";
 
 contract SMT is ISMT, BrevisAccess {
-    event SmtRootUpdated(bytes32 smtRoot, bytes32 endBlockHash, uint64 chainId);
+    event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
 
@@ -48,8 +48,8 @@ contract SMT is ISMT, BrevisAccess {
         if (u.nextChunkMerkleRoot == 0) {
             IAnchorBlocks anchorProvider = anchorProviders[chainId];
             require(address(anchorProvider) != address(0), "unknown anchor provider");
-            uint256 blockNum = anchorProvider.blockNums(u.endBlockHash);
-            require(blockNum != 0, "anchor check failed");
+            bytes32 anchorHash = anchorProvider.blocks(u.endBlockNum);
+            require(anchorHash == u.endBlockHash, "anchor check failed");
         }
         bytes32 root = latestRoots[chainId];
         bool success = verifyProof(chainId, root, u);
@@ -57,7 +57,7 @@ contract SMT is ISMT, BrevisAccess {
 
         smtRoots[chainId][u.newSmtRoot] = true;
         latestRoots[chainId] = u.newSmtRoot;
-        emit SmtRootUpdated(u.newSmtRoot, u.endBlockHash, chainId);
+        emit SmtRootUpdated(u.newSmtRoot, u.endBlockNum, chainId);
     }
 
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {

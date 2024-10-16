@@ -14,9 +14,9 @@ contract TestSMT is SMT {
     ) SMT(_chainIds, _anchorProviders, _verifiers, _initRoots) {}
 
     // function for testing convenience
-    function addRootForTesting(uint64 chainId, bytes32 newRoot, bytes32 endBlockHash) external onlyOwner {
+    function addRootForTesting(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyOwner {
         smtRoots[chainId][newRoot] = true;
         latestRoots[chainId] = newRoot;
-        emit SmtRootUpdated(newRoot, endBlockHash, chainId);
+        emit SmtRootUpdated(newRoot, endBlockNum, chainId);
     }
 }
