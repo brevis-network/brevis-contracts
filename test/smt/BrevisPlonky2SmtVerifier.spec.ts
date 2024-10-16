@@ -33,24 +33,24 @@ describe('BrevisPlonky2SmtVerifier test', async () => {
   it('should pass on true proof', async () => {
     const result = await contract.verifyProof(
         [
-          BigNumber.from('0x0e387f2b729455c4097e269c20c83748e9b3a1e149c318c252c921721627ed65'), // a0
-          BigNumber.from('0x2d3771c636e8c3a9348b9010f3e3c9b8c7e6ad546cdae3afec03816b170171e8'), // a1
+          BigNumber.from('0x07e2778626964a754b9195def728ea19cf0e3d8b8c5753ba43bc0dd139133736'), // a0
+          BigNumber.from('0x042438dd97b6592229539cd15443ee5f9d63b31db2f31481c65594711f3067d2'), // a1
 
-          BigNumber.from('0x22c1863a7ac076b464ad34441c60b2cc3dd28967c446498be279a324d3d03e09'), // b00
-          BigNumber.from('0x0aa3291b1879abbaf7bd2e70efbd39bf6f48a51eda404b98fd833eff3b4fb065'), // b01
-          BigNumber.from('0x0d491305ccb73ec18045c71f59115b9f7fb37a718bc83489c8346d48f6d563b0'), // b10
-          BigNumber.from('0x21e627b00b26bebf197d2c58f0c2968419be11e6cbdf31541c7cae99d88d1ad4'), // b11
+          BigNumber.from('0x236453f47b140a9a05cbe55415e48974299241a2c69469cc63da70e62bc320c4'), // b00
+          BigNumber.from('0x28f5c16d64ed7784a8a2f3595362ddc8949848b5ca58820d3309e216fc725e57'), // b01
+          BigNumber.from('0x284c0ec5df51b61bac50ec39b335c911b9ede6c8a08aff8f415ae566d59c78e6'), // b10
+          BigNumber.from('0x168970a94c85b5a679aaf149141485ac1e2cf3100133c73f47cd299ffa8ae992'), // b11
 
-          BigNumber.from('0x047304cc88e4a6c3315b98ccd1b59a674e25234a31b6d9295940714d6bedf07c'), // c0
-          BigNumber.from('0x0375dfb0eb0eba372fcf3d57bbf00db6c798046e8855d91f32e18c0f952a5edd') // c1
+          BigNumber.from('0x22ff39d4822505452f1668fe7d3e75702007f6a81bc64c1615880756144a6a19'), // c0
+          BigNumber.from('0x17065d881740ce2efd4d9494d691cdb52b229a0316d92a751a1d73a9a18c41a2') // c1
         ],
         [
-          BigNumber.from('0x15828066f2bcde3528b822aeef1ae54a99352806d7d8e7c7af80ddd79978eaf5'), // Commitment 0
-          BigNumber.from('0x1a480d818841b2d93baada593cec0a1808f0f1526b622ff174808199c04eb94e') // Commitment 1
+          BigNumber.from('0x1019ebea4a5e5e32c3e9bf00424f3043e29173d00798b616b17a0e1e59994e09'), // Commitment 0
+          BigNumber.from('0x153f42fa8353f93f61ea7ae6eca63e917d4cbf38dcf1afd8301828ae42f67ee7') // Commitment 1
         ],
         [
-          BigNumber.from('0x18dd29acec340d08fbbe737655349828559eb5af8a6fd03a5d2e74e46a9248df'), // Commitment POK0
-          BigNumber.from('0x26bb05e4dc8886c8e45ef26bff932bcaf63ed561a95c6b9708251cc2642666a8') // Commitment POK1
+          BigNumber.from('0x0ed223b3b6edc2c3610fd8f865e1a9f910597a49d0882da3753f125fad74b764'), // Commitment POK0
+          BigNumber.from('0x1b4d6fff41d141d1fde2abfe75dcb60291cfb97bac4215b23e7d0041d6b76df7') // Commitment POK1
         ],
         [
           BigNumber.from('0x00000000000000000000000000000000409f3590dcd221e5786a20423cfc8305'), // EndBlkHash 0
@@ -61,7 +61,7 @@ describe('BrevisPlonky2SmtVerifier test', async () => {
           BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // OldSmtRoot 1
           BigNumber.from('0x0000000000000000000000000000000082fc73fc57007f802f958f4b18d7fb6f'), // NextChunkMerkleRoot 0
           BigNumber.from('0x000000000000000000000000000000009f01498afa81edea7ee5404bdb09a283'), // NextChunkMerkleRoot 1
-          BigNumber.from('0x06f5391a3225d0639697ec95a506c8b762239a8d1cfed24e9fb83d773ec43717')  // CircuitDigest
+          BigNumber.from('0x1ba0ce182fc9cf0eba3aa35b990b052d0d956d641defdddd8b93473a7d9d6d5e')  // CircuitDigest
         ]
     );
     assert.equal(result, true);
