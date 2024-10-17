@@ -1,0 +1,105 @@
+{
+  "address": "0x061691567026bf6384Ca1Ab2402346E9bD1d0765",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "blocks",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "blockHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "update",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x2a193b569dd0be09c565b7af3b8e6cf308de1779a369875fbcee57bb3a9295a8",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529F9084D7eAA598EB3477Fe36064C5B7bbC1",
+    "contractAddress": "0x061691567026bf6384Ca1Ab2402346E9bD1d0765",
+    "transactionIndex": 108,
+    "gasUsed": "92091",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x4bc0978ce0b97583fe86ea62189e109cd83828fa7a96ed629624d832dab97563",
+    "transactionHash": "0x2a193b569dd0be09c565b7af3b8e6cf308de1779a369875fbcee57bb3a9295a8",
+    "logs": [],
+    "blockNumber": 6884577,
+    "cumulativeGasUsed": "14164401",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5718695c7b6b1bbd0bcfc233f10eef41",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"blocks\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockNum\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"}],\"name\":\"update\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/test-helper/MockAnchorBlocks.sol\":\"MockAnchorBlocks\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/light-client-eth/interfaces/IAnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IAnchorBlocks {\\n    function blocks(uint256 blockNum) external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x317ca2285ce87fc2e74f748b71eeca387687a5d8f1c6cb46dd7b609ef7623ec8\",\"license\":\"MIT\"},\"contracts/test-helper/MockAnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\nimport \\\"../light-client-eth/interfaces/IAnchorBlocks.sol\\\";\\n\\ncontract MockAnchorBlocks is IAnchorBlocks {\\n    mapping(uint256 => bytes32) public blocks;\\n\\n    function update(uint256 blockNum, bytes32 blockHash) external {\\n        blocks[blockNum] = blockHash;\\n    }\\n}\\n\",\"keccak256\":\"0xd7f612e9957a4387e249f9d359b0ca9022e6c132a5ab3ea007bed553d9ff7583\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523460145760b3908161001a8239f35b600080fdfe60806040526004361015601157600080fd5b6000803560e01c8063d3b7576c1460595763f25b3f9914603057600080fd5b346056576020366003190112605657604060209160043581528083522054604051908152f35b80fd5b50346056576040366003190112605657600435815280602052602435604082205580f3fea2646970667358221220578e794164831f9033342f33579caf409626a0b645e34c1b6dada50429b11d0064736f6c63430008140033",
+  "deployedBytecode": "0x60806040526004361015601157600080fd5b6000803560e01c8063d3b7576c1460595763f25b3f9914603057600080fd5b346056576020366003190112605657604060209160043581528083522054604051908152f35b80fd5b50346056576040366003190112605657600435815280602052602435604082205580f3fea2646970667358221220578e794164831f9033342f33579caf409626a0b645e34c1b6dada50429b11d0064736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 88686,
+        "contract": "contracts/test-helper/MockAnchorBlocks.sol:MockAnchorBlocks",
+        "label": "blocks",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_uint256,t_bytes32)"
+      }
+    ],
+    "types": {
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_uint256,t_bytes32)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bytes32)",
+        "numberOfBytes": "32",
+        "value": "t_bytes32"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

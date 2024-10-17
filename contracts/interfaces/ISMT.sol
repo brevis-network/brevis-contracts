@@ -9,6 +9,7 @@ interface ISMT {
         uint64 endBlockNum;
         bytes32 endBlockHash;
         bytes32 nextChunkMerkleRoot;
+        bytes32 circuitDigest;
         uint256[8] proof;
         uint256[2] commit;
         uint256[2] knowledgeProof;
