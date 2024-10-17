@@ -134,6 +134,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
       hexValues += value.toHexString().slice(2).padStart(64, '0');
     });
 
+    console.log("hexValues: ", hexValues)
     const result = await contract.verifyRaw(hexToBytes('0x' + hexValues));
 
     assert.equal(result, true);
