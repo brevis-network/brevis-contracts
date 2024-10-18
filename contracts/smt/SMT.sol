@@ -9,12 +9,14 @@ contract SMT is ISMT, BrevisAccess {
     event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
+    event CircuitDigestUpdated(bytes32 circuitDigest);
 
     mapping(uint64 => IAnchorBlocks) public anchorProviders;
     mapping(uint64 => IVerifier) public verifiers;
 
     mapping(uint64 => mapping(bytes32 => bool)) public smtRoots;
     mapping(uint64 => bytes32) public latestRoots;
+    bytes32 public circuitDigest; 
 
     constructor(
         uint64[] memory _chainIds,
@@ -63,18 +65,18 @@ contract SMT is ISMT, BrevisAccess {
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
-
+        require(circuitDigest == u.circuitDigest, "not valid circuit digest");
         uint256[9] memory input;
         uint256 m = 1 << 128;
-        input[0] = uint256(oldSmtRoot) >> 128;
-        input[1] = uint256(oldSmtRoot) % m;
+        input[0] = uint256(u.endBlockHash) >> 128;
+        input[1] = uint256(u.endBlockHash) % m;
         input[2] = uint256(u.newSmtRoot) >> 128;
         input[3] = uint256(u.newSmtRoot) % m;
-        input[4] = uint256(u.endBlockHash) >> 128;
-        input[5] = uint256(u.endBlockHash) % m;
-        input[6] = u.endBlockNum;
-        input[7] = uint256(u.nextChunkMerkleRoot) >> 128;
-        input[8] = uint256(u.nextChunkMerkleRoot) % m;
+        input[4] = uint256(oldSmtRoot) >> 128;
+        input[5] = uint256(oldSmtRoot) % m;
+        input[6] = uint256(u.nextChunkMerkleRoot) >> 128;
+        input[7] = uint256(u.nextChunkMerkleRoot) % m;
+        input[8] = uint256(u.circuitDigest);
 
         return verifier.verifyProof(u.proof, u.commit, u.knowledgeProof, input);
     }
@@ -87,5 +89,10 @@ contract SMT is ISMT, BrevisAccess {
     function setVerifier(uint64 chainId, address verifier) external onlyOwner {
         verifiers[chainId] = IVerifier(verifier);
         emit VerifierUpdated(chainId, verifier);
+    }
+
+    function setCircuitDigest(bytes32 _circuitDigest) external onlyOwner {
+        circuitDigest = _circuitDigest;
+        emit CircuitDigestUpdated(_circuitDigest);
     }
 }

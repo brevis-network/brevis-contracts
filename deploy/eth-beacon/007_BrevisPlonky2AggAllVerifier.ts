@@ -12,14 +12,10 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  // const anchorProvider = await deployments.get('AnchorBlocks');
-  const anchorProvider = await deployments.get('MockAnchorBlocks');
-  const verifier = await deployments.get('BrevisPlonky2SmtVerifier');
-  const args = [[1], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
-  const deployment = await deploy('SMT', { from: deployer, log: true, args: args });
+  const deployment = await deploy('BrevisPlonky2AggAllVerifier', { from: deployer, log: true });
   await verify(hre, deployment);
 };
 
-deployFunc.tags = ['SMT'];
+deployFunc.tags = ['BrevisPlonky2AggAllVerifier'];
 deployFunc.dependencies = [];
 export default deployFunc;
