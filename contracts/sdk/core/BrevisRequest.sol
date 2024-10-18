@@ -93,8 +93,9 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         bytes calldata _appCircuitOutput,
         address _callbackTarget
     ) external onlyActiveProver {
-        (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
-        require(_proofId == proofId, "invalid proofId");
+        (bytes32 commitHash, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
+
+        require(_proofId == keccak256(abi.encodePacked(commitHash, appVkHash)), "invalid proofId");
 
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
         Request storage request = requests[requestKey];
@@ -129,9 +130,8 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
 
         uint256 numFulfilled;
         for (uint256 i = 0; i < dataNum; i++) {
-            require(_proofDataArray[i].commitHash == _proofIds[i], "invalid proofId");
+            require(keccak256(abi.encodePacked(_proofDataArray[i].commitHash, _proofDataArray[i].appVkHash)) == _proofIds[i], "invalid proofId");
             require(_proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
-
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
             RequestStatus status = request.status;
