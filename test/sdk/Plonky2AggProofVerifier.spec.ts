@@ -1,11 +1,11 @@
 import { Fixture } from 'ethereum-waffle';
 import { BigNumber, Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
-import { Plonky2AppAggVerifier } from '../../typechain';
+import { Plonky2AggProofVerifier } from '../../typechain';
 import assert from 'assert';
 
 async function deployContract(admin: Wallet) {
-  const _factory = await ethers.getContractFactory('Plonky2AppAggVerifier');
+  const _factory = await ethers.getContractFactory('Plonky2AggProofVerifier');
   const _contract = await _factory.connect(admin).deploy();
   return _contract;
 }
@@ -21,7 +21,7 @@ describe('plonky2 app agg verifier', async () => {
     return { admin, contract };
   }
 
-  let contract: Plonky2AppAggVerifier;
+  let contract: Plonky2AggProofVerifier;
   let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);

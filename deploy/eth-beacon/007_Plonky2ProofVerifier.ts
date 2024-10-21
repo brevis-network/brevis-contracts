@@ -12,10 +12,10 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const deployment = await deploy('BrevisPlonky2AggAllVerifier', { from: deployer, log: true });
+  const deployment = await deploy('Plonky2ProofVerifier', { from: deployer, log: true });
   await verify(hre, deployment);
 };
 
-deployFunc.tags = ['BrevisPlonky2AggAllVerifier'];
+deployFunc.tags = ['Plonky2ProofVerifier'];
 deployFunc.dependencies = [];
 export default deployFunc;

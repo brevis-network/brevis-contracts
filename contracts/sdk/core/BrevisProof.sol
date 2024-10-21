@@ -31,9 +31,9 @@ contract BrevisProof is BrevisAggProof {
         require(verifyRaw(_chainId, _proofWithPubInputs), "proof not valid");
         Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs);
 
-        proofId = data.commitHash;
         appCommitHash = data.appCommitHash;
         appVkHash = data.appVkHash;
+        proofId = keccak256(abi.encodePacked(appVkHash, data.commitHash, appCommitHash));
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
         require(dummyInputCommitments[_chainId] == data.dummyInputCommitment, "invalid dummy input");
         proofs[proofId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
@@ -72,7 +72,9 @@ contract BrevisProof is BrevisAggProof {
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]
         );
         data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]);
-        data.dummyInputCommitment = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]);
+        data.dummyInputCommitment = bytes32(
+            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]
+        );
     }
 
     function verifyRaw(uint64 _chainId, bytes calldata _proofWithPubInputs) private view returns (bool) {
