@@ -94,7 +94,6 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         address _callbackTarget
     ) external onlyActiveProver {
         (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) = brevisProof.submitProof(_chainId, _proof);
-
         require(_proofId == proofId, "invalid proofId");
 
         bytes32 requestKey = keccak256(abi.encodePacked(_proofId, _nonce));
