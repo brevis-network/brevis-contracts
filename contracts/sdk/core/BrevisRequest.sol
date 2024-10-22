@@ -129,9 +129,17 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
 
         uint256 numFulfilled;
         for (uint256 i = 0; i < dataNum; i++) {
-            require(_proofDataArray[i].commitHash == _proofIds[i], "invalid proofId");
+            require(
+                keccak256(
+                    abi.encodePacked(
+                        _proofDataArray[i].appVkHash,
+                        _proofDataArray[i].commitHash,
+                        _proofDataArray[i].appCommitHash
+                    )
+                ) == _proofIds[i],
+                "invalid proofId"
+            );
             require(_proofDataArray[i].appCommitHash == keccak256(_appCircuitOutputs[i]), "invalid circuit output");
-
             bytes32 requestKey = keccak256(abi.encodePacked(_proofIds[i], _nonces[i]));
             Request storage request = requests[requestKey];
             RequestStatus status = request.status;

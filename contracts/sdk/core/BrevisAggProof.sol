@@ -37,7 +37,7 @@ contract BrevisAggProof is BrevisAccess {
         require(address(verifier) != address(0), "chain agg proof verifier not set");
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
 
-        (bytes32 root, bytes32 commitHash) = unpack(_proofWithPubInputs);
+        (bytes32 root, bytes32 proofIdsCommit) = unpack(_proofWithPubInputs);
 
         uint dataLen = _proofIds.length;
         bytes32[LEAF_NODES_LEN] memory rIds;
@@ -50,7 +50,7 @@ contract BrevisAggProof is BrevisAccess {
                 rIds[i] = rIds[dataLen - 1];
             }
         }
-        require(keccak256(abi.encodePacked(rIds)) == commitHash, "proofIds not right");
+        require(keccak256(abi.encodePacked(rIds)) == proofIdsCommit, "proofIds not right");
         merkleRoots[root] = true;
     }
 
@@ -157,8 +157,10 @@ contract BrevisAggProof is BrevisAccess {
      * Internal and Private Functions *
      **********************************/
 
-    function unpack(bytes calldata _proofWithPubInputs) internal pure returns (bytes32 merkleRoot, bytes32 commitHash) {
+    function unpack(
+        bytes calldata _proofWithPubInputs
+    ) internal pure returns (bytes32 merkleRoot, bytes32 proofIdsCommit) {
         merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
-        commitHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
+        proofIdsCommit = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
     }
 }

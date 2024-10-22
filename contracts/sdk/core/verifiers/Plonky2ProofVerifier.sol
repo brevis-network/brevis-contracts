@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -9,8 +8,7 @@ pragma solidity ^0.8.0;
 /// (256 bytes) and compressed (128 bytes) format. A view function is provided
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
-contract BrevisPlonky2AggAllVerifier {
-
+contract Plonky2ProofVerifier {
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -82,10 +80,14 @@ contract BrevisPlonky2AggAllVerifier {
     uint256 constant PEDERSEN_G_Y_1 = 18666732610208156221473739148692793838408719187618260589200353480581221843461;
 
     // Pedersen GRootSigmaNeg point in G2 in powers of i
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 = 21505379607885122009953351770408508416300000766254241868101458101697608187837;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 = 2030938172933112431869863941948069252617984473137149834426985863056323485998;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 = 16421963408192857261465288505251823743005906191763480780698561612688354193564;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 = 6106969836540272191339684324668517442136584166977361754486796138964061701414;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 =
+        21505379607885122009953351770408508416300000766254241868101458101697608187837;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 =
+        2030938172933112431869863941948069252617984473137149834426985863056323485998;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 =
+        16421963408192857261465288505251823743005906191763480780698561612688354193564;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 =
+        6106969836540272191339684324668517442136584166977361754486796138964061701414;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 4066879786622539654360163533447495143816198716738061491754616469283063625572;
@@ -243,8 +245,8 @@ contract BrevisPlonky2AggAllVerifier {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             mstore(f, a0)
             mstore(add(f, 0x20), a1)
             mstore(add(f, 0x40), b00)
@@ -254,10 +256,10 @@ contract BrevisPlonky2AggAllVerifier {
             mstore(add(f, 0xc0), c0)
             mstore(add(f, 0xe0), c1)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -296,9 +298,9 @@ contract BrevisPlonky2AggAllVerifier {
             mstore(add(f, 0x440), PEDERSEN_GROOTSIGMANEG_Y_1)
             mstore(add(f, 0x460), PEDERSEN_GROOTSIGMANEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {
@@ -339,5 +341,4 @@ contract BrevisPlonky2AggAllVerifier {
 
         return this.verifyProof(proof, commitment, commitmentPOK, input);
     }
-
 }

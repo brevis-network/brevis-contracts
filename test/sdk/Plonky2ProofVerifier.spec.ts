@@ -1,18 +1,18 @@
 import { Fixture } from 'ethereum-waffle';
 import { BigNumber, Wallet } from 'ethers';
 import { ethers, waffle } from 'hardhat';
-import { BrevisPlonky2AggAllVerifier } from '../../typechain';
+import { Plonky2ProofVerifier } from '../../typechain';
 import assert from 'assert';
 import { hexToBytes } from '../util';
 import { expect } from 'chai';
 
 async function deployContract(admin: Wallet) {
-  const _factory = await ethers.getContractFactory('BrevisPlonky2AggAllVerifier');
+  const _factory = await ethers.getContractFactory('Plonky2ProofVerifier');
   const _contract = await _factory.connect(admin).deploy();
   return _contract;
 }
 
-describe('BrevisPlonky2AggAllVerifier test', async () => {
+describe('Plonky2ProofVerifier test', async () => {
   function loadFixture<T>(fixture: Fixture<T>): Promise<T> {
     const provider = waffle.provider;
     return waffle.createFixtureLoader(provider.getWallets(), provider)(fixture);
@@ -23,7 +23,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
     return { admin, contract };
   }
 
-  let contract: BrevisPlonky2AggAllVerifier;
+  let contract: Plonky2ProofVerifier;
   let admin: Wallet;
   beforeEach(async () => {
     const res = await loadFixture(fixture);
@@ -54,7 +54,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
         BigNumber.from('0x0abee73cf9c9eaaaf22818c48d6a247740996d02aa53a61d5838d63abea22df8') // Commitment POK1
       ],
       [
-        BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Query Hash
+        BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Input commitments root
         BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'), // SMT Root 0
         BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root 1
         BigNumber.from('0x0000000000000000000000000000000071712a0c5ec82685a9c47466e00386a7'), // App Circuit Output Commitment 0
@@ -89,7 +89,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
         BigNumber.from('0x217366aada9048eb697c3da4507b5e13eaa5897e09459d70e2e02bbf203d28b5') // Commitment POK1
       ],
       [
-        BigNumber.from('0x2f7bff88baa27888fc2770d4c708c5e73524858f3af0aa0b1470dd71fe6b0465'), // Query Hash
+        BigNumber.from('0x2f7bff88baa27888fc2770d4c708c5e73524858f3af0aa0b1470dd71fe6b0465'), // Input commitments root
         BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'), // SMT Root 0
         BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root 1
         BigNumber.from('0x0000000000000000000000000000000071712a0c5ec82685a9c47466e00386a7'), // App Circuit Output Commitment 0
@@ -121,11 +121,11 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
       BigNumber.from('0x2daf786e373ddd39333c53a3965bc98e78d7259096167340e41db1a46546024f'), // Commitment POK0
       BigNumber.from('0x0abee73cf9c9eaaaf22818c48d6a247740996d02aa53a61d5838d63abea22df8'), // Commitment POK1
 
-      BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Query Hash
+      BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Input commitments root
       BigNumber.from('0xca3022d33d006b913ecfad08eb9d6dde985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root
       BigNumber.from('0x71712a0c5ec82685a9c47466e00386a7190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment
       BigNumber.from('0x2c86965e6e0d3878f8bc667d9e3ff0043f07a125d9ea24c3f83df9519e7d57eb'), // CircuitDigest
-      BigNumber.from('0x17d1e8686c170d21dfd9870eaba43ff8fbaeefb0aca084a0dd2e308f0e5b3b7e')  // DummyCommitment
+      BigNumber.from('0x17d1e8686c170d21dfd9870eaba43ff8fbaeefb0aca084a0dd2e308f0e5b3b7e') // DummyCommitment
     ];
 
     var hexValues = '';
@@ -134,7 +134,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
       hexValues += value.toHexString().slice(2).padStart(64, '0');
     });
 
-    console.log("hexValues: ", hexValues)
+    console.log('hexValues: ', hexValues);
     const result = await contract.verifyRaw(hexToBytes('0x' + hexValues));
 
     assert.equal(result, true);
@@ -163,7 +163,7 @@ describe('BrevisPlonky2AggAllVerifier test', async () => {
       BigNumber.from('0xca3022d33d006b913ecfad08eb9d6dde985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root
       BigNumber.from('0x71712a0c5ec82685a9c47466e00386a7190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment
       BigNumber.from('0x140390b7ddcb67336f3cc7269b552519940d8dbc54b5e24d4d7b772b0cb9b53b'), // CircuitDigest
-      BigNumber.from('0x0')  // DummyCommitment
+      BigNumber.from('0x0') // DummyCommitment
     ];
 
     var hexValues = '';
