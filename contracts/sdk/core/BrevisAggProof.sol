@@ -16,9 +16,11 @@ contract BrevisAggProof is BrevisAccess {
     mapping(bytes32 => bool) public merkleRoots;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
     mapping(uint64 => bytes32) public dummyInputCommitments;
+    bytes32 public aggVkHash; // aggregation verifying key hash
     event SmtContractUpdated(address smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
     event DummyInputCommitmentsUpdated(uint64[] chainIds, bytes32[] updatedDummyInputCommitments);
+    event AggVkHashUpdated(bytes32 aggVkHash);
 
     constructor(ISMT _smtContract) {
         smtContract = _smtContract;
@@ -33,11 +35,11 @@ contract BrevisAggProof is BrevisAccess {
         bytes32[] calldata _proofIds,
         bytes calldata _proofWithPubInputs
     ) external onlyActiveProver {
+        (bytes32 root, bytes32 proofIdsCommit, bytes32 _aggVkHash) = unpack(_proofWithPubInputs);
+        require(_aggVkHash == aggVkHash, "agg verifying key not valid");
         IZkpVerifier verifier = aggProofVerifierAddress[_chainId];
         require(address(verifier) != address(0), "chain agg proof verifier not set");
         require(verifier.verifyRaw(_proofWithPubInputs), "proof not valid");
-
-        (bytes32 root, bytes32 proofIdsCommit) = unpack(_proofWithPubInputs);
 
         uint dataLen = _proofIds.length;
         bytes32[LEAF_NODES_LEN] memory rIds;
@@ -153,14 +155,22 @@ contract BrevisAggProof is BrevisAccess {
         emit DummyInputCommitmentsUpdated(_chainIds, _dummyInputCommitments);
     }
 
+     function setAggVkHash(
+        bytes32 _aggVkHash
+    ) public onlyOwner {
+        aggVkHash = _aggVkHash;
+        emit AggVkHashUpdated(_aggVkHash);
+    }
+
     /**********************************
      * Internal and Private Functions *
      **********************************/
 
     function unpack(
         bytes calldata _proofWithPubInputs
-    ) internal pure returns (bytes32 merkleRoot, bytes32 proofIdsCommit) {
+    ) internal pure returns (bytes32 merkleRoot, bytes32 proofIdsCommit, bytes32 aggVk) {
         merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
         proofIdsCommit = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
+        aggVk = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2*32:PUBLIC_BYTES_START_IDX + 3 * 32]);
     }
 }
