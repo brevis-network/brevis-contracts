@@ -29,52 +29,34 @@ describe('plonky2 app agg verifier', async () => {
     admin = res.admin;
   });
 
-  /*
-2024-10-22 06:33:24.927 |INFO | proof.go:148: proofData.A[0]: 0x085cbf5aff3b193ca425230910fa514fb8799dfa0f4d3c0a7a3ca75ea7c33876
-2024-10-22 06:33:24.927 |INFO | proof.go:149: proofData.A[1]: 0x288115ac0ecbbb83b5a93f8680c3dbe3cc0d2d5557b9a5b43510a4c92dfe67a2
-2024-10-22 06:33:24.927 |INFO | proof.go:151: proofData.B[0][0]: 0x15744d267afc176d716301ad8ad8c88beb3248dc8f09c1d8380c56d24fe79c08
-2024-10-22 06:33:24.927 |INFO | proof.go:152: proofData.B[0][1]: 0x1e1ea03ea68143787edbc16d754835862a00b35aee12942a673a190bab91878f
-2024-10-22 06:33:24.927 |INFO | proof.go:153: proofData.B[1][0]: 0x1a65bfe7990e30fe2a3773965ba29487fd2c5fea863560833e01f6c34607e18b
-2024-10-22 06:33:24.927 |INFO | proof.go:154: proofData.B[1][1]: 0x0b421a3b82d91c689f0d01c3ab1458770c859f88375b9eaecb763d61da4331c5
-2024-10-22 06:33:24.927 |INFO | proof.go:156: proofData.C[0]: 0x2ef4498c44ad3eddb225bd46145bd412f038ab4336f92f9f6899be7ccf7894fd
-2024-10-22 06:33:24.927 |INFO | proof.go:157: proofData.C[1]: 0x1f7bff28305f1a70e76b59e70b9bafda0a61ac92c062fc8ac868bce714fd0a08
-2024-10-22 06:33:24.927 |INFO | proof.go:159: proofData.Commitment[0]: 0x0614fd03069c0ede511046d71fb1d257bfaf60f44c89bfac856c4eef648fe0d7
-2024-10-22 06:33:24.927 |INFO | proof.go:160: proofData.Commitment[1]: 0x0cb356627bca41abd132d8c1207bce6a4c583ae7ffe3e4af0bb2be4b630dd9
-2024-10-22 06:33:24.927 |INFO | proof.go:161: proofData.CommitmentPok[0]: 0x14c6cac2599f247fee469d1fe6b814a50f8b5daddc21678dc6db80cd59a0490d
-2024-10-22 06:33:24.927 |INFO | proof.go:162: proofData.CommitmentPok[1]: 0x0b10b60132c91d57d0cdd0784d8da35fa718ebb7ef841f5768ae75726c540e7d
-2024-10-22 06:33:24.927 |INFO | proof.go:172: witness_0: 0x0000000000000000000000000000000010014c98bf2dd09230f13624e8bcdd6c
-2024-10-22 06:33:24.927 |INFO | proof.go:172: witness_1: 0x00000000000000000000000000000000a85a1c5cfe0f7c183eb0c471b6cb9800
-2024-10-22 06:33:24.927 |INFO | proof.go:172: witness_2: 0x00000000000000000000000000000000ec2421d3673015d1f77586110882910e
-2024-10-22 06:33:24.927 |INFO | proof.go:172: witness_3: 0x000000000000000000000000000000000aeb1f2268c6c016a3954be3ed26798c
-   */
-
   it('should pass on true proof', async () => {
     const result = await contract.verifyProof(
       [
-        BigNumber.from('0x085cbf5aff3b193ca425230910fa514fb8799dfa0f4d3c0a7a3ca75ea7c33876'), // a0
-        BigNumber.from('0x288115ac0ecbbb83b5a93f8680c3dbe3cc0d2d5557b9a5b43510a4c92dfe67a2'), // a1
+        BigNumber.from('0x055da2f44ec1250fe4943bae59206ddfb2214cd3b8049be31b9915e1dde08148'), // a0
+        BigNumber.from('0x27187295f976fce577654bc0c31892937793bbecdab3a1b3c671c087dab3c14b'), // a1
 
-        BigNumber.from('0x15744d267afc176d716301ad8ad8c88beb3248dc8f09c1d8380c56d24fe79c08'), // b00
-        BigNumber.from('0x1e1ea03ea68143787edbc16d754835862a00b35aee12942a673a190bab91878f'), // b01
-        BigNumber.from('0x1a65bfe7990e30fe2a3773965ba29487fd2c5fea863560833e01f6c34607e18b'), // b10
-        BigNumber.from('0x0b421a3b82d91c689f0d01c3ab1458770c859f88375b9eaecb763d61da4331c5'), // b11
+        BigNumber.from('0x0a89b97abff05eeef06762ed638f702de8d70d4551654670f8212a302b54eb23'), // b00
+        BigNumber.from('0x194f802b9aa4f0d0a7de06dd054941a610069d4915843fd6e33895ff85269dae'), // b01
+        BigNumber.from('0x150c09738284b51714bd0ed516e366847a2e339f3351ff16786d33c1c8609452'), // b10
+        BigNumber.from('0x11949044585f0378a0c9ad3dd5c0bc193262536179f1db5288276e863f2d33f9'), // b11
 
-        BigNumber.from('0x2ef4498c44ad3eddb225bd46145bd412f038ab4336f92f9f6899be7ccf7894fd'), // c0
-        BigNumber.from('0x1f7bff28305f1a70e76b59e70b9bafda0a61ac92c062fc8ac868bce714fd0a08') // c1
+        BigNumber.from('0x427dfbd96c3dccabe35ff12a9ed9bd94bb6c4903bf4085dac280221f625c03'), // c0
+        BigNumber.from('0x2d017a3a6ea21f5a744d50bb27facc1fc03e4542c46d08dc1a2393942b27401f') // c1
       ],
       [
-        BigNumber.from('0x0614fd03069c0ede511046d71fb1d257bfaf60f44c89bfac856c4eef648fe0d7'), // Commitment 0
-        BigNumber.from('0x0cb356627bca41abd132d8c1207bce6a4c583ae7ffe3e4af0bb2be4b630dd9') // Commitment 1
+        BigNumber.from('0x23d2f8c229ebf6f57203893798cbdf5e70af15f8630f8fd026540451e0bebb7e'), // Commitment 0
+        BigNumber.from('0x0bf51700de4ad5378cfbcc2af927820a886e37a5c35b56ba96015458d8e31d89') // Commitment 1
       ],
       [
-        BigNumber.from('0x14c6cac2599f247fee469d1fe6b814a50f8b5daddc21678dc6db80cd59a0490d'), // Commitment POK0
-        BigNumber.from('0x0b10b60132c91d57d0cdd0784d8da35fa718ebb7ef841f5768ae75726c540e7d') // Commitment POK1
+        BigNumber.from('0x172e94231d85e0f7db939a3ebbdda5e643eecf7aad86f8bf69d4e2327344c2a4'), // Commitment POK0
+        BigNumber.from('0x10fdad86e46127a8f6d8c51c84c1aa05aaffd5b8959eee4484aa052f2debfb7f') // Commitment POK1
       ],
       [
         BigNumber.from('0x0000000000000000000000000000000010014c98bf2dd09230f13624e8bcdd6c'),
         BigNumber.from('0x00000000000000000000000000000000a85a1c5cfe0f7c183eb0c471b6cb9800'),
         BigNumber.from('0x00000000000000000000000000000000ec2421d3673015d1f77586110882910e'),
-        BigNumber.from('0x000000000000000000000000000000000aeb1f2268c6c016a3954be3ed26798c')
+        BigNumber.from('0x000000000000000000000000000000000aeb1f2268c6c016a3954be3ed26798c'),
+        BigNumber.from('0x078ab850e8148fc412016972abf837fddbc8c7f87d049e337fcdfdc1a47caca2')
       ]
     );
     assert.equal(result, true);
