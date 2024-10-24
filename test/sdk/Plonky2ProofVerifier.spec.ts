@@ -34,24 +34,24 @@ describe('Plonky2ProofVerifier test', async () => {
   it('should pass on true proof', async () => {
     const result = await contract.verifyProof(
       [
-        BigNumber.from('0x067c89cf20e457d1d5008139e388c95dfaef74ec927f648bc7048116ad879df9'), // a0
-        BigNumber.from('0x2b490bb46d91cad7667623bf7cecac1c7f6ae16712f82e87148157aeda32c046'), // a1
+        BigNumber.from('0x07226d1bf54c34fd4138d73d9950bff0b46cdf3f1cb23e42ff9bf7c794f7dba4'), // a0
+        BigNumber.from('0x288dd90826fb4a52d34982b900962d864c0411df97b0f0819527b4ed318751fa'), // a1
 
-        BigNumber.from('0x0b3445bc871b565e532630b0b2e793a3a7270b83f8bbcb131fcff19330c7ff64'), // b00
-        BigNumber.from('0x163b2971ee0eb0ebf63b16c4cb2502a36d735913fe0268fc8b424a60b6dc5c83'), // b01
-        BigNumber.from('0x2134bc80369d748a29a6d032454354ac362018f3179fd7411c24825ef2afffc8'), // b10
-        BigNumber.from('0x2583b3a3f1eb5def4920674a065e7d8eafaaeccbee6322bfd8a6e2620d07c1bb'), // b11
+        BigNumber.from('0x07b9d5f4ff9fc7991087d4ae352d2f780efc566cc9fc12ecd8e820d3c9ccdc78'), // b00
+        BigNumber.from('0x0992e1f35f68ed4b5aa65a90b8fb754775820c54f8904f9317721375a9d80661'), // b01
+        BigNumber.from('0x2e3c2a30bcbf1497723e5c2f94dd9ddc6745d35f6b2e198bdc5aa21fcac14094'), // b10
+        BigNumber.from('0x280d9491d5e100788a2b6155aabf1724f10b85d751f769289d7f4eef442877be'), // b11
 
-        BigNumber.from('0x1eda53e3a3c1eee7a66b84a1bca1f29cb6a1f3fd5d4d2ac48a69cf2bff39efce'), // c0
-        BigNumber.from('0x17cdaeb9dc2dc92354098cf5dfb431538db95b6d8ff005ba46516c3819699cf5') // c1
+        BigNumber.from('0x2c74fcdee3a4bdfe216e9fee7f87a4f4a9efe4b7e19ca5ee9c1a728586657ded'), // c0
+        BigNumber.from('0x10b7d6d1fe7ac88670f9f59aa3c0bcbb18fc207b8f84c40116029a3d84823f6c') // c1
       ],
       [
-        BigNumber.from('0x34a56eb26a24a6174354063f680660f0a0f7e710ce6fdcff66b111d401f271'), // Commitment 0
-        BigNumber.from('0x2c4e04b63a814d8e801a8ae0002ea66bde542f4fa151ee572628aa0267b5fffb') // Commitment 1
+        BigNumber.from('0xc3e7285e5c53aa4a73512a066762a84335b18424736c6f2ec276dbbd9fb15c'), // Commitment 0
+        BigNumber.from('0x1d658fecdcf74c8ed73511751f8d04bb35837b7e835269e3c11fe6aed35e1989') // Commitment 1
       ],
       [
-        BigNumber.from('0x2daf786e373ddd39333c53a3965bc98e78d7259096167340e41db1a46546024f'), // Commitment POK0
-        BigNumber.from('0x0abee73cf9c9eaaaf22818c48d6a247740996d02aa53a61d5838d63abea22df8') // Commitment POK1
+        BigNumber.from('0x15e54e593fb1f65822f04b76c9e776325fbc27705abe65073c112fae7f4b3bd6'), // Commitment POK0
+        BigNumber.from('0x2a318cbb0bca8b760f758e9c011108ce1fea07856d16dcb18d49e818857b22d2') // Commitment POK1
       ],
       [
         BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Input commitments root
@@ -59,7 +59,7 @@ describe('Plonky2ProofVerifier test', async () => {
         BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root 1
         BigNumber.from('0x0000000000000000000000000000000071712a0c5ec82685a9c47466e00386a7'), // App Circuit Output Commitment 0
         BigNumber.from('0x00000000000000000000000000000000190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment 1
-        BigNumber.from('0x2c86965e6e0d3878f8bc667d9e3ff0043f07a125d9ea24c3f83df9519e7d57eb'), // CircuitDigest
+        BigNumber.from('0x091be53f1dc5af98b496abfdc85ef95d9c31b71a3ae28a7d69ba52dd51095718'), // CircuitDigest
         BigNumber.from('0x17d1e8686c170d21dfd9870eaba43ff8fbaeefb0aca084a0dd2e308f0e5b3b7e') // DummyCommitment
       ]
     );
@@ -104,27 +104,27 @@ describe('Plonky2ProofVerifier test', async () => {
 
   it('should pass on verify raw proof', async () => {
     const values = [
-      BigNumber.from('0x067c89cf20e457d1d5008139e388c95dfaef74ec927f648bc7048116ad879df9'), // a0
-      BigNumber.from('0x2b490bb46d91cad7667623bf7cecac1c7f6ae16712f82e87148157aeda32c046'), // a1
+      BigNumber.from('0x07226d1bf54c34fd4138d73d9950bff0b46cdf3f1cb23e42ff9bf7c794f7dba4'), // a0
+      BigNumber.from('0x288dd90826fb4a52d34982b900962d864c0411df97b0f0819527b4ed318751fa'), // a1
 
-      BigNumber.from('0x0b3445bc871b565e532630b0b2e793a3a7270b83f8bbcb131fcff19330c7ff64'), // b00
-      BigNumber.from('0x163b2971ee0eb0ebf63b16c4cb2502a36d735913fe0268fc8b424a60b6dc5c83'), // b01
-      BigNumber.from('0x2134bc80369d748a29a6d032454354ac362018f3179fd7411c24825ef2afffc8'), // b10
-      BigNumber.from('0x2583b3a3f1eb5def4920674a065e7d8eafaaeccbee6322bfd8a6e2620d07c1bb'), // b11
+      BigNumber.from('0x07b9d5f4ff9fc7991087d4ae352d2f780efc566cc9fc12ecd8e820d3c9ccdc78'), // b00
+      BigNumber.from('0x0992e1f35f68ed4b5aa65a90b8fb754775820c54f8904f9317721375a9d80661'), // b01
+      BigNumber.from('0x2e3c2a30bcbf1497723e5c2f94dd9ddc6745d35f6b2e198bdc5aa21fcac14094'), // b10
+      BigNumber.from('0x280d9491d5e100788a2b6155aabf1724f10b85d751f769289d7f4eef442877be'), // b11
 
-      BigNumber.from('0x1eda53e3a3c1eee7a66b84a1bca1f29cb6a1f3fd5d4d2ac48a69cf2bff39efce'), // c0
-      BigNumber.from('0x17cdaeb9dc2dc92354098cf5dfb431538db95b6d8ff005ba46516c3819699cf5'), // c1
+      BigNumber.from('0x2c74fcdee3a4bdfe216e9fee7f87a4f4a9efe4b7e19ca5ee9c1a728586657ded'), // c0
+      BigNumber.from('0x10b7d6d1fe7ac88670f9f59aa3c0bcbb18fc207b8f84c40116029a3d84823f6c'), // c1
 
-      BigNumber.from('0x34a56eb26a24a6174354063f680660f0a0f7e710ce6fdcff66b111d401f271'), // Commitment 0
-      BigNumber.from('0x2c4e04b63a814d8e801a8ae0002ea66bde542f4fa151ee572628aa0267b5fffb'), // Commitment 1
+      BigNumber.from('0xc3e7285e5c53aa4a73512a066762a84335b18424736c6f2ec276dbbd9fb15c'), // Commitment 0
+      BigNumber.from('0x1d658fecdcf74c8ed73511751f8d04bb35837b7e835269e3c11fe6aed35e1989'), // Commitment 1
 
-      BigNumber.from('0x2daf786e373ddd39333c53a3965bc98e78d7259096167340e41db1a46546024f'), // Commitment POK0
-      BigNumber.from('0x0abee73cf9c9eaaaf22818c48d6a247740996d02aa53a61d5838d63abea22df8'), // Commitment POK1
+      BigNumber.from('0x15e54e593fb1f65822f04b76c9e776325fbc27705abe65073c112fae7f4b3bd6'), // Commitment POK0
+      BigNumber.from('0x2a318cbb0bca8b760f758e9c011108ce1fea07856d16dcb18d49e818857b22d2'), // Commitment POK1
 
       BigNumber.from('0x1c80a4a07adc00e26449991f8742a2882f0f89e5e4ef453a118a5c5db1ef22d7'), // Input commitments root
       BigNumber.from('0xca3022d33d006b913ecfad08eb9d6dde985e93fdd80ca6fadebcd2172d28c3f3'), // SMT Root
       BigNumber.from('0x71712a0c5ec82685a9c47466e00386a7190bc97dbf0fb86d1ff47370783ffa07'), // App Circuit Output Commitment
-      BigNumber.from('0x2c86965e6e0d3878f8bc667d9e3ff0043f07a125d9ea24c3f83df9519e7d57eb'), // CircuitDigest
+      BigNumber.from('0x091be53f1dc5af98b496abfdc85ef95d9c31b71a3ae28a7d69ba52dd51095718'), // CircuitDigest
       BigNumber.from('0x17d1e8686c170d21dfd9870eaba43ff8fbaeefb0aca084a0dd2e308f0e5b3b7e') // DummyCommitment
     ];
 
