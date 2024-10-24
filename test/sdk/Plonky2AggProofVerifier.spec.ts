@@ -52,11 +52,11 @@ describe('plonky2 app agg verifier', async () => {
         BigNumber.from('0x10fdad86e46127a8f6d8c51c84c1aa05aaffd5b8959eee4484aa052f2debfb7f') // Commitment POK1
       ],
       [
-        BigNumber.from('0x0000000000000000000000000000000010014c98bf2dd09230f13624e8bcdd6c'),
-        BigNumber.from('0x00000000000000000000000000000000a85a1c5cfe0f7c183eb0c471b6cb9800'),
-        BigNumber.from('0x00000000000000000000000000000000ec2421d3673015d1f77586110882910e'),
-        BigNumber.from('0x000000000000000000000000000000000aeb1f2268c6c016a3954be3ed26798c'),
-        BigNumber.from('0x078ab850e8148fc412016972abf837fddbc8c7f87d049e337fcdfdc1a47caca2')
+        BigNumber.from('0x0000000000000000000000000000000010014c98bf2dd09230f13624e8bcdd6c'), // Merkle Root 0
+        BigNumber.from('0x00000000000000000000000000000000a85a1c5cfe0f7c183eb0c471b6cb9800'), // Merkle Root 1
+        BigNumber.from('0x00000000000000000000000000000000ec2421d3673015d1f77586110882910e'), // ProofIds Commitment 0
+        BigNumber.from('0x000000000000000000000000000000000aeb1f2268c6c016a3954be3ed26798c'), // ProofIds Commitment 1
+        BigNumber.from('0x078ab850e8148fc412016972abf837fddbc8c7f87d049e337fcdfdc1a47caca2') // Agg Vk Hash
       ]
     );
     assert.equal(result, true);
