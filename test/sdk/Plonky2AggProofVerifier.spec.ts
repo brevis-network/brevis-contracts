@@ -50,14 +50,14 @@ describe('plonky2 app agg verifier', async () => {
       ],
       [
         BigNumber.from('0x13efaaa8bbab7c933da36361cd8449323d07d70213ec24cc52750efbb8207104'), // Commitment POK0
-        BigNumber.from('0x1f0ce031346253c1fabd300a9b7fb2989665c8d06d40eb117ddf500bdbd28580') // Commitment POK1
+        BigNumber.from('0x1f0ce031346253c1fabd300a9b7fb2989665c8d06d40eb117ddf500bdbd28580'), // Commitment POK1
       ],
       [
-        BigNumber.from('0x0000000000000000000000000000000058135c8317b5cbf63d7567de0693818f'),
-        BigNumber.from('0x00000000000000000000000000000000d7377885e3e26a73ed88f828b44ce437'),
-        BigNumber.from('0x00000000000000000000000000000000efd3a1e24fd7fed7c07d0e9c001421fc'),
-        BigNumber.from('0x000000000000000000000000000000002185153b9345a5d2e9c0513edcd59a87'),
-        BigNumber.from('0x17db68ec6ce43b8a521f8d2b0ac528aa6822f715081ed194a818f3a5daf0f253')
+        BigNumber.from('0x0000000000000000000000000000000058135c8317b5cbf63d7567de0693818f'), // Merkle Root 1
+        BigNumber.from('0x00000000000000000000000000000000d7377885e3e26a73ed88f828b44ce437'), // Merkle Root 0
+        BigNumber.from('0x00000000000000000000000000000000efd3a1e24fd7fed7c07d0e9c001421fc'), // ProofIds Commitment 1
+        BigNumber.from('0x000000000000000000000000000000002185153b9345a5d2e9c0513edcd59a87'), // ProofIds Commitment 0
+        BigNumber.from('0x17db68ec6ce43b8a521f8d2b0ac528aa6822f715081ed194a818f3a5daf0f253')  // Agg Vk Hash
       ]
     );
     assert.equal(result, true);
@@ -82,9 +82,9 @@ describe('plonky2 app agg verifier', async () => {
       BigNumber.from('0x13efaaa8bbab7c933da36361cd8449323d07d70213ec24cc52750efbb8207104'), // Commitment POK0
       BigNumber.from('0x1f0ce031346253c1fabd300a9b7fb2989665c8d06d40eb117ddf500bdbd28580'), // Commitment POK1
 
-      BigNumber.from('0xd7377885e3e26a73ed88f828b44ce43758135c8317b5cbf63d7567de0693818f'),
-      BigNumber.from('0x2185153b9345a5d2e9c0513edcd59a87efd3a1e24fd7fed7c07d0e9c001421fc'),
-      BigNumber.from('0x17db68ec6ce43b8a521f8d2b0ac528aa6822f715081ed194a818f3a5daf0f253')
+      BigNumber.from('0xd7377885e3e26a73ed88f828b44ce43758135c8317b5cbf63d7567de0693818f'), // Merkle Root 
+      BigNumber.from('0x2185153b9345a5d2e9c0513edcd59a87efd3a1e24fd7fed7c07d0e9c001421fc'), // ProofIds Commitment
+      BigNumber.from('0x17db68ec6ce43b8a521f8d2b0ac528aa6822f715081ed194a818f3a5daf0f253')  // Agg Vk Hash
     ];
 
     var hexValues = '';
