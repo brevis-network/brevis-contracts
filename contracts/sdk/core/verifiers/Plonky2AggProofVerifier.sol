@@ -297,7 +297,7 @@ contract Plonky2AggProofVerifier {
         input[0] = uint256(uint128(bytes16(proofData[400:416]))); // merkleRoot 1
         input[3] = uint256(uint128(bytes16(proofData[416:432]))); // proofIdsCommit 0
         input[2] = uint256(uint128(bytes16(proofData[432:448]))); // proofIdsCommit 1
-        input[4] = uint256(uint128(bytes16(proofData[448:480]))); // sub proof vk hash, mimc bn254
+        input[4] = uint256(bytes32(proofData[448:480])); // sub proof vk hash, mimc bn254
 
         return this.verifyProof(proof, commitment, commitmentPOK, input);
     }
