@@ -27,6 +27,10 @@ const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.or
 const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const optimismEndpoint = process.env.OPTIMISM_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
 const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const arbitrumSepoliaEndpoint = process.env.ARBITRUM_SEPOLIA_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
+const arbitrumSepoliaPrivateKey = process.env.ARBITRUM_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const baseSepoliaEndpoint = process.env.BASE_SEPOLIA_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
+const baseSepoliaPrivateKey = process.env.BASE_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -72,7 +76,15 @@ const config: HardhatUserConfig = {
     optimism: {
       url: optimismEndpoint || '',
       accounts: [`0x${optimismPrivateKey}`]
-    }
+    },
+    arbitrumSepolia: {
+      url: arbitrumSepoliaEndpoint,
+      accounts: [`0x${arbitrumSepoliaPrivateKey}`]
+    },
+    baseSepolia: {
+      url: baseSepoliaEndpoint,
+      accounts: [`0x${baseSepoliaPrivateKey}`]
+    },
   },
   namedAccounts: {
     deployer: {
@@ -108,7 +120,9 @@ const config: HardhatUserConfig = {
       holesky: process.env.ETHERSCAN_API_KEY as string,
       base: process.env.BASESCAN_API_KEY as string,
       arbitrumOne: process.env.ARBISCAN_API_KEY as string,
-      optimisticEthereum: process.env.OPSCAN_API_KEY as string
+      optimisticEthereum: process.env.OPSCAN_API_KEY as string,
+      arbitrumSepolia: process.env.ARBISCAN_API_KEY as string,
+      baseSepolia: process.env.BASESCAN_API_KEY as string,
     },
     customChains: [
       {
@@ -126,7 +140,23 @@ const config: HardhatUserConfig = {
           apiURL: 'https://api-holesky.etherscan.io/api',
           browserURL: 'https://holesky.etherscan.io/'
         }
-      }
+      },
+      {
+        network: 'arbitrumSepolia',
+        chainId: 421614,
+        urls: {
+          apiURL: 'https://api-sepolia.arbiscan.io/api',
+          browserURL: 'https://sepolia.arbiscan.io/'
+        }
+      },
+      {
+        network: 'baseSepolia',
+        chainId: 84532,
+        urls: {
+          apiURL: 'https://api-sepolia.basescan.org/api',
+          browserURL: 'https://sepolia.basescan.io/'
+        }
+      },
     ]
   }
 };
