@@ -31,6 +31,8 @@ const arbitrumSepoliaEndpoint = process.env.ARBITRUM_SEPOLIA_ENDPOINT ||  proces
 const arbitrumSepoliaPrivateKey = process.env.ARBITRUM_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const baseSepoliaEndpoint = process.env.BASE_SEPOLIA_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
 const baseSepoliaPrivateKey = process.env.BASE_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const modeEndpoint = process.env.MODE_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
+const modePrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY; 
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -85,6 +87,11 @@ const config: HardhatUserConfig = {
       url: baseSepoliaEndpoint,
       accounts: [`0x${baseSepoliaPrivateKey}`]
     },
+    mode: {
+      url: modeEndpoint,
+      accounts: [`0x${modePrivateKey}`],
+      chainId: 34443,
+    }
   },
   namedAccounts: {
     deployer: {
@@ -110,6 +117,9 @@ const config: HardhatUserConfig = {
     outDir: 'typechain',
     target: 'ethers-v5'
   },
+  sourcify: {
+    enabled: true,
+  },
   etherscan: {
     apiKey: {
       goerli: process.env.ETHERSCAN_API_KEY as string,
@@ -123,6 +133,7 @@ const config: HardhatUserConfig = {
       optimisticEthereum: process.env.OPSCAN_API_KEY as string,
       arbitrumSepolia: process.env.ARBISCAN_API_KEY as string,
       baseSepolia: process.env.BASESCAN_API_KEY as string,
+      mode: "mode",
     },
     customChains: [
       {
@@ -155,6 +166,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api-sepolia.basescan.org/api',
           browserURL: 'https://sepolia.basescan.io/'
+        }
+      },
+      {
+        network: "mode",
+        chainId: 34443,
+        urls: {
+          apiURL: "https://api.routescan.io/v2/network/mainnet/evm/34443/etherscan",
+          browserURL: "https://modescan.io"
         }
       },
     ]

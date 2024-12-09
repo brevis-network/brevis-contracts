@@ -3,7 +3,7 @@
   "description": "Brevis contracts",
   "version": "1.0.2",
   "license": "MIT",
-  "author":"",
+  "author": "",
   "files": [
     "/contracts"
   ],
@@ -20,7 +20,7 @@
     "@ethereumjs/trie": "^5.0.2",
     "@lodestar/types": "^1.4.3",
     "@noble/bls12-381": "^1.4.0",
-    "@nomicfoundation/hardhat-verify": "^1.1.1",
+    "@nomicfoundation/hardhat-verify": "^2.0.12",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
     "@openzeppelin/contracts": "4.5.0",
@@ -56,11 +56,11 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "@rumblefishdev/hardhat-kms-signer": "1.1.2",
     "@uniswap/v4-core": "uniswap/v4-core",
+    "aws-sdk": "2.1419.0",
     "merkletreejs": "0.3.10",
     "solidity-bytes-utils": "^0.8.0",
-    "solidity-rlp": "^2.0.7",
-    "@rumblefishdev/hardhat-kms-signer": "1.1.2",
-    "aws-sdk": "2.1419.0"
+    "solidity-rlp": "^2.0.7"
   }
 }
