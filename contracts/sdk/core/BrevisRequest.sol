@@ -70,7 +70,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         require(status == RequestStatus.Null, "invalid status");
         _option = _option & 0x03; // binary 00000011
         if (_option == 0) {
-            status == RequestStatus.ZkPending;
+            status = RequestStatus.ZkPending;
         } else {
             status = RequestStatus.OpPending;
         }
