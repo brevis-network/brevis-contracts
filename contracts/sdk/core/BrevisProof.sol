@@ -72,11 +72,11 @@ contract BrevisProof is BrevisAggProof {
         data.appCommitHash = bytes32(
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]
         );
-        data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]);
+        data.circuitDigest = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]);
         data.dummyInputCommitment = bytes32(
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]
         );
-        data.circuitDigest = bytes32(
+        data.appVkHash = bytes32(
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 5 * 32:PUBLIC_BYTES_START_IDX + 6 * 32]
         );
     }
