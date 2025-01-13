@@ -1,0 +1,59 @@
+{
+  "address": "0xf5c6825015280cdfd0b56903f9f8b5a2233476f5",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
+        }
+      ],
+      "name": "blocks",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x20c5c1a9a1f240f8f268d7f6963117a2c7e4e1d9b0355faa08c339d12bf6db37",
+  "receipt": {
+    "to": null,
+    "from": "0x58b529f9084d7eaa598eb3477fe36064c5b7bbc1",
+    "contractAddress": "0xf5c6825015280cdfd0b56903f9f8b5a2233476f5",
+    "transactionIndex": "0x1",
+    "gasUsed": "0x1386b",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x5fa0cca2df5c5f680cda6b736833aabc663a2cd059862f4f9be3b84ae61fb763",
+    "transactionHash": "0xad762accb4a9350374ae5b7042ef8cfc2015965bd48d0cfb0f405954446e58fe",
+    "logs": [],
+    "blockNumber": "0x1b9bbf",
+    "cumulativeGasUsed": "0x1e3f5",
+    "status": "0x1"
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "ce5aef6379564b585f443441bc8887f4",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockNum\",\"type\":\"uint256\"}],\"name\":\"blocks\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/light-client-eth/SameChainAnchorBlock.sol\":\"SameChainAnchorBlocks\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":800},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/light-client-eth/SameChainAnchorBlock.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.20;\\n\\nimport \\\"./interfaces/IAnchorBlocks.sol\\\";\\n\\ncontract SameChainAnchorBlocks is IAnchorBlocks {\\n   function blocks(uint256 blockNum) external view returns (bytes32) {\\n        return blockhash(blockNum);\\n    }\\n}\\n\",\"keccak256\":\"0xf553d7b77be00b62fbf4b0ccfd8592c760959a5406a9ac83e4d6b71b720e7889\",\"license\":\"MIT\"},\"contracts/light-client-eth/interfaces/IAnchorBlocks.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.18;\\n\\ninterface IAnchorBlocks {\\n    function blocks(uint256 blockNum) external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x317ca2285ce87fc2e74f748b71eeca387687a5d8f1c6cb46dd7b609ef7623ec8\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60808060405234601457607b908161001a8239f35b600080fdfe6080806040526004361015601257600080fd5b60003560e01c63f25b3f9914602657600080fd5b346040576020366003190112604057602090600435408152f35b600080fdfea2646970667358221220958a8b5157acb82a8fcae4e62b75a1717c2442832777ab8b5887deb8856d524064736f6c63430008140033",
+  "deployedBytecode": "0x6080806040526004361015601257600080fd5b60003560e01c63f25b3f9914602657600080fd5b346040576020366003190112604057602090600435408152f35b600080fdfea2646970667358221220958a8b5157acb82a8fcae4e62b75a1717c2442832777ab8b5887deb8856d524064736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

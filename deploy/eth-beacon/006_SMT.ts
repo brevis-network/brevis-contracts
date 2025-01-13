@@ -5,17 +5,16 @@ import { verify } from '../utils/utils';
 
 dotenv.config();
 
-const defaultSmtRoot = '0xca3022d33d006b913ecfad08eb9d6dde985e93fdd80ca6fadebcd2172d28c3f3';
+const defaultSmtRoot = '0xb244c559122805487f8377c4ad9bc2120c34b373ad27a41840940db61ec3c5b7';
 
 const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  // const anchorProvider = await deployments.get('AnchorBlocks');
-  const anchorProvider = await deployments.get('MockAnchorBlocks');
+  const anchorProvider = await deployments.get('SameChainAnchorBlocks');
   const verifier = await deployments.get('BrevisPlonky2SmtVerifier');
-  const args = [[1], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
+  const args = [[1868], [anchorProvider.address], [verifier.address], [defaultSmtRoot]];
   const deployment = await deploy('SMT', { from: deployer, log: true, args: args });
   await verify(hre, deployment);
 };

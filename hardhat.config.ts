@@ -32,7 +32,10 @@ const arbitrumSepoliaPrivateKey = process.env.ARBITRUM_SEPOLIA_PRIVATE_KEY || DE
 const baseSepoliaEndpoint = process.env.BASE_SEPOLIA_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
 const baseSepoliaPrivateKey = process.env.BASE_SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const modeEndpoint = process.env.MODE_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
-const modePrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY; 
+const modePrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const soneiumEndpoint= process.env.SONEIUM_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const soneiumPrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -91,6 +94,10 @@ const config: HardhatUserConfig = {
       url: modeEndpoint,
       accounts: [`0x${modePrivateKey}`],
       chainId: 34443,
+    },
+    soneium: {
+      url: soneiumEndpoint,
+      accounts: [`0x${soneiumPrivateKey}`],
     }
   },
   namedAccounts: {
@@ -134,6 +141,7 @@ const config: HardhatUserConfig = {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY as string,
       baseSepolia: process.env.BASESCAN_API_KEY as string,
       mode: "mode",
+      soneium: process.env.SONEIUM_API_KEY as string,
     },
     customChains: [
       {
@@ -175,6 +183,14 @@ const config: HardhatUserConfig = {
           apiURL: "https://api.routescan.io/v2/network/mainnet/evm/34443/etherscan",
           browserURL: "https://modescan.io"
         }
+      },
+      {
+        network: "soneium",
+        chainId: 1868,
+        urls: {
+          apiURL: "https://soneium.blockscout.com/api",
+          browserURL: "https://soneium.blockscout.com/",
+        },
       },
     ]
   }
