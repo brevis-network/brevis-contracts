@@ -36,7 +36,6 @@ contract BrevisProof is BrevisAggProof {
         proofId = keccak256(abi.encodePacked(appVkHash, data.commitHash, appCommitHash));
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
         require(dummyInputCommitments[_chainId] == data.dummyInputCommitment, "invalid dummy input");
-        require(circuitDigests[data.circuitDigest], "invalid circuit digest");
         proofs[proofId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
     }
 
@@ -75,9 +74,6 @@ contract BrevisProof is BrevisAggProof {
         data.appVkHash = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 3 * 32:PUBLIC_BYTES_START_IDX + 4 * 32]);
         data.dummyInputCommitment = bytes32(
             _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 4 * 32:PUBLIC_BYTES_START_IDX + 5 * 32]
-        );
-        data.circuitDigest = bytes32(
-            _proofWithPubInputs[PUBLIC_BYTES_START_IDX + 5 * 32:PUBLIC_BYTES_START_IDX + 6 * 32]
         );
     }
 
