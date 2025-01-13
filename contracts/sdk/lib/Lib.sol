@@ -8,10 +8,9 @@ library Brevis {
     struct ProofData {
         bytes32 commitHash;
         bytes32 appCommitHash; // zk-program computing circuit commit hash
-        bytes32 appVkHash; // zk-program computing circuit verifying key hash
+        bytes32 appVkHash; // zk-program computing circuit Verify Key hash
         bytes32 smtRoot;
         bytes32 dummyInputCommitment; // zk-program computing circuit dummy input commitment
-        bytes32 circuitDigest; // zk-program data validation circuit verifying key hash
     }
 
     struct ProofAppData {

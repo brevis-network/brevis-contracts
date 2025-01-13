@@ -16,14 +16,11 @@ contract BrevisAggProof is BrevisAccess {
     mapping(bytes32 => bool) public merkleRoots;
     mapping(uint64 => IZkpVerifier) public aggProofVerifierAddress;
     mapping(uint64 => bytes32) public dummyInputCommitments;
-    mapping(bytes32 => bool) public circuitDigests;
     bytes32 public aggVkHash; // aggregation verifying key hash
     event SmtContractUpdated(address smtContract);
     event AggProofVerifierAddressesUpdated(uint64[] chainIds, IZkpVerifier[] newAddresses);
     event DummyInputCommitmentsUpdated(uint64[] chainIds, bytes32[] updatedDummyInputCommitments);
     event AggVkHashUpdated(bytes32 aggVkHash);
-    event CircuitDigestEnabled(bytes32 circuitDigest);
-    event CircuitDigestDisabled(bytes32 circuitDigest);
 
     constructor(ISMT _smtContract) {
         smtContract = _smtContract;
@@ -163,20 +160,6 @@ contract BrevisAggProof is BrevisAccess {
     ) public onlyOwner {
         aggVkHash = _aggVkHash;
         emit AggVkHashUpdated(_aggVkHash);
-    }
-
-    function enableCircuitDigest(
-        bytes32 _circuitDigest
-    ) public onlyOwner {
-        circuitDigests[_circuitDigest] = true;
-        emit CircuitDigestEnabled(_circuitDigest);
-    }
-
-    function disableCircuitDigest(
-        bytes32 _circuitDigest
-    ) public onlyOwner {
-        circuitDigests[_circuitDigest] = false;
-        emit CircuitDigestDisabled(_circuitDigest);
     }
 
     /**********************************
