@@ -33,35 +33,35 @@ describe('BrevisPlonky2SmtVerifier test', async () => {
   it('should pass on true proof', async () => {
     const result = await contract.verifyProof(
         [
-          BigNumber.from('0x2f5dfef59cfa952da626e6839cabd03a9d414e37f3d59ff0c4f148f21e8e06a8'), // a0
-          BigNumber.from('0x04e41eb5d00ae7a99db6f75d0d3c52592ef38ea567cd97b02ee0d39422384176'), // a1
+          BigNumber.from('0x1a6de85e1829528a0963b409da663343c00c138f7582f990d52ff19b5ff5f29a'), // a0
+          BigNumber.from('0x218988b65ffad99a70aab1c35e7be3d66565370b07e37723db4734ed3aac5c6d'), // a1
 
-          BigNumber.from('0x0b9e8df76ae619d9cc39f7249eb01bfda2c1544e4346312fa8e34dc8b6f55f1f'), // b00
-          BigNumber.from('0x1b73d50861f9a5ca5bc34a4b6178fe04d96cf3ebd831da0010abefeda6819c25'), // b01
-          BigNumber.from('0x2f3ca3a6fa094ba450e75fc6963bb068b7454434adecd2f9d7c51a3d3dc1cba2'), // b10
-          BigNumber.from('0x18ac635bd13127131e8143e4051e1216ed0e491c157bf9ac74a75c6705d9c351'), // b11
+          BigNumber.from('0x19e44d5e50d7ae28d1496263fb6b5ec2202cc6816d9edde31df6c78c9622d152'), // b00
+          BigNumber.from('0x11681f4302e49dfa1ffd8875b3edc9b00fcf09bfba9b6b3fe946bcde308b753d'), // b01
+          BigNumber.from('0x1b9a79b676a5cbe3966298a987bdd4489816ae2595759afbe65eee7a593a26c8'), // b10
+          BigNumber.from('0x269aacd368910231b4e38034a91d74dc28a7443a8a7c25df97dd478f99e4ced2'), // b11
 
-          BigNumber.from('0x29bfc79e0ddd57d61b85db1b40e5dafc7a6a793cbd3f5364e72c645ba5ee3ea7'), // c0
-          BigNumber.from('0x07b0cd6f744358867b79e545337b671ebf87198d1fa69c3b9b68df2dd7f496a8') // c1
+          BigNumber.from('0x08eb00a0bff2d2f28313e41f0ef2441da2218bb271eb9a3d267f9825421574b8'), // c0
+          BigNumber.from('0x2aa727997830b038b0c5a24f3720cafa900df677c1100642cd764a2bbf89f994') // c1
         ],
         [
-          BigNumber.from('0x1f906ca05aa8f7ced26d4600394dc41982bad9551efb20085075b5ac0ebeb90c'), // Commitment 0
-          BigNumber.from('0x193befaf0f4bc0507d255b7494bdc471d1e3c560a7092ecc26c29c1b819dcb34') // Commitment 1
+          BigNumber.from('0x1e98f5bf21991b908775d2e7ac6558410fe5f67a14464b2a8699e51cdb0adb25'), // Commitment 0
+          BigNumber.from('0x0b0f63cbccf76a457c986722457e5209fd6c5676bfcd15359117a327637e39b9') // Commitment 1
         ],
         [
-          BigNumber.from('0x292e5a07d10dfce215a6723b5c5d125f0d477a033fcb003e5bc3b918f4a78061'), // Commitment POK0
-          BigNumber.from('0x1ea8c4c6d22d5d78ecb676b654740148415a89b6cd30499dd6fb97bb9872ce9c') // Commitment POK1
+          BigNumber.from('0x27ad93d284d74b3d09c341f205136699a95c22b7e80a0869af593106c4fb0aa0'), // Commitment POK0
+          BigNumber.from('0x10b18b34c2a68dbacd9d008d933350c68431d32bbec17bf741e1b16fa2dc63c7') // Commitment POK1
         ],
         [
-          BigNumber.from('0x00000000000000000000000000000000409f3590dcd221e5786a20423cfc8305'), // EndBlkHash 0
-          BigNumber.from('0x00000000000000000000000000000000738a88d3efaa6210428de2024f75aceb'), // EndBlkHash 1
-          BigNumber.from('0x0000000000000000000000000000000045187e590779d8dfca61be4ea6c9e888'), // NewSmtRoot 0
-          BigNumber.from('0x0000000000000000000000000000000031b07e7bfefbda1cdb66921cb0d63b86'), // NewSmtRoot 1
-          BigNumber.from('0x00000000000000000000000000000000ca3022d33d006b913ecfad08eb9d6dde'), // OldSmtRoot 0
-          BigNumber.from('0x00000000000000000000000000000000985e93fdd80ca6fadebcd2172d28c3f3'), // OldSmtRoot 1
-          BigNumber.from('0x0000000000000000000000000000000082fc73fc57007f802f958f4b18d7fb6f'), // NextChunkMerkleRoot 0
-          BigNumber.from('0x000000000000000000000000000000009f01498afa81edea7ee5404bdb09a283'), // NextChunkMerkleRoot 1
-          BigNumber.from('0x1ba0ce182fc9cf0eba3aa35b990b052d0d956d641defdddd8b93473a7d9d6d5e')  // CircuitDigest
+          BigNumber.from('0x000000000000000000000000000000004fcf04370e7fff28a61aeb865faa4c97'), // EndBlkHash 0
+          BigNumber.from('0x00000000000000000000000000000000201c06eddd475833ba42138333ffc3dd'), // EndBlkHash 1
+          BigNumber.from('0x00000000000000000000000000000000a7c945bf248170650ea0370c8bd4dea8'), // NewSmtRoot 0
+          BigNumber.from('0x00000000000000000000000000000000301ede52931e4d12a2f0e7a0b4698b6f'), // NewSmtRoot 1
+          BigNumber.from('0x00000000000000000000000000000000b244c559122805487f8377c4ad9bc212'), // OldSmtRoot 0
+          BigNumber.from('0x000000000000000000000000000000000c34b373ad27a41840940db61ec3c5b7'), // OldSmtRoot 1
+          BigNumber.from('0x0000000000000000000000000000000000000000000000000000000000000000'), // NextChunkMerkleRoot 0
+          BigNumber.from('0x0000000000000000000000000000000000000000000000000000000000000000'), // NextChunkMerkleRoot 1
+          BigNumber.from('0x25d8769b8e3aa1755bc55f71443ae0f9f0b5b3263d51de80ec1c4cddd16dff20')  // CircuitDigest
         ]
     );
     assert.equal(result, true);
