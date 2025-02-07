@@ -26,6 +26,8 @@ const holeskyEndpoint = process.env.HOLESKY_ENDPOINT || 'https://holesky.drpc.or
 const holeskyPrivateKey = process.env.HOLESKY_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const optimismEndpoint = process.env.OPTIMISM_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
 const optimismPrivateKey = process.env.OPTIMISM_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const beraEndpoint = process.env.BERA_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const beraPrivateKey = process.env.BERA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -71,6 +73,10 @@ const config: HardhatUserConfig = {
     optimism: {
       url: optimismEndpoint || '',
       accounts: [`0x${optimismPrivateKey}`]
+    },
+    bera: {
+      url: beraEndpoint || '',
+      accounts: [`0x${beraPrivateKey}`]
     }
   },
   namedAccounts: {
@@ -107,7 +113,8 @@ const config: HardhatUserConfig = {
       holesky: process.env.ETHERSCAN_API_KEY as string,
       base: process.env.BASESCAN_API_KEY as string,
       arbitrumOne: process.env.ARBISCAN_API_KEY as string,
-      optimisticEthereum: process.env.OPSCAN_API_KEY as string
+      optimisticEthereum: process.env.OPSCAN_API_KEY as string,
+      bera: process.env.BERASCAN_API_KEY as string
     },
     customChains: [
       {
@@ -124,6 +131,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api-holesky.etherscan.io/api',
           browserURL: 'https://holesky.etherscan.io/'
+        }
+      },
+      {
+        network: 'bera',
+        chainId: 80094,
+        urls: {
+          apiURL: 'https://api.berascan.com/api',
+          browserURL: 'https://berascan.com/'
         }
       }
     ]
