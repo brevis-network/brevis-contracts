@@ -23,9 +23,10 @@ uint256 constant EXECUTION_BLOCK_HASH_INDEX = 412;
 // the following indices are gindices counting from the executionPayloadRoot
 // beaconBodyRoot -> executionPayloadRoot gindex: 2 << 4 | 9
 uint256 constant EXECUTION_PAYLOAD_ROOT_INDEX = 25;
-// executionPayloadRoot -> stateRoot gindex: 2 << 4 | 2
-uint256 constant EXECUTION_STATE_ROOT_LOCAL_INDEX = 18;
-// executionPayloadRoot -> blockNumber gindex: 2 << 4 | 6
-uint256 constant EXECUTION_BLOCK_NUMBER_LOCAL_INDEX = 22;
-// executionPayloadRoot -> blockHash gindex: 2 << 4 | 12
-uint256 constant EXECUTION_BLOCK_HASH_LOCAL_INDEX = 28;
+
+// executionPayloadRoot -> stateRoot gindex: 2 << 5 | 2
+uint256 constant EXECUTION_STATE_ROOT_LOCAL_INDEX = 34;
+// executionPayloadRoot -> blockNumber gindex: 2 << 5 | 6
+uint256 constant EXECUTION_BLOCK_NUMBER_LOCAL_INDEX = 38;
+// executionPayloadRoot -> blockHash gindex: 2 << 5 | 12
+uint256 constant EXECUTION_BLOCK_HASH_LOCAL_INDEX = 44;
