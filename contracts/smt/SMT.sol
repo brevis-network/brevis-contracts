@@ -96,7 +96,7 @@ contract SMT is ISMT, BrevisAccess {
         emit CircuitDigestUpdated(chainId, _circuitDigest);
     }
 
-    function postRoot(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyOwner {
+    function postRoot(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyActiveProver {
         smtRoots[chainId][newRoot] = true;
         latestRoots[chainId] = newRoot;
         emit SmtRootUpdated(newRoot, endBlockNum, chainId);
