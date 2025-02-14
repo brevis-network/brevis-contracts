@@ -9,14 +9,14 @@ contract SMT is ISMT, BrevisAccess {
     event SmtRootUpdated(bytes32 smtRoot, uint64 endBlockNum, uint64 chainId);
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
-    event CircuitDigestUpdated(uint64 chainId, bytes32 circuitDigest);
+    event CircuitDigestUpdated(bytes32 circuitDigest);
 
     mapping(uint64 => IAnchorBlocks) public anchorProviders;
     mapping(uint64 => IVerifier) public verifiers;
 
     mapping(uint64 => mapping(bytes32 => bool)) public smtRoots;
     mapping(uint64 => bytes32) public latestRoots;
-    mapping(uint64 => bytes32) public circuitDigests;
+    bytes32 public circuitDigest; 
 
     constructor(
         uint64[] memory _chainIds,
@@ -65,7 +65,7 @@ contract SMT is ISMT, BrevisAccess {
     function verifyProof(uint64 chainId, bytes32 oldSmtRoot, SmtUpdate memory u) private view returns (bool) {
         IVerifier verifier = verifiers[chainId];
         require(address(verifier) != address(0), "no verifier for chainId");
-        require(circuitDigests[chainId] == u.circuitDigest, "not valid circuit digest");
+        require(circuitDigest == u.circuitDigest, "not valid circuit digest");
         uint256[9] memory input;
         uint256 m = 1 << 128;
         input[0] = uint256(u.endBlockHash) >> 128;
@@ -91,8 +91,8 @@ contract SMT is ISMT, BrevisAccess {
         emit VerifierUpdated(chainId, verifier);
     }
 
-    function setCircuitDigest(uint64 chainId, bytes32 _circuitDigest) external onlyOwner {
-        circuitDigests[chainId] = _circuitDigest;
-        emit CircuitDigestUpdated(chainId, _circuitDigest);
+    function setCircuitDigest(bytes32 _circuitDigest) external onlyOwner {
+        circuitDigest = _circuitDigest;
+        emit CircuitDigestUpdated(_circuitDigest);
     }
 }
