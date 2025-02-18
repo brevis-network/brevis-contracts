@@ -10,6 +10,7 @@ contract SMT is ISMT, BrevisAccess {
     event AnchorProviderUpdated(uint64 chainId, address anchorProvider);
     event VerifierUpdated(uint64 chainId, address verifier);
     event CircuitDigestUpdated(uint64 chainId, bytes32 circuitDigest);
+    event RootUpdaterUpdated(address account);
 
     mapping(uint64 => IAnchorBlocks) public anchorProviders;
     mapping(uint64 => IVerifier) public verifiers;
@@ -17,6 +18,12 @@ contract SMT is ISMT, BrevisAccess {
     mapping(uint64 => mapping(bytes32 => bool)) public smtRoots;
     mapping(uint64 => bytes32) public latestRoots;
     mapping(uint64 => bytes32) public circuitDigests;
+    address public rootUpdater;
+
+    modifier onlyRootUpdater() {
+        require(msg.sender == rootUpdater, "invalid root updater");
+        _;
+    }
 
     constructor(
         uint64[] memory _chainIds,
@@ -96,7 +103,12 @@ contract SMT is ISMT, BrevisAccess {
         emit CircuitDigestUpdated(chainId, _circuitDigest);
     }
 
-    function postRoot(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyActiveProver {
+    function setRootUpdater(address _rootUpdater) external onlyOwner {
+        rootUpdater = _rootUpdater;
+        emit RootUpdaterUpdated(_rootUpdater);
+    }
+
+    function postRoot(uint64 chainId, bytes32 newRoot, uint64 endBlockNum) external onlyRootUpdater {
         smtRoots[chainId][newRoot] = true;
         latestRoots[chainId] = newRoot;
         emit SmtRootUpdated(newRoot, endBlockNum, chainId);
