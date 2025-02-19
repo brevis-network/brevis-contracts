@@ -29,7 +29,7 @@ contract AnchorBlocks is IAnchorBlocks, BrevisAccess {
     }
 
     /// @notice Updates an "anchor block" of a specific block number to the contract state
-    function processUpdate(LightClientOptimisticUpdate memory hb) external {
+    function processUpdate(LightClientOptimisticUpdate memory hb) external onlyActiveProver {
         (uint256 blockNum, bytes32 blockHash) = verifyHeadBlock(hb);
         require(blockHash != bytes32(0), "empty blockHash");
         doUpdate(blockNum, blockHash);
