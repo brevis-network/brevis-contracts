@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -10,7 +9,6 @@ pragma solidity ^0.8.0;
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
 contract BrevisPlonky2SmtVerifier {
-
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -82,10 +80,14 @@ contract BrevisPlonky2SmtVerifier {
     uint256 constant PEDERSEN_G_Y_1 = 17209259504677688674058987403089010076299754933268187705508266825052530638006;
 
     // Pedersen GRootSigmaNeg point in G2 in powers of i
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 = 9414394291441915470653952017248010394073630170817386807456454754534113486211;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 = 993594027156440135435878430487261545559346686988903913189119717580184039914;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 = 6753985584860452045608779244881915107652171843322826399403112115513279076356;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 = 20326437300128747457179208676007395546113513461444267108581568995017323902270;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 =
+        9414394291441915470653952017248010394073630170817386807456454754534113486211;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 =
+        993594027156440135435878430487261545559346686988903913189119717580184039914;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 =
+        6753985584860452045608779244881915107652171843322826399403112115513279076356;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 =
+        20326437300128747457179208676007395546113513461444267108581568995017323902270;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 16394830929394585354971696367942597959752012849364332032406395500147703696364;
@@ -264,8 +266,8 @@ contract BrevisPlonky2SmtVerifier {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             mstore(f, a0)
             mstore(add(f, 0x20), a1)
             mstore(add(f, 0x40), b00)
@@ -275,10 +277,10 @@ contract BrevisPlonky2SmtVerifier {
             mstore(add(f, 0xc0), c0)
             mstore(add(f, 0xe0), c1)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -317,9 +319,9 @@ contract BrevisPlonky2SmtVerifier {
             mstore(add(f, 0x440), PEDERSEN_GROOTSIGMANEG_Y_1)
             mstore(add(f, 0x460), PEDERSEN_GROOTSIGMANEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {

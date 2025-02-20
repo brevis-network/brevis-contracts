@@ -7,11 +7,7 @@ interface IUpgradeableOwner {
 
     function upgrade(address _proxy, address _implementation) external;
 
-    function upgradeAndCall(
-        address _proxy,
-        address _implementation,
-        bytes calldata _data
-    ) external;
+    function upgradeAndCall(address _proxy, address _implementation, bytes calldata _data) external;
 
     function upgradeTo(address _implementation) external;
 

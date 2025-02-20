@@ -155,9 +155,7 @@ contract BrevisAggProof is BrevisAccess {
         emit DummyInputCommitmentsUpdated(_chainIds, _dummyInputCommitments);
     }
 
-     function setAggVkHash(
-        bytes32 _aggVkHash
-    ) public onlyOwner {
+    function setAggVkHash(bytes32 _aggVkHash) public onlyOwner {
         aggVkHash = _aggVkHash;
         emit AggVkHashUpdated(_aggVkHash);
     }
@@ -171,6 +169,6 @@ contract BrevisAggProof is BrevisAccess {
     ) internal pure returns (bytes32 merkleRoot, bytes32 proofIdsCommit, bytes32 aggVk) {
         merkleRoot = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX:PUBLIC_BYTES_START_IDX + 32]);
         proofIdsCommit = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 32:PUBLIC_BYTES_START_IDX + 2 * 32]);
-        aggVk = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2*32:PUBLIC_BYTES_START_IDX + 3 * 32]);
+        aggVk = bytes32(_proofWithPubInputs[PUBLIC_BYTES_START_IDX + 2 * 32:PUBLIC_BYTES_START_IDX + 3 * 32]);
     }
 }

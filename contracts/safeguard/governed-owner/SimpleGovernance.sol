@@ -130,10 +130,10 @@ contract SimpleGovernance {
         return proposalId;
     }
 
-    function createVoterUpdateProposal(address[] calldata _voters, uint256[] calldata _powers)
-        external
-        returns (uint256)
-    {
+    function createVoterUpdateProposal(
+        address[] calldata _voters,
+        uint256[] calldata _powers
+    ) external returns (uint256) {
         require(_voters.length == _powers.length, "voters and powers length not match");
         bytes memory data = abi.encode(_voters, _powers);
         uint256 proposalId = _createProposal(msg.sender, address(0), data, ProposalType.InternalVoterUpdate);
@@ -175,12 +175,7 @@ contract SimpleGovernance {
         }
     }
 
-    function executeProposal(
-        uint256 _proposalId,
-        ProposalType _type,
-        address _target,
-        bytes calldata _data
-    ) external {
+    function executeProposal(uint256 _proposalId, ProposalType _type, address _target, bytes calldata _data) external {
         require(voterPowers[msg.sender] > 0, "only voter can execute a proposal");
         Proposal storage p = proposals[_proposalId];
         require(block.timestamp < p.deadline, "deadline passed");
@@ -257,15 +252,7 @@ contract SimpleGovernance {
         return proposals[_proposalId].votes[_voter];
     }
 
-    function countVotes(uint256 _proposalId, ProposalType _type)
-        public
-        view
-        returns (
-            uint256,
-            uint256,
-            bool
-        )
-    {
+    function countVotes(uint256 _proposalId, ProposalType _type) public view returns (uint256, uint256, bool) {
         uint256 yesVotes;
         uint256 totalPower;
         for (uint32 i = 0; i < voters.length; i++) {
@@ -331,11 +318,7 @@ contract SimpleGovernance {
         revert("voter not found"); // this should never happen
     }
 
-    function _transfer(
-        address _receiver,
-        address _token,
-        uint256 _amount
-    ) private {
+    function _transfer(address _receiver, address _token, uint256 _amount) private {
         if (_token == address(0)) {
             (bool sent, ) = _receiver.call{value: _amount, gas: nativeTokenTransferGas}("");
             require(sent, "failed to send native token");

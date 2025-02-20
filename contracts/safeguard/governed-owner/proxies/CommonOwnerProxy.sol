@@ -17,11 +17,7 @@ abstract contract CommonOwnerProxy is OwnerProxyBase {
         emit TransferOwnershipProposalCreated(proposalId, _target, _newOwner);
     }
 
-    function proposeUpdatePauser(
-        address _target,
-        dt.Action _action,
-        address _account
-    ) external {
+    function proposeUpdatePauser(address _target, dt.Action _action, address _account) external {
         bytes4 selector;
         if (_action == dt.Action.Add) {
             selector = ICommonOwner.addPauser.selector;

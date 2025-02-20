@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -10,7 +9,6 @@ pragma solidity ^0.8.0;
 /// to compress proofs.
 /// @notice See <https://2π.com/23/bn254-compression> for further explanation.
 contract Plonky2ProofVerifierForxLayer {
-    
     /// Some of the provided public input values are larger than the field modulus.
     /// @dev Public input elements are not automatically reduced, as this is can be
     /// a dangerous source of bugs.
@@ -36,7 +34,7 @@ contract Plonky2ProofVerifierForxLayer {
     uint256 constant P = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
     uint256 constant R = 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001;
 
-	uint256 constant MOD_R = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
+    uint256 constant MOD_R = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
     // Extension field Fp2 = Fp[i] / (i² + 1)
     // Note: This is the complex extension field of Fp with i² = -1.
@@ -82,10 +80,14 @@ contract Plonky2ProofVerifierForxLayer {
     uint256 constant PEDERSEN_G_Y_1 = 2471556477446606044567382216323556520646965011532911625585891661254114202820;
 
     // Pedersen GRootSigmaNeg point in G2 in powers of i
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 = 13461884536574381732989038503740343510680190513459109204811206277714232110762;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 = 15041495481447641666818224585557646886172049299972296944601850456002793424276;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 = 14202656463787153687167922146708345991735495796836944024972696339384200458152;
-    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 = 13848576030828357870643246877278888546442101521708840488194133893740815607300;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_0 =
+        13461884536574381732989038503740343510680190513459109204811206277714232110762;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_X_1 =
+        15041495481447641666818224585557646886172049299972296944601850456002793424276;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_0 =
+        14202656463787153687167922146708345991735495796836944024972696339384200458152;
+    uint256 constant PEDERSEN_GROOTSIGMANEG_Y_1 =
+        13848576030828357870643246877278888546442101521708840488194133893740815607300;
 
     // Constant and public input points
     uint256 constant CONSTANT_X = 3175410241884927963331166726277081995922583857612514257948619677109974892991;
@@ -243,8 +245,8 @@ contract Plonky2ProofVerifierForxLayer {
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
-        // Copy points (A, B, C) to memory. They are already in correct encoding.
-        // This is pairing e(A, B) and G1 of e(C, -δ).
+            // Copy points (A, B, C) to memory. They are already in correct encoding.
+            // This is pairing e(A, B) and G1 of e(C, -δ).
             mstore(f, a0)
             mstore(add(f, 0x20), a1)
             mstore(add(f, 0x40), b00)
@@ -254,10 +256,10 @@ contract Plonky2ProofVerifierForxLayer {
             mstore(add(f, 0xc0), c0)
             mstore(add(f, 0xe0), c1)
 
-        // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
-        // OPT: This could be better done using a single codecopy, but
-        //      Solidity (unlike standalone Yul) doesn't provide a way to
-        //      to do this.
+            // Complete e(C, -δ) and write e(α, -β), e(L_pub, -γ) to memory.
+            // OPT: This could be better done using a single codecopy, but
+            //      Solidity (unlike standalone Yul) doesn't provide a way to
+            //      to do this.
             mstore(add(f, 0x100), DELTA_NEG_X_1)
             mstore(add(f, 0x120), DELTA_NEG_X_0)
             mstore(add(f, 0x140), DELTA_NEG_Y_1)
@@ -296,9 +298,9 @@ contract Plonky2ProofVerifierForxLayer {
             mstore(add(f, 0x440), PEDERSEN_GROOTSIGMANEG_Y_1)
             mstore(add(f, 0x460), PEDERSEN_GROOTSIGMANEG_Y_0)
 
-        // Check pairing equation.
+            // Check pairing equation.
             success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x480, f, 0x20)
-        // Also check returned value (both are either 1 or 0).
+            // Also check returned value (both are either 1 or 0).
             success := and(success, mload(f))
         }
         if (!success) {
