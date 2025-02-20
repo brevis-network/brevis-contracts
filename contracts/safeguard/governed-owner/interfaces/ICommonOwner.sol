@@ -7,5 +7,21 @@ interface ICommonOwner {
 
     function addPauser(address _account) external;
 
+    function addPausers(address[] memory accounts) external;
+
     function removePauser(address _account) external;
+
+    function removePausers(address[] memory _accounts) external;
+
+    function addProvers(address[] memory _accounts) external;
+
+    function removeProvers(address[] memory _accounts) external;
+
+    function addGovernor(address _account) external;
+
+    function addGovernors(address[] memory _accounts) external;
+
+    function removeGovernor(address _account) external;
+
+    function removeGovernors(address[] memory _accounts) external;
 }
