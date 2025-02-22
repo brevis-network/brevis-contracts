@@ -1785,7 +1785,7 @@ library ProtoBufRuntime {
 
     /**
      * @dev Encode Solidity type
-     * @param x The unsinged integer to be encoded
+     * @param x The unsigned integer to be encoded
      * @param sz The number of bytes used to encode Solidity types
      * @param p The offset of bytes array `bs`
      * @param bs The bytes array to encode
