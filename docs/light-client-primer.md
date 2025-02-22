@@ -14,7 +14,7 @@ Note that a sync committee is different from a beacon committee whose job is to 
 
 ## Light Client Implementation
 
-The implementation of [succinct lab’s light client](https://github.com/succinctlabs/eth-proof-of-consensus/blob/main/contracts/src/lightclient/BeaconLightClient.sol) follows the light client design specified in the [Ethereum light client spec](https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/sync-protocol.md#process_light_client_finality_update). We'll use this implementation as an example throughout the reset of the doc.
+The implementation of [succinct lab’s light client](https://github.com/succinctlabs/eth-proof-of-consensus/blob/main/contracts/src/lightclient/BeaconLightClient.sol) follows the light client design specified in the [Ethereum light client spec](https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/sync-protocol.md#process_light_client_finality_update). We'll use this implementation as an example throughout the rest of the doc.
 
 ### Minimal Light Client State
 
@@ -68,7 +68,7 @@ Let's take a look at each field for what purpose they serve.
 
 ### `attestedHeader` & `finalizedHeader`
 
-The field we care about the most is `finalizedHeader`. A block is said to be "finalized" when it's state root appears in the beacon state trie index 105. We can know this by applying `ssz_root(finalizedHeader)` to the `finalityBranch` at [generalized index](https://ethereum.org/en/developers/docs/data-structures-and-encoding/ssz/#generalized-indices) = 105 and see if it computes `attestedHeader.stateRoot`. If it's true, then we know the beacon chain state corresponding to the `attestedHeader` contains finality info about that block. If this update also has `signature.participation` > 2/3 of the its corresponding sync commitee members, the light client can safely put it into the `headers` state.
+The field we care about the most is `finalizedHeader`. A block is said to be "finalized" when it's state root appears in the beacon state trie index 105. We can know this by applying `ssz_root(finalizedHeader)` to the `finalityBranch` at [generalized index](https://ethereum.org/en/developers/docs/data-structures-and-encoding/ssz/#generalized-indices) = 105 and see if it computes `attestedHeader.stateRoot`. If it's true, then we know the beacon chain state corresponding to the `attestedHeader` contains finality info about that block. If this update also has `signature.participation` > 2/3 of the its corresponding sync committee members, the light client can safely put it into the `headers` state.
 
 ### `executionStateRoot`
 
@@ -100,7 +100,7 @@ struct LightClientUpdate {
 
 Since committee info only needs to be updated once per 256 epochs, there is a function `updateSyncCommittee()` to update it separate from the one that updates just a block. The steps to update sync commitee is the following:
 
-1. compute the period number from `update.finalizedHeader.slot` (`update.attestedHeader.slot` is no finality proof is provided, more on this later).
+1. compute the period number from `update.finalizedHeader.slot` (`update.attestedHeader.slot` if no finality proof is provided, more on this later).
 2. verify the merkle branch `update.nextSyncCommitteebranch` from `update.nextSyncCommitteeRoot` to `update.finalizedHeader.stateRoot` (generalized index = 55). This proves that the new committe we are replacing the old one with exists in the latest beacon state. (Note: I can't figure out why Succinct Lab uses `update.finalizedHeader.stateRoot` as the target root here even though finality is not required when calling `updateSyncCommittee()`. It should be `update.attestedHeader` when finality proof is not present?)
 3. if the update has a finality proof, the new sync commitee is added to the `syncCommitteeRootByPeriod` state, keyed by the new period number.
 4. else, if the update is a "better" one comparing to the one stored in a temp storage, replace it. More on whatever "better" means and why we need to store this at all later.
@@ -113,4 +113,4 @@ Since sync committee can only be updated upon finalized blocks, if the chain fai
 
 #### Poseidon Merkle Root
 
-Details about the sync committee commitment were omitted on purpose in the previous explanations for clarity. In fact, each time an committee's SSZ merkle root is saved into the state, a mapping from that root to a Poseidon merkle root is also created. This mapping is supported by a proof that the updater must provide in when calling `updateSyncCommittee()`. This additional proof is built from a circuit that takes in the 512 pubkeys of the committee and calculates both SSZ and Poseidon merkle roots. The point of this extra mapping is to save proof generation time so that when proving validity for each block that we want to update, the prover only needs to calculate a zk friendly Poseidon root of the pubkeys. The cost of this mapping is that there is an additional proof needed when updating the committee. So in short, heavier proof every 27 hours and lighter proof for every block.
+Details about the sync committee commitment were omitted on purpose in the previous explanations for clarity. In fact, each time a committee's SSZ merkle root is saved into the state, a mapping from that root to a Poseidon merkle root is also created. This mapping is supported by a proof that the updater must provide in when calling `updateSyncCommittee()`. This additional proof is built from a circuit that takes in the 512 pubkeys of the committee and calculates both SSZ and Poseidon merkle roots. The point of this extra mapping is to save proof generation time so that when proving validity for each block that we want to update, the prover only needs to calculate a zk friendly Poseidon root of the pubkeys. The cost of this mapping is that there is an additional proof needed when updating the committee. So in short, heavier proof every 27 hours and lighter proof for every block.
