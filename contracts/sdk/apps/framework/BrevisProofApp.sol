@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-// App that directly interact with the BrevisProof contract.B
+// App that directly interact with the BrevisProof contract interface.
 abstract contract BrevisProofApp {
     IBrevisProof public brevisProof;
 
@@ -30,10 +30,10 @@ abstract contract BrevisProofApp {
 interface IBrevisProof {
     struct ProofData {
         bytes32 commitHash;
-        bytes32 appCommitHash; // zk-program computing circuit commit hash
-        bytes32 appVkHash; // zk-program computing circuit Verify Key hash
+        bytes32 appCommitHash;
+        bytes32 appVkHash;
         bytes32 smtRoot;
-        bytes32 dummyInputCommitment; // zk-program computing circuit dummy input commitment
+        bytes32 dummyInputCommitment;
     }
 
     function submitProof(
