@@ -21,26 +21,44 @@ abstract contract Whitelist is Ownable {
     /**
      * @notice Set whitelistEnabled
      */
-    function setWhitelistEnabled(bool _whitelistEnabled) external onlyOwner {
+    function setWhitelistEnabled(bool _whitelistEnabled) public onlyOwner {
         whitelistEnabled = _whitelistEnabled;
     }
 
     /**
      * @notice Add an account to whitelist
      */
-    function addWhitelisted(address account) external onlyOwner {
-        require(!isWhitelisted(account), "Already whitelisted");
-        whitelist[account] = true;
-        emit WhitelistedAdded(account);
+    function addWhitelistedAccount(address _account) public onlyOwner {
+        require(!isWhitelisted(_account), "Already whitelisted");
+        whitelist[_account] = true;
+        emit WhitelistedAdded(_account);
+    }
+
+    /**
+     * @notice Add multiple accounts to whitelist
+     */
+    function addWhitelistedAccounts(address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            addWhitelistedAccount(_accounts[i]);
+        }
     }
 
     /**
      * @notice Remove an account from whitelist
      */
-    function removeWhitelisted(address account) external onlyOwner {
-        require(isWhitelisted(account), "Not whitelisted");
-        whitelist[account] = false;
-        emit WhitelistedRemoved(account);
+    function removeWhitelistedAccount(address _account) public onlyOwner {
+        require(isWhitelisted(_account), "Not whitelisted");
+        whitelist[_account] = false;
+        emit WhitelistedRemoved(_account);
+    }
+
+    /**
+     * @notice Remove multiple accounts from whitelist
+     */
+    function removeWhitelistedAccounts(address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            removeWhitelistedAccount(_accounts[i]);
+        }
     }
 
     /**
