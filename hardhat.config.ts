@@ -35,7 +35,8 @@ const modeEndpoint = process.env.MODE_ENDPOINT ||  process.env.DEFAULT_ENDPOINT;
 const modePrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const soneiumEndpoint= process.env.SONEIUM_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const soneiumPrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-
+const bscEndpoint = process.env.BSC_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const bscPrivateKey = process.env.BSC_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -98,6 +99,10 @@ const config: HardhatUserConfig = {
     soneium: {
       url: soneiumEndpoint,
       accounts: [`0x${soneiumPrivateKey}`],
+    },
+    bsc: {
+      url: bscEndpoint,
+      accounts: [`0x${bscPrivateKey}`],
     }
   },
   namedAccounts: {
@@ -142,6 +147,7 @@ const config: HardhatUserConfig = {
       baseSepolia: process.env.BASESCAN_API_KEY as string,
       mode: "mode",
       soneium: process.env.SONEIUM_API_KEY as string,
+      bsc: process.env.BSCSCAN_API_KEY as string,
     },
     customChains: [
       {
