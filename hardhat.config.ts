@@ -17,6 +17,8 @@ const privateKey =
 const DEFAULT_PRIVATE_KEY = privateKey;
 const goerliEndpoint = process.env.GOERLI_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const goerliPrivateKey = process.env.GOERLI_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const ethMainnetEndpoint = process.env.ETH_MAINNET_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const ethMainnetPrivateKey = process.env.ETH_MAINNET_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const sepoliaEndpoint = process.env.SEPOLIA_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const sepoliaPrivateKey = process.env.SEPOLIA_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const bscTestEndpoint = process.env.BSC_TEST_ENDPOINT || process.env.DEFAULT_ENDPOINT;
@@ -37,6 +39,9 @@ const soneiumEndpoint= process.env.SONEIUM_ENDPOINT || process.env.DEFAULT_ENDPO
 const soneiumPrivateKey = process.env.MODE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const bscEndpoint = process.env.BSC_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const bscPrivateKey = process.env.BSC_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const polygonEndpoint = process.env.POLYGON_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const polygonPrivateKey = process.env.POLYGON_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -46,6 +51,10 @@ const config: HardhatUserConfig = {
       blockGasLimit: 120_000_000
     },
     localhost: { timeout: 600000 },
+    ethMainnet: {
+      url: ethMainnetEndpoint || '',
+      accounts: [`0x${ethMainnetPrivateKey}`]
+    },
     goerli: {
       url: goerliEndpoint || '',
       accounts: [`0x${goerliPrivateKey}`]
@@ -103,7 +112,11 @@ const config: HardhatUserConfig = {
     bsc: {
       url: bscEndpoint,
       accounts: [`0x${bscPrivateKey}`],
-    }
+    },
+    polygon: {
+      url: polygonEndpoint,
+      accounts: [`0x${polygonPrivateKey}`],
+    },
   },
   namedAccounts: {
     deployer: {
@@ -134,6 +147,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY as string,
       goerli: process.env.ETHERSCAN_API_KEY as string,
       sepolia: process.env.ETHERSCAN_API_KEY as string,
       bscTestnet: process.env.BSCSCAN_API_KEY as string,
@@ -148,6 +162,7 @@ const config: HardhatUserConfig = {
       mode: "mode",
       soneium: process.env.SONEIUM_API_KEY as string,
       bsc: process.env.BSCSCAN_API_KEY as string,
+      polygon: process.env.POLYGONSCAN_API_KEY as string,
     },
     customChains: [
       {
