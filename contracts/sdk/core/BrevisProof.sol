@@ -28,15 +28,20 @@ contract BrevisProof is BrevisAggProof {
         uint64 _chainId,
         bytes calldata _proofWithPubInputs
     ) external onlyActiveProver returns (bytes32 proofId, bytes32 appCommitHash, bytes32 appVkHash) {
-        require(verifyRaw(_chainId, _proofWithPubInputs), "proof not valid");
         Brevis.ProofData memory data = unpackProofData(_proofWithPubInputs);
-
         appCommitHash = data.appCommitHash;
         appVkHash = data.appVkHash;
         proofId = keccak256(abi.encodePacked(appVkHash, data.commitHash, appCommitHash));
+
+        bytes32 proofAppHash =keccak256(abi.encodePacked(appCommitHash, appVkHash));
+        if (proofs[proofId] == proofAppHash) {
+            return (proofId, appCommitHash, appVkHash);
+        } 
+
+        require(verifyRaw(_chainId, _proofWithPubInputs), "proof not valid");
         require(smtContract.isSmtRootValid(_chainId, data.smtRoot), "smt root not valid");
         require(dummyInputCommitments[_chainId] == data.dummyInputCommitment, "invalid dummy input");
-        proofs[proofId] = keccak256(abi.encodePacked(appCommitHash, appVkHash));
+        proofs[proofId] = proofAppHash;
     }
 
     function validateProofAppData(
