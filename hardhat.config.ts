@@ -41,7 +41,8 @@ const bscEndpoint = process.env.BSC_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const bscPrivateKey = process.env.BSC_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const polygonEndpoint = process.env.POLYGON_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const polygonPrivateKey = process.env.POLYGON_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-
+const unichainEndpoint = process.env.UNICHAIN_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const unichainPrivateKey = process.env.UNICHAIN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -117,6 +118,10 @@ const config: HardhatUserConfig = {
       url: polygonEndpoint,
       accounts: [`0x${polygonPrivateKey}`],
     },
+    unichain: {
+      url: unichainEndpoint,
+      accounts: [`0x${unichainPrivateKey}`],
+    }
   },
   namedAccounts: {
     deployer: {
