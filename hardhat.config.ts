@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
       url: polygonEndpoint,
       accounts: [`0x${polygonPrivateKey}`],
     },
-    unichain: {
+    uni: {
       url: unichainEndpoint,
       accounts: [`0x${unichainPrivateKey}`],
     }
@@ -168,6 +168,7 @@ const config: HardhatUserConfig = {
       soneium: process.env.SONEIUM_API_KEY as string,
       bsc: process.env.BSCSCAN_API_KEY as string,
       polygon: process.env.POLYGONSCAN_API_KEY as string,
+      uni: process.env.UNISCAN_API_KEY as string,
     },
     customChains: [
       {
@@ -216,6 +217,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://soneium.blockscout.com/api",
           browserURL: "https://soneium.blockscout.com/",
+        },
+      },
+      {
+        network: "uni",
+        chainId: 130,
+        urls: {
+          apiURL: "https://api.uniscan.xyz/api",
+          browserURL: "https://uniscan.xyz/",
         },
       },
     ]
