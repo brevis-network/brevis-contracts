@@ -43,6 +43,8 @@ const polygonEndpoint = process.env.POLYGON_ENDPOINT || process.env.DEFAULT_ENDP
 const polygonPrivateKey = process.env.POLYGON_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const unichainEndpoint = process.env.UNICHAIN_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const unichainPrivateKey = process.env.UNICHAIN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const worldchainEndpoint = process.env.WOLRDCHAIN_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const worldchainPrivateKey = process.env.WOLRDCHAIN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -121,6 +123,10 @@ const config: HardhatUserConfig = {
     uni: {
       url: unichainEndpoint,
       accounts: [`0x${unichainPrivateKey}`],
+    },
+    worldchain: {
+       url: worldchainEndpoint,
+      accounts: [`0x${worldchainPrivateKey}`],
     }
   },
   namedAccounts: {
@@ -169,6 +175,7 @@ const config: HardhatUserConfig = {
       bsc: process.env.BSCSCAN_API_KEY as string,
       polygon: process.env.POLYGONSCAN_API_KEY as string,
       uni: process.env.UNISCAN_API_KEY as string,
+      worldchain:  process.env.WOLRDSCAN_API_KEY as string,
     },
     customChains: [
       {
@@ -225,6 +232,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api.uniscan.xyz/api",
           browserURL: "https://uniscan.xyz/",
+        },
+      },
+      {
+        network: "worldchain",
+        chainId: 480,
+        urls: {
+          apiURL: "https://api.worldscan.org/api",
+          browserURL: "https://worldscan.org/",
         },
       },
     ]

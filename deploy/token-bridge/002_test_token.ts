@@ -9,7 +9,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const args = ['Reward2', 'R2', 18, '0'];
+  const args = ['incetest2', 'INCE2', 18, '0'];
 
   const testToken = await deploy('MintableERC20', {
     from: deployer,
