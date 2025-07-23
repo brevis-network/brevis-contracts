@@ -45,6 +45,8 @@ const unichainEndpoint = process.env.UNICHAIN_ENDPOINT || process.env.DEFAULT_EN
 const unichainPrivateKey = process.env.UNICHAIN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 const worldchainEndpoint = process.env.WOLRDCHAIN_ENDPOINT || process.env.DEFAULT_ENDPOINT;
 const worldchainPrivateKey = process.env.WOLRDCHAIN_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+const avalancheEndpoint = process.env.AVALANCHE_ENDPOINT || process.env.DEFAULT_ENDPOINT;
+const avalanchePrivateKey = process.env.AVALANCHE_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -127,7 +129,11 @@ const config: HardhatUserConfig = {
     worldchain: {
        url: worldchainEndpoint,
       accounts: [`0x${worldchainPrivateKey}`],
-    }
+    },
+    avalanche: {
+      url: avalancheEndpoint || '',
+      accounts: [`0x${avalanchePrivateKey}`]
+    },
   },
   namedAccounts: {
     deployer: {
