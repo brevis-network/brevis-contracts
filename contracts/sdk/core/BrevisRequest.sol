@@ -195,7 +195,7 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
         OnchainRequestInfo storage info = onchainRequests[requestKey];
         require(info.feeHash == keccak256(abi.encodePacked(_currentFee, _refundee)), "invalid input");
         uint256 newFee = _currentFee + msg.value;
-        info.feeHash == keccak256(abi.encodePacked(newFee, _refundee));
+        info.feeHash = keccak256(abi.encodePacked(newFee, _refundee));
         if (_addGas > 0) {
             info.callback.gas += _addGas;
         }
@@ -211,9 +211,10 @@ contract BrevisRequest is IBrevisRequest, FeeVault, BrevisAccess {
 
         bytes32 feeHash = onchainRequests[requestKey].feeHash;
         require(feeHash == keccak256(abi.encodePacked(_amount, _refundee)), "invalid input");
+
+        requests[requestKey].status = RequestStatus.Refunded;
         (bool sent, ) = _refundee.call{value: _amount, gas: 50000}("");
         require(sent, "send native failed");
-        requests[requestKey].status = RequestStatus.Refunded;
         emit RequestRefunded(_proofId, _nonce);
     }
 
