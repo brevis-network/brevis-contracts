@@ -13,14 +13,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const proof = await deployments.get('BrevisProof');
   const sigsVerifier = await deployments.get('BrevisProof');
   const args = ["0xe03B4133fFf5d4023ec125c11167E1ba8d7419DE", proof.address, sigsVerifier.address];
-  const deployment = await deploy('BrevisRequest', {
-    from: deployer,
-    log: true,
-    args: args
-  });
-  await verify(hre, deployment, args);
-
-
+  const initArgs = ["0xe03B4133fFf5d4023ec125c11167E1ba8d7419DE", proof.address, sigsVerifier.address, 3600];
   await deploy('BrevisRequest', {
     from: deployer,
     log: true,
@@ -32,7 +25,7 @@ const deployFunc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         // with proper args
         init: {
           methodName: 'init',
-          args: args
+          args: initArgs
         }
       }
     }
